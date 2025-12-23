@@ -57,15 +57,14 @@
         /* A4 設定：精確控制 */
         @page {
             size: A4 portrait;
-            margin: 0; /* 清除瀏覽器預設邊距 */
+            margin: 0; /* 清除瀏覽器預設邊距，由 CSS 控制內容邊距 */
         }
 
-        /* 列印容器 */
+        /* 列印容器：單頁強制設定 */
         .print-page-container {
             width: 210mm;
-            /* 預覽時顯示完整高度，列印時由 @media print 覆蓋 */
-            min-height: 296mm; 
-            padding: 12mm 15mm;
+            height: 296mm; /* A4 高度 */
+            padding: 12mm 15mm; /* 舒適的邊距 */
             background: white;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin: 0 auto 20px auto;
@@ -73,12 +72,19 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: hidden; /* 防止溢出 */
+            page-break-after: always; /* 預覽時每頁後換頁 */
         }
 
-        /* --- 列印專用字體設定 --- */
+        /* 最後一頁取消強制換頁，避免多出空白頁 */
+        .print-page-container:last-child {
+            page-break-after: auto;
+            margin-bottom: 0;
+        }
+
+        /* --- 列印專用字體設定 (只影響預覽區塊) --- */
         .print-page-container {
-            font-family: 'Noto Serif TC', serif;
+            font-family: 'Noto Serif TC', serif; /* 統一使用襯線體增加書卷氣與專業感 */
             color: #000;
         }
 
@@ -91,17 +97,18 @@
         }
 
         .print-title {
-            font-size: 36px;
-            font-weight: 900;
-            color: #000;
+            font-size: 36px; /* 加大標題 */
+            font-weight: 900; /* 最粗體 */
+            color: #000; /* 全黑 */
             letter-spacing: 2px;
             line-height: 1.1;
             margin-bottom: 4px;
+            /* 模擬更粗的字重，以防字體不支援 */
             text-shadow: 0.5px 0 0 currentColor; 
         }
 
         .print-subtitle {
-            font-size: 20px;
+            font-size: 20px; /* 副標題放大 */
             font-weight: 700;
             letter-spacing: 4px;
             color: #222;
@@ -122,7 +129,7 @@
 
         .print-meta {
             position: absolute;
-            top: 15mm;
+            /* top 由 React 動態控制 */
             right: 15mm;
             text-align: right;
             font-family: 'Noto Sans TC', sans-serif;
@@ -140,7 +147,7 @@
             line-height: 0.9;
         }
 
-        /* 表格容器 */
+        /* 表格容器：Flex 1 自動填滿剩餘高度 */
         .table-wrapper {
             flex: 1;
             display: flex;
@@ -152,9 +159,9 @@
         /* 表格樣式 */
         .design-table {
             width: 100%;
-            height: 100%;
+            height: 100%; /* 強制撐滿容器高度 */
             border-collapse: collapse;
-            table-layout: fixed;
+            table-layout: fixed; /* 固定佈局 */
         }
         
         .design-table th {
@@ -167,8 +174,8 @@
             font-weight: 800;
             text-align: center;
             font-size: 16px;
-            font-family: 'Noto Sans TC', sans-serif;
-            height: 36px;
+            font-family: 'Noto Sans TC', sans-serif; /* 標題用黑體較清晰 */
+            height: 36px; /* 固定標題高度 */
             color: #000;
         }
 
@@ -181,16 +188,18 @@
             border-right: 1px solid #eee;
             vertical-align: middle;
             padding: 0 6px;
+            /* height 不設定，由瀏覽器自動均分 tbody 的高度 */
         }
 
         .design-table tr:last-child td {
-            border-bottom: 2px solid #000;
+            border-bottom: 2px solid #000; /* 表格底部粗線 */
         }
 
         .design-table tr:nth-child(even) {
-            background-color: #fafafa;
+            background-color: #fafafa; /* 隔行底色，增加閱讀性 */
         }
 
+        /* 單元格內容優化 */
         .cell-date {
             text-align: center;
             font-family: 'Noto Sans TC', sans-serif;
@@ -207,11 +216,11 @@
         }
 
         .cell-scripture {
-            font-size: 15px;
+            font-size: 13px; /* 稍微縮小以容納長英文單字 */
             font-weight: 600;
-            white-space: nowrap;
+            white-space: nowrap; /* 保持單行，若太長可能會截斷，但保持整潔 */
             overflow: hidden;
-            text-overflow: clip;
+            text-overflow: clip; 
             letter-spacing: 0.5px;
             color: #000;
         }
@@ -229,6 +238,7 @@
             margin: 0 auto;
         }
 
+        /* 頁尾 */
         .print-footer {
             margin-top: 8px;
             font-size: 10px;
@@ -241,50 +251,41 @@
             height: 12px;
         }
 
-        /* --- 修正後的 @media print --- */
+        /* 列印時隱藏非預覽元素 */
         @media print {
-            html, body {
-                width: 210mm;
-                height: 297mm; /* A4 height */
-                margin: 0 !important; 
-                padding: 0 !important;
+            body { background: white; margin: 0; padding: 0; }
+            body > *:not(#print-preview-root) { display: none !important; }
+            
+            /* 修正列印時的容器行為 */
+            #print-preview-root {
+                display: block !important;
+                position: static !important; /* 關鍵：改為 static 以支援自然換頁 */
+                width: 100%;
+                height: auto;
+                overflow: visible !important;
                 background: white;
             }
 
-            /* 隱藏主介面與預覽UI */
-            body > *:not(#print-preview-root) { display: none !important; }
             .no-print-in-preview { display: none !important; }
-
-            #print-preview-root {
-                display: block !important;
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                margin: 0;
-                padding: 0;
-            }
-
-            /* 容器設定修正：解決多頁問題 */
+            
             .print-page-container {
                 box-shadow: none; 
-                margin: 0 !important; 
-                border: none;
+                margin: 0; 
                 width: 210mm;
-                /* 稍微小於 297mm 以容錯，避免瀏覽器因 1px 誤差產生空白頁 */
-                height: 296mm; 
-                overflow: hidden;
-                /* 使用 break-after 代替 page-break-after (現代瀏覽器) */
-                break-after: page;
+                height: 296mm; /* 維持固定高度 */
                 page-break-after: always;
+                break-after: page; /* 現代瀏覽器支援 */
+                overflow: hidden;
             }
 
-            /* 最後一頁取消強制分頁，避免最後多出一張白紙 */
             .print-page-container:last-child {
+                page-break-after: auto; /* 避免最後一頁後空白 */
                 break-after: auto;
-                page-break-after: auto;
+                height: auto; /* 最後一頁允許自動高度，減少空白頁風險 */
+                min-height: 296mm;
             }
-
+            
+            /* 強制列印背景色 (為了隔行底色) */
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
     </style>
@@ -302,12 +303,12 @@
           TrendingUp, LayoutGrid, Sun, Globe, Printer, Eye, FileDown, Image as ImageIcon, FileText
         } from 'lucide-react';
 
-        // ... existing translations code ...
+        // --- 翻譯與設定 ---
         const TRANSLATIONS = {
             zh: {
                 title: "PJBC 平鎮浸信會",
-                subtitle: "讀經進度", 
-                print_subtitle: "讀經進度表",
+                subtitle: "讀經進度", // 網站用
+                print_subtitle: "讀經進度表", // 列印用
                 greeting: "平安！願神的話語成為你腳前的燈",
                 today_btn: "今日進度",
                 days_read: "已讀天數",
@@ -318,7 +319,7 @@
                 daily_ten: "每日十章", 
                 mark_read: "標記已讀",
                 marked: "已讀完",
-                note_title: "靈修筆記",
+                note_title: "靈修筆記", 
                 note_placeholder: "記錄神今天對你說的話...",
                 source: "來源: Bolls.life API",
                 version: "和合本 (CUV)",
@@ -342,7 +343,7 @@
                 nav: { home: "首頁", calendar: "月曆", table: "列表", admin: "管理" }
             },
             en: {
-                title: "PJBC Pingzhen Baptist",
+                title: "PJBC", 
                 subtitle: "Bible Schedule",
                 print_subtitle: "Bible Reading Schedule",
                 greeting: "Peace! Your word is a lamp for my feet",
@@ -370,15 +371,18 @@
                 download_pdf: "Download PDF",
                 close_preview: "Close",
                 cancel: "Cancel",
-                year: "Year",
-                month: "Month",
-                check_col: "Chk",
+                year: "",
+                month: "",
+                check_col: "✓", // 修改：Checkmark symbol
                 date_col: "Date",
                 select_all: "Select All",
                 deselect_all: "Clear",
                 nav: { home: "Home", calendar: "Calendar", table: "List", admin: "Admin" }
             }
         };
+
+        // 星期對照表
+        const WEEKDAY_MAP = { "日": "Sun", "一": "Mon", "二": "Tue", "三": "Wed", "四": "Thu", "五": "Fri", "六": "Sat" };
 
         const ABBREV_TO_FULL_ZH = {
             "創": "創世記", "出": "出埃及記", "利": "利未記", "民": "民數記", "申": "申命記",
@@ -416,20 +420,20 @@
           "約翰一書": 62, "約一": 62, "約翰二書": 63, "約二": 63, "約翰三書": 64, "約三": 64, "猶大書": 65, "猶": 65, "啟示錄": 66, "啟": 66
         };
         const ZH_TO_EN_BOOKS = {
-             "創世記": "Gen", "創": "Gen", "出埃及記": "Exo", "出": "Exo", "利未記": "Lev", "利": "Lev", "民數記": "Num", "民": "Num", "申命記": "Deu", "申": "Deu",
-            "約書亞記": "Jos", "書": "Jos", "士師記": "Jud", "士": "Jud", "路得記": "Rut", "得": "Rut", "撒母耳記上": "1Sa", "撒上": "1Sa", "撒母耳記下": "2Sa", "撒下": "2Sa",
-            "列王紀上": "1Ki", "王上": "1Ki", "列王紀下": "2Ki", "王下": "2Ki", "歷代志上": "1Ch", "代上": "1Ch", "歷代志下": "2Ch", "代下": "2Ch",
-            "以斯拉記": "Ezr", "拉": "Ezr", "尼希米記": "Neh", "尼": "Neh", "以斯帖記": "Est", "斯": "Est", "約伯記": "Job", "伯": "Job",
-            "詩篇": "Psa", "詩": "Psa", "箴言": "Pro", "箴": "Pro", "傳道書": "Ecc", "傳": "Ecc", "雅歌": "Son", "歌": "Son",
-            "以賽亞書": "Isa", "賽": "Isa", "耶利米書": "Jer", "耶": "Jer", "耶利米哀歌": "Lam", "哀": "Lam", "以西結書": "Eze", "結": "Eze", "但以理書": "Dan", "但": "Dan",
-            "何西阿書": "Hos", "何": "Hos", "約珥書": "Joe", "珥": "Joe", "阿摩司書": "Amo", "阿": "Amo", "俄巴底亞書": "Oba", "俄": "Oba", "約拿書": "Jon", "拿": "Jon", "彌迦書": "Mic", "彌": "Mic",
-            "那鴻書": "Nah", "鴻": "Nah", "哈巴谷書": "Hab", "哈": "Hab", "西番雅書": "Zep", "番": "Zep", "哈該書": "Hag", "該": "Hag", "撒迦利亞書": "Zec", "亞": "Zec", "瑪拉基書": "Mal", "瑪": "Mal",
-            "馬太福音": "Mat", "太": "Mat", "馬可福音": "Mar", "可": "Mar", "路加福音": "Luk", "路": "Luk", "約翰福音": "Joh", "約": "Joh", "使徒行傳": "Act", "徒": "Act",
-            "羅馬書": "Rom", "羅": "Rom", "哥林多前書": "1Co", "林前": "1Co", "哥林多後書": "2Co", "林後": "2Co", "加拉太書": "Gal", "加": "Gal", "以弗所書": "Eph", "弗": "Eph",
-            "腓立比書": "Phi", "腓": "Phi", "歌羅西書": "Col", "西": "Col", "帖撒羅尼迦前書": "1Th", "帖前": "1Th", "帖撒羅尼迦後書": "2Th", "帖後": "2Th",
-            "提摩太前書": "1Ti", "提前": "1Ti", "提摩太後書": "2Ti", "提後": "2Ti", "提多書": "Tit", "多": "Tit", "腓利門書": "Phm", "門": "Phm", "希伯來書": "Heb", "希": "Heb",
-            "雅各書": "Jam", "雅": "Jam", "彼得前書": "1Pe", "彼前": "1Pe", "彼得後書": "2Pe", "彼後": "2Pe", "約翰一書": "1Jo", "約一": "1Jo", "約翰二書": "2Jo", "約二": "2Jo", "約翰三書": "3Jo", "約三": "3Jo",
-            "猶大書": "Jud", "猶": "Jud", "啟示錄": "Rev", "啟": "Rev"
+             "創世記": "Genesis", "創": "Genesis", "出埃及記": "Exodus", "出": "Exodus", "利未記": "Leviticus", "利": "Leviticus", "民數記": "Numbers", "民": "Numbers", "申命記": "Deuteronomy", "申": "Deuteronomy",
+            "約書亞記": "Joshua", "書": "Joshua", "士師記": "Judges", "士": "Judges", "路得記": "Ruth", "得": "Ruth", "撒母耳記上": "1 Samuel", "撒上": "1 Samuel", "撒母耳記下": "2 Samuel", "撒下": "2 Samuel",
+            "列王紀上": "1 Kings", "王上": "1 Kings", "列王紀下": "2 Kings", "王下": "2 Kings", "歷代志上": "1 Chronicles", "代上": "1 Chronicles", "歷代志下": "2 Chronicles", "代下": "2 Chronicles",
+            "以斯拉記": "Ezra", "拉": "Ezra", "尼希米記": "Nehemiah", "尼": "Nehemiah", "以斯帖記": "Esther", "斯": "Esther", "約伯記": "Job", "伯": "Job",
+            "詩篇": "Psalms", "詩": "Psalms", "箴言": "Proverbs", "箴": "Proverbs", "傳道書": "Ecclesiastes", "傳": "Ecclesiastes", "雅歌": "Song of Songs", "歌": "Song of Songs",
+            "以賽亞書": "Isaiah", "賽": "Isaiah", "耶利米書": "Jeremiah", "耶": "Jeremiah", "耶利米哀歌": "Lamentations", "哀": "Lamentations", "以西結書": "Ezekiel", "結": "Ezekiel", "但以理書": "Daniel", "但": "Daniel",
+            "何西阿書": "Hosea", "何": "Hosea", "約珥書": "Joel", "珥": "Joel", "阿摩司書": "Amos", "阿": "Amos", "俄巴底亞書": "Obadiah", "俄": "Obadiah", "約拿書": "Jonah", "拿": "Jonah", "彌迦書": "Micah", "彌": "Micah",
+            "那鴻書": "Nahum", "鴻": "Nahum", "哈巴谷書": "Habakkuk", "哈": "Habakkuk", "西番雅書": "Zephaniah", "番": "Zephaniah", "哈該書": "Haggai", "該": "Haggai", "撒迦利亞書": "Zechariah", "亞": "Zechariah", "瑪拉基書": "Malachi", "瑪": "Malachi",
+            "馬太福音": "Matthew", "太": "Matthew", "馬可福音": "Mark", "可": "Mark", "路加福音": "Luke", "路": "Luke", "約翰福音": "John", "約": "John", "使徒行傳": "Acts", "徒": "Acts",
+            "羅馬書": "Romans", "羅": "Romans", "哥林多前書": "1 Corinthians", "林前": "1 Corinthians", "哥林多後書": "2 Corinthians", "林後": "2 Corinthians", "加拉太書": "Galatians", "加": "Galatians", "以弗所書": "Ephesians", "弗": "Ephesians",
+            "腓立比書": "Philippians", "腓": "Philippians", "歌羅西書": "Colossians", "西": "Colossians", "帖撒羅尼迦前書": "1 Thessalonians", "帖前": "1 Thessalonians", "帖撒羅尼迦後書": "2 Thessalonians", "帖後": "2 Thessalonians",
+            "提摩太前書": "1 Timothy", "提前": "1 Timothy", "提摩太後書": "2 Timothy", "提後": "2 Timothy", "提多書": "Titus", "多": "Titus", "腓利門書": "Philemon", "門": "Philemon", "希伯來書": "Hebrews", "希": "Hebrews",
+            "雅各書": "James", "雅": "James", "彼得前書": "1 Peter", "彼前": "1 Peter", "彼得後書": "2 Peter", "彼後": "2 Peter", "約翰一書": "1 John", "約一": "1 John", "約翰二書": "2 John", "約二": "2 John", "約翰三書": "3 John", "約三": "3 John",
+            "猶大書": "Jude", "猶": "Jude", "啟示錄": "Revelation", "啟": "Revelation"
         };
 
         const parseScriptureString = (text) => {
@@ -541,7 +545,6 @@
              const plans = [];
             const addDay = (date, wd, one, ten) => plans.push({ date, weekday: wd, dailyOne: one, dailyTen: ten });
             
-            // ... [Data array omitted for brevity, keeping existing data logic] ...
             // 2025-12
             const year2025_Dec = [
                 ["2025-12-01", "一", "使徒行傳 1", "約 18-21；徒 1-6"],
@@ -948,7 +951,7 @@
             year2026.forEach(d => addDay(d[0], d[1], d[2], d[3]));
             return plans;
         };
-        // ... BibleReader component omitted for brevity ...
+
         const BibleReader = ({ bookId, chapter, label, lang }) => {
             const [content, setContent] = useState([]);
             const [loading, setLoading] = useState(true);
@@ -1006,6 +1009,7 @@
                 </div>
             );
         };
+
         // --- 全新的預覽與列印組件 (PrintPreviewOverlay) ---
         const PrintPreviewOverlay = ({ year, selectedMonths, plans, lang, onClose }) => {
             const t = TRANSLATIONS[lang];
@@ -1032,6 +1036,7 @@
                 }
 
                 // 獲取當前頁面的樣式 (包含 Google Fonts 和自定義 CSS)
+                // 這裡特別抓取所有的 style 標籤和 link 標籤
                 const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
                     .map(style => style.outerHTML)
                     .join('\n');
@@ -1039,13 +1044,16 @@
                 // 獲取預覽區域的 HTML
                 const content = contentRef.current.innerHTML;
 
-                // 寫入新視窗：加上 Loading 提示與延遲
+                // 寫入新視窗
                 printWindow.document.write(`
                     <!DOCTYPE html>
                     <html>
                     <head>
                         <title>PJBC Schedule Print</title>
                         <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        
+                        <!-- 重新引入 Tailwind (確保樣式正確) -->
                         <script src="https://cdn.tailwindcss.com"><\/script>
                         <script>
                             tailwind.config = {
@@ -1056,9 +1064,12 @@
                                 }
                             }
                         <\/script>
+
+                        <!-- 引入原有的樣式 (包含 Font, Custom CSS) -->
                         ${styles}
+
                         <style>
-                            /* 強制覆蓋新視窗的列印樣式 */
+                            /* 強制覆蓋：列印視窗的基礎設定 */
                             body { 
                                 background-color: white !important; 
                                 margin: 0; 
@@ -1066,46 +1077,28 @@
                                 -webkit-print-color-adjust: exact !important; 
                                 print-color-adjust: exact !important; 
                             }
-                            #loading-message {
-                                display: flex;
-                                justify-content: center;
-                                align-items: center;
-                                height: 100vh;
-                                font-family: sans-serif;
-                                font-size: 24px;
-                                color: #666;
-                            }
-                            @media print {
-                                #loading-message { display: none; }
-                            }
+                            
+                            /* 隱藏預覽介面中不該出現的捲軸等 */
+                            ::-webkit-scrollbar { display: none; }
                         </style>
                     </head>
                     <body>
-                        <div id="loading-message">載入預覽中，請稍候...</div>
-                        <div id="print-content" style="opacity: 0;">
+                        <div id="print-preview-root" style="position: static; width: 100%; height: auto; overflow: visible;">
                             ${content}
                         </div>
                         <script>
+                            // 等待資源載入後執行列印
                             window.onload = function() {
-                                var loading = document.getElementById('loading-message');
-                                var content = document.getElementById('print-content');
-                                
-                                // 稍微延遲以確保樣式渲染
                                 setTimeout(function() {
-                                    loading.style.display = 'none';
-                                    content.style.opacity = '1';
                                     window.print();
-                                    // window.close(); // 可選：列印後自動關閉
-                                }, 1500); // 1.5秒緩衝
+                                    // window.close(); // 選擇性開啟自動關閉
+                                }, 800);
                             };
                         <\/script>
                     </body>
                     </html>
                 `);
-                
-                // 關鍵：必須關閉 document 才能觸發 onload
-                printWindow.document.close();
-                printWindow.focus();
+                printWindow.document.close(); // 必須調用，否則某些瀏覽器載入指示器會一直轉
             };
 
             const handleDownloadPNG = async () => {
@@ -1183,16 +1176,29 @@
                     {/* 預覽內容 (實際列印區域) */}
                     <div className="flex-1 p-4 md:p-8 print:p-0 flex justify-center print:block overflow-x-hidden bg-gray-200">
                         <div ref={contentRef} className="print:w-full">
-                            {pagesData.map((page, idx) => (
+                            {pagesData.map((page, idx) => {
+                                // 計算月份標籤
+                                const monthLabel = lang === 'en' 
+                                    ? ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][page.month - 1]
+                                    : page.month;
+                                
+                                // 針對英文月份調整字體大小，避免與上方橫線重疊
+                                const monthFontSize = lang === 'en' ? '24px' : '36px';
+                                
+                                // 針對中文月份調整 top 位置，使其位於格線上方 (14mm)
+                                // 英文維持原位 (22mm)
+                                const metaTop = lang === 'en' ? '22mm' : '14mm';
+
+                                return (
                                 <div key={page.month} className="print-page-container">
                                     
                                     {/* 裝飾性標題區 */}
                                     <div className="print-header">
                                         <div className="print-title">{t.title}</div>
                                         <div className="print-subtitle">{t.print_subtitle}</div>
-                                        <div className="print-meta">
+                                        <div className="print-meta" style={{ top: metaTop }}>
                                             <div className="print-meta-year">{year} {t.year}</div>
-                                            <div className="print-meta-month">{page.month} <span style={{fontSize:'16px', fontWeight:'normal'}}>{t.month}</span></div>
+                                            <div className="print-meta-month" style={{fontSize: monthFontSize}}>{monthLabel} <span style={{fontSize:'16px', fontWeight:'normal'}}>{t.month}</span></div>
                                         </div>
                                     </div>
 
@@ -1213,7 +1219,7 @@
                                                     <tr key={p.date}>
                                                         <td className="cell-date">
                                                             {/* 移除星期旁的括號 */}
-                                                            {parseInt(p.date.split('-')[2])} <span className="cell-weekday">{p.weekday}</span>
+                                                            {parseInt(p.date.split('-')[2])} <span className="cell-weekday">{lang === 'en' ? WEEKDAY_MAP[p.weekday] : p.weekday}</span>
                                                         </td>
                                                         <td className="cell-scripture pl-2">
                                                             {formatScriptureDisplay(p.dailyOne, lang)}
@@ -1249,17 +1255,18 @@
                                          <div>"{t.greeting}"</div>
                                     </div>
                                 </div>
-                            ))}
+                            )})}
                         </div>
                     </div>
                 </div>
             );
         };
-        // ... rest of the App component ...
+
         // --- 列印設定彈窗 (支援複選月份) ---
         const PrintModal = ({ isOpen, onClose, onConfirm, availableYears, lang }) => {
             const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-            const [selectedMonths, setSelectedMonths] = useState([new Date().getMonth() + 1]);
+            // 修改：預設月份為空陣列，不勾選任何月份
+            const [selectedMonths, setSelectedMonths] = useState([]);
             const t = TRANSLATIONS[lang];
 
             if (!isOpen) return null;
@@ -1455,10 +1462,7 @@
                                 {isRead ? <CheckCircle size={20} /> : <Circle size={20} />}{isRead ? t.marked : t.mark_read}
                              </button>
                         </div>
-                        <div>
-                             <div className="flex items-center gap-2 mb-2 px-1"><Edit3 size={16} className="text-[#1E3A8A]" /><h3 className="font-bold text-gray-700 text-sm">{t.note_title}</h3></div>
-                             <textarea className="w-full p-4 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-100 outline-none text-sm min-h-[100px]" placeholder={t.note_placeholder} value={userState.notes[date] || ""} onChange={(e) => updateNote(date, e.target.value)} />
-                        </div>
+                        {/* 移除了筆記欄位 */}
                     </div>
                 );
             };
