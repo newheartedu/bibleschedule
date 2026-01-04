@@ -22,6 +22,8 @@
     <!-- 引入 html2pdf.js 與 html2canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <!-- 引入 JSZip 用於多圖打包下載 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     
     <script type="importmap">
     {
@@ -303,7 +305,7 @@
           TrendingUp, LayoutGrid, Sun, Globe, Printer, Eye, FileDown, Image as ImageIcon, FileText, Fish
         } from 'lucide-react';
 
-        // --- 翻譯與設定 ---
+        // --- 全域資料設定 (移至最上方以確保讀取) ---
         const TRANSLATIONS = {
             zh: {
                 title: "PJBC 平鎮浸信會",
@@ -367,7 +369,7 @@
                 print_desc: "Select year and month(s) to generate printable A4 schedules.",
                 print_preview_btn: "Preview Document",
                 print_now: "Print Now",
-                download_png: "Download All Images (PNG)",
+                download_png: "Download Image",
                 download_pdf: "Download PDF",
                 close_preview: "Close",
                 cancel: "Cancel",
@@ -396,7 +398,7 @@
             "太": "馬太福音", "可": "馬可福音", "路": "路加福音", "約": "約翰福音", "徒": "使徒行傳",
             "羅": "羅馬書", "林前": "哥林多前書", "林後": "哥林多後書", "加": "加拉太書", "弗": "以弗所書",
             "腓": "腓立比書", "西": "歌羅西書", "帖前": "帖撒羅尼迦前書", "帖後": "帖撒羅尼迦後書",
-            "提前": "提摩太前書", "提後": "提摩太後書", "多": "提多書", "門": "腓利門書", "來": "希伯來書", // 已修正：希 -> 來
+            "提前": "提摩太前書", "提後": "提摩太後書", "多": "提多書", "門": "腓利門書", "來": "希伯來書", 
             "雅": "雅各書", "彼前": "彼得前書", "彼後": "彼得後書", "約一": "約翰一書", "約二": "約翰二書", "約三": "約翰三書",
             "猶": "猶大書", "啟": "啟示錄"
         };
@@ -419,7 +421,7 @@
             "以弗所書": "Eph", "弗": "Eph", "腓立比書": "Phil", "腓": "Phil", "歌羅西書": "Col", "西": "Col",
             "帖撒羅尼迦前書": "1 Thess", "帖前": "1 Thess", "帖撒羅尼迦後書": "2 Thess", "帖後": "2 Thess",
             "提摩太前書": "1 Tim", "提前": "1 Tim", "提摩太後書": "2 Tim", "提後": "2 Tim", "提多書": "Titus", "多": "Titus", "腓利門書": "Phlm", "門": "Phlm",
-            "希伯來書": "Heb", "來": "Heb", // 已修正：希 -> 來 (對應 Heb)
+            "希伯來書": "Heb", "來": "Heb", 
             "雅各書": "Jas", "雅": "Jas", "彼得前書": "1 Pet", "彼前": "1 Pet", "彼得後書": "2 Pet", "彼後": "2 Pet",
             "約翰一書": "1 John", "約一": "1 John", "約翰二書": "2 John", "約二": "2 John", "約翰三書": "3 John", "約三": "3 John", "猶大書": "Jude", "猶": "Jude", "啟示錄": "Rev", "啟": "Rev"
         };
@@ -438,10 +440,12 @@
           "羅馬書": 45, "羅": 45, "哥林多前書": 46, "林前": 46, "哥林多後書": 47, "林後": 47, "加拉太書": 48, "加": 48,
           "以弗所書": 49, "弗": 49, "腓立比書": 50, "腓": 50, "歌羅西書": 51, "西": 51, "帖撒羅尼迦前書": 52, "帖前": 52, "帖撒羅尼迦後書": 53, "帖後": 53,
           "提摩太前書": 54, "提前": 54, "提摩太後書": 55, "提後": 55, "提多書": 56, "多": 56, "腓利門書": 57, "門": 57,
-          "希伯來書": 58, "來": 58, // 已修正：希 -> 來
+          "希伯來書": 58, "來": 58, 
           "雅各書": 59, "雅": 59, "彼得前書": 60, "彼前": 60, "彼得後書": 61, "彼後": 61,
           "約翰一書": 62, "約一": 62, "約翰二書": 63, "約二": 63, "約翰三書": 64, "約三": 64, "猶大書": 65, "猶": 65, "啟示錄": 66, "啟": 66
         };
+
+        // 詳細英文書名對照表 (用於 formatScriptureDisplay 與 BibleReader)
         const ZH_TO_EN_BOOKS = {
              "創世記": "Genesis", "創": "Genesis", "出埃及記": "Exodus", "出": "Exodus", "利未記": "Leviticus", "利": "Leviticus", "民數記": "Numbers", "民": "Numbers", "申命記": "Deuteronomy", "申": "Deuteronomy",
             "約書亞記": "Joshua", "書": "Joshua", "士師記": "Judges", "士": "Judges", "路得記": "Ruth", "得": "Ruth", "撒母耳記上": "1 Samuel", "撒上": "1 Samuel", "撒母耳記下": "2 Samuel", "撒下": "2 Samuel",
@@ -449,12 +453,12 @@
             "以斯拉記": "Ezra", "拉": "Ezra", "尼希米記": "Nehemiah", "尼": "Nehemiah", "以斯帖記": "Esther", "斯": "Esther", "約伯記": "Job", "伯": "Job",
             "詩篇": "Psalms", "詩": "Psalms", "箴言": "Proverbs", "箴": "Proverbs", "傳道書": "Ecclesiastes", "傳": "Ecclesiastes", "雅歌": "Song of Songs", "歌": "Song of Songs",
             "以賽亞書": "Isaiah", "賽": "Isaiah", "耶利米書": "Jeremiah", "耶": "Jeremiah", "耶利米哀歌": "Lamentations", "哀": "Lamentations", "以西結書": "Ezekiel", "結": "Ezekiel", "但以理書": "Daniel", "但": "Daniel",
-            "何西阿書": "Hosea", "何": "Hosea", "約珥書": "Joel", "珥": "Joel", "阿摩司書": "Amos", "摩": "Amos", "俄巴底亞書": "Obad", "俄": "Obad", "約拿書": "Jonah", "拿": "Jonah", "彌迦書": "Mic", "彌": "Mic",
-            "那鴻書": "Nah", "鴻": "Nah", "哈巴谷書": "Habakkuk", "哈": "Habakkuk", "西番雅書": "Zephaniah", "番": "Zephaniah", "哈該書": "Haggai", "該": "Haggai", "撒迦利亞書": "Zechariah", "亞": "Zechariah", "瑪拉基書": "Malachi", "瑪": "Malachi",
+            "何西阿書": "Hosea", "何": "Hosea", "約珥書": "Joel", "珥": "Joel", "阿摩司書": "Amos", "摩": "Amos", "俄巴底亞書": "Obadiah", "俄": "Obadiah", "約拿書": "Jonah", "拿": "Jonah", "彌迦書": "Micah", "彌": "Micah",
+            "那鴻書": "Nahum", "鴻": "Nahum", "哈巴谷書": "Habakkuk", "哈": "Habakkuk", "西番雅書": "Zephaniah", "番": "Zephaniah", "哈該書": "Haggai", "該": "Haggai", "撒迦利亞書": "Zechariah", "亞": "Zechariah", "瑪拉基書": "Malachi", "瑪": "Malachi",
             "馬太福音": "Matthew", "太": "Matthew", "馬可福音": "Mark", "可": "Mark", "路加福音": "Luke", "路": "Luke", "約翰福音": "John", "約": "John", "使徒行傳": "Acts", "徒": "Acts",
             "羅馬書": "Romans", "羅": "Romans", "哥林多前書": "1 Corinthians", "林前": "1 Corinthians", "哥林多後書": "2 Corinthians", "林後": "2 Corinthians", "加拉太書": "Galatians", "加": "Galatians", "以弗所書": "Ephesians", "弗": "Ephesians",
             "腓立比書": "Philippians", "腓": "Philippians", "歌羅西書": "Colossians", "西": "Colossians", "帖撒羅尼迦前書": "1 Thessalonians", "帖前": "1 Thessalonians", "帖撒羅尼迦後書": "2 Thessalonians", "帖後": "2 Thessalonians",
-            "提摩太前書": "1 Timothy", "提前": "1 Timothy", "提摩太後書": "2 Timothy", "提後": "2 Timothy", "提多書": "Titus", "多": "Titus", "腓利門書": "Philemon", "門": "Philemon", "希伯來書": "Hebrews", "來": "Hebrews", // 已修正：希 -> 來
+            "提摩太前書": "1 Timothy", "提前": "1 Timothy", "提摩太後書": "2 Timothy", "提後": "2 Timothy", "提多書": "Titus", "多": "Titus", "腓利門書": "Philemon", "門": "Philemon", "希伯來書": "Hebrews", "來": "Hebrews", 
             "雅各書": "James", "雅": "James", "彼得前書": "1 Peter", "彼前": "1 Peter", "彼得後書": "2 Peter", "彼後": "2 Peter", "約翰一書": "1 John", "約一": "1 John", "約翰二書": "2 John", "約二": "2 John", "約翰三書": "3 John", "約三": "3 John",
             "猶大書": "Jude", "猶": "Jude", "啟示錄": "Revelation", "啟": "Revelation"
         };
@@ -847,7 +851,7 @@
                 ["2026-08-10", "一", "提後 2", "彼後 1-3；約一 1-5；約二；約三"],
                 ["2026-08-11", "二", "創 46", "猶；啟 1-9"],
                 ["2026-08-12", "三", "創 47", "啟 10-19"],
-                ["2026-08-13", "四", "創 48", "啟 20-22；創 1-7 (第二遍讀完)"],
+                ["2026-08-13", "四", "創 48", "啟 20-22；創 1-7 (第三遍讀完)"],
                 ["2026-08-14", "五", "創 49", "創 8-17"],
                 ["2026-08-15", "六", "提後 3", "創 18-27"],
                 ["2026-08-16", "日", "提後 4 (卷終)", "創 28-37"],
@@ -1157,24 +1161,46 @@
                 try {
                     const pages = contentRef.current.querySelectorAll('.print-page-container');
                     
-                    // 依序下載每一頁
-                    for (let i = 0; i < pages.length; i++) {
-                        const page = pages[i];
-                        // 等待一小段時間讓瀏覽器喘息，避免卡頓
-                        await new Promise(r => setTimeout(r, 100));
-                        
+                    // 單張圖片直接下載
+                    if (pages.length === 1) {
+                        const page = pages[0];
                         const canvas = await html2canvas(page, { scale: 2 });
                         const link = document.createElement('a');
-                        
-                        // 取得月份資訊，若有對應資料則使用，否則用 index
-                        const month = pagesData[i] ? pagesData[i].month : (i + 1);
-                        
+                        const month = pagesData[0] ? pagesData[0].month : 1;
                         link.download = `PJBC_Schedule_${year}_${month}.png`;
                         link.href = canvas.toDataURL('image/png');
                         link.click();
+                    } 
+                    // 多張圖片打包成 ZIP
+                    else if (pages.length > 1) {
+                        const zip = new JSZip();
+                        
+                        // 依序處理每一頁
+                        for (let i = 0; i < pages.length; i++) {
+                            const page = pages[i];
+                            // 讓瀏覽器有機會渲染畫面進度，避免無回應
+                            await new Promise(r => setTimeout(r, 100));
+                            
+                            const canvas = await html2canvas(page, { scale: 2 });
+                            const imgData = canvas.toDataURL('image/png');
+                            
+                            // 去除 Data URL 前綴 (data:image/png;base64,) 以便存入 zip
+                            const base64Data = imgData.split(',')[1];
+                            
+                            const month = pagesData[i] ? pagesData[i].month : (i + 1);
+                            // 檔名：PJBC_Schedule_2025_1.png
+                            zip.file(`PJBC_Schedule_${year}_${month}.png`, base64Data, { base64: true });
+                        }
+                        
+                        // 生成 ZIP 並觸發下載
+                        const content = await zip.generateAsync({ type: "blob" });
+                        const link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(content);
+                        link.download = `PJBC_Schedule_${year}_Images.zip`;
+                        link.click();
                     }
                 } catch (err) {
-                    console.error("PNG Generation failed", err);
+                    console.error("PNG/ZIP Generation failed", err);
                     alert("圖片生成失敗，請重試");
                 } finally {
                     setIsGenerating(false);
