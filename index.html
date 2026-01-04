@@ -300,7 +300,7 @@
         import { 
           Calendar as CalendarIcon, List, Home, Settings, ChevronLeft, ChevronRight, CheckCircle, Circle, 
           Star, BookOpen, Edit3, X, Search, Download, RefreshCw, Sparkles, Bookmark, Book, ArrowRight, 
-          TrendingUp, LayoutGrid, Sun, Globe, Printer, Eye, FileDown, Image as ImageIcon, FileText
+          TrendingUp, LayoutGrid, Sun, Globe, Printer, Eye, FileDown, Image as ImageIcon, FileText, Fish
         } from 'lucide-react';
 
         // --- 翻譯與設定 ---
@@ -449,8 +449,8 @@
             "以斯拉記": "Ezra", "拉": "Ezra", "尼希米記": "Nehemiah", "尼": "Nehemiah", "以斯帖記": "Esther", "斯": "Esther", "約伯記": "Job", "伯": "Job",
             "詩篇": "Psalms", "詩": "Psalms", "箴言": "Proverbs", "箴": "Proverbs", "傳道書": "Ecclesiastes", "傳": "Ecclesiastes", "雅歌": "Song of Songs", "歌": "Song of Songs",
             "以賽亞書": "Isaiah", "賽": "Isaiah", "耶利米書": "Jeremiah", "耶": "Jeremiah", "耶利米哀歌": "Lamentations", "哀": "Lamentations", "以西結書": "Ezekiel", "結": "Ezekiel", "但以理書": "Daniel", "但": "Daniel",
-            "何西阿書": "Hosea", "何": "Hosea", "約珥書": "Joel", "珥": "Joel", "阿摩司書": "Amos", "摩": "Amos", "俄巴底亞書": "Obadiah", "俄": "Obadiah", "約拿書": "Jonah", "拿": "Jonah", "彌迦書": "Micah", "彌": "Micah",
-            "那鴻書": "Nahum", "鴻": "Nahum", "哈巴谷書": "Habakkuk", "哈": "Habakkuk", "西番雅書": "Zephaniah", "番": "Zephaniah", "哈該書": "Haggai", "該": "Haggai", "撒迦利亞書": "Zechariah", "亞": "Zechariah", "瑪拉基書": "Malachi", "瑪": "Malachi",
+            "何西阿書": "Hosea", "何": "Hosea", "約珥書": "Joel", "珥": "Joel", "阿摩司書": "Amos", "摩": "Amos", "俄巴底亞書": "Obad", "俄": "Obad", "約拿書": "Jonah", "拿": "Jonah", "彌迦書": "Mic", "彌": "Mic",
+            "那鴻書": "Nah", "鴻": "Nah", "哈巴谷書": "Habakkuk", "哈": "Habakkuk", "西番雅書": "Zephaniah", "番": "Zephaniah", "哈該書": "Haggai", "該": "Haggai", "撒迦利亞書": "Zechariah", "亞": "Zechariah", "瑪拉基書": "Malachi", "瑪": "Malachi",
             "馬太福音": "Matthew", "太": "Matthew", "馬可福音": "Mark", "可": "Mark", "路加福音": "Luke", "路": "Luke", "約翰福音": "John", "約": "John", "使徒行傳": "Acts", "徒": "Acts",
             "羅馬書": "Romans", "羅": "Romans", "哥林多前書": "1 Corinthians", "林前": "1 Corinthians", "哥林多後書": "2 Corinthians", "林後": "2 Corinthians", "加拉太書": "Galatians", "加": "Galatians", "以弗所書": "Ephesians", "弗": "Ephesians",
             "腓立比書": "Philippians", "腓": "Philippians", "歌羅西書": "Colossians", "西": "Colossians", "帖撒羅尼迦前書": "1 Thessalonians", "帖前": "1 Thessalonians", "帖撒羅尼迦後書": "2 Thessalonians", "帖後": "2 Thessalonians",
@@ -1313,7 +1313,10 @@
                                     {/* 頁尾 */}
                                     <div className="print-footer">
                                          <div>PJBC Bible Reading Schedule</div>
-                                         <div>"{t.greeting}"</div>
+                                         <div className="flex items-center gap-1">
+                                            <Fish size={12} />
+                                            <span>水深之處，下網打魚</span>
+                                         </div>
                                     </div>
                                 </div>
                             )})}
@@ -1468,13 +1471,34 @@
             const closePreview = () => setPrintPreviewData(null);
 
             // --- Sub-Components inside App context ---
-            const DetailCard = ({ date }) => {
+            const DetailCard = ({ date, onNavigate }) => {
                 const plan = plans.find(p => p.date === date);
                 const [readingQuery, setReadingQuery] = useState(null);
+                
+                // --- Reset reading query when date changes ---
+                useEffect(() => {
+                    setReadingQuery(null);
+                }, [date]);
+
                 if (!plan) return <div className="p-10 text-center text-gray-500">{t.no_data}</div>;
                 const isRead = userState.readStatus[date];
                 const dailyOneReadings = parseScriptureString(plan.dailyOne);
                 const dailyTenReadings = parseScriptureString(plan.dailyTen);
+                
+                const handlePrev = () => {
+                    const d = new Date(date);
+                    d.setDate(d.getDate() - 1);
+                    const newDate = d.toISOString().split('T')[0];
+                    if (onNavigate) onNavigate(newDate);
+                };
+
+                const handleNext = () => {
+                    const d = new Date(date);
+                    d.setDate(d.getDate() + 1);
+                    const newDate = d.toISOString().split('T')[0];
+                    if (onNavigate) onNavigate(newDate);
+                };
+
                 const renderButtons = (readings, source) => (
                     <div className="flex flex-wrap gap-2 mt-2">
                         {readings.map((r, idx) => {
@@ -1494,12 +1518,22 @@
                 );
                 return (
                     <div className="space-y-6">
-                        <div className="text-center">
-                            <h2 className="text-3xl font-bold text-[#1E3A8A] mb-1">
-                                {parseInt(date.split('-')[1])} / {parseInt(date.split('-')[2])}
-                                <span className="text-lg ml-2 font-medium text-gray-500">({plan.weekday})</span>
-                            </h2>
-                            <div className="text-gray-400 font-medium">{date.split('-')[0]}</div>
+                        <div className="flex items-center justify-between">
+                            <button onClick={handlePrev} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-blue-600 transition-colors">
+                                <ChevronLeft size={28} />
+                            </button>
+                            <div className="text-center">
+                                <h2 className="text-3xl font-bold text-[#1E3A8A] mb-1">
+                                    {parseInt(date.split('-')[1])} / {parseInt(date.split('-')[2])}
+                                    <span className="text-lg ml-2 font-medium text-gray-500">
+                                        ({lang === 'en' ? WEEKDAY_MAP[plan.weekday] : plan.weekday})
+                                    </span>
+                                </h2>
+                                <div className="text-gray-400 font-medium">{date.split('-')[0]}</div>
+                            </div>
+                            <button onClick={handleNext} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-blue-600 transition-colors">
+                                <ChevronRight size={28} />
+                            </button>
                         </div>
                         <div className="flex flex-col gap-4">
                              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 relative group hover:border-blue-200 transition-all">
@@ -1536,6 +1570,11 @@
                 const month = currentDate.getMonth() + 1;
                 const daysInMonth = new Date(year, month, 0).getDate();
                 const firstDay = new Date(year, month - 1, 1).getDay();
+                
+                const weekdays = lang === 'zh' 
+                    ? ["日", "一", "二", "三", "四", "五", "六"] 
+                    : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
                 return (
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden h-full flex flex-col">
                         <div className="p-4 flex items-center justify-between border-b border-gray-100 bg-gray-50/50">
@@ -1546,7 +1585,7 @@
                             </div>
                         </div>
                         <div className="grid grid-cols-7 text-center border-b border-gray-100 bg-gray-50/30">
-                            {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map(d => <div key={d} className="py-3 text-xs font-bold text-gray-400">{d}</div>)}
+                            {weekdays.map(d => <div key={d} className="py-3 text-xs font-bold text-gray-400">{d}</div>)}
                         </div>
                         <div className="grid grid-cols-7 auto-rows-fr flex-1">
                             {Array.from({ length: firstDay }).map((_, i) => <div key={`empty-${i}`} className="min-h-[80px] bg-gray-50/10 border-r border-b border-gray-100 last:border-r-0" />)}
@@ -1685,7 +1724,8 @@
                                     <div className="flex justify-between items-start">
                                         <div>
                                             <div className="text-[#D97706] font-bold text-sm mb-1 flex items-center gap-2">
-                                                <Sun size={16} /> {t.greeting}
+                                                <Fish size={16} /> 
+                                                {lang === 'zh' ? "水深之處，下網打魚" : "Launch out into the deep"}
                                             </div>
                                             <h1 className="text-2xl md:text-4xl font-bold text-[#1E3A8A] tracking-tight leading-snug">
                                                 {t.title}<br/>{t.subtitle}
@@ -1744,7 +1784,7 @@
                         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm transition-opacity no-print">
                             <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-200 flex flex-col">
                                 <div className="sticky top-0 bg-white/95 backdrop-blur z-20 flex justify-end p-3 border-b border-gray-100"><button onClick={() => { setSelectedDate(null); }} className="p-2 hover:bg-gray-100 rounded-full text-gray-500"><X size={24} /></button></div>
-                                <div className="p-6 pt-2 overflow-y-auto custom-scrollbar"><DetailCard date={selectedDate} /></div>
+                                <div className="p-6 pt-2 overflow-y-auto custom-scrollbar"><DetailCard date={selectedDate} onNavigate={setSelectedDate} /></div>
                             </div>
                         </div>
                     )}
