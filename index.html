@@ -330,7 +330,7 @@
                 print_desc: "請選擇年份與月份 (可多選)，系統將生成專用的 A4 進度表。",
                 print_preview_btn: "預覽文件",
                 print_now: "立即列印",
-                download_png: "下載圖片",
+                download_png: "下載所有圖片 (PNG)",
                 download_pdf: "下載 PDF",
                 close_preview: "關閉",
                 cancel: "取消",
@@ -367,7 +367,7 @@
                 print_desc: "Select year and month(s) to generate printable A4 schedules.",
                 print_preview_btn: "Preview Document",
                 print_now: "Print Now",
-                download_png: "Download Image",
+                download_png: "Download All Images (PNG)",
                 download_pdf: "Download PDF",
                 close_preview: "Close",
                 cancel: "Cancel",
@@ -391,16 +391,38 @@
             "拉": "以斯拉記", "尼": "尼希米記", "斯": "以斯帖記", "伯": "約伯記",
             "詩": "詩篇", "箴": "箴言", "傳": "傳道書", "歌": "雅歌",
             "賽": "以賽亞書", "耶": "耶利米書", "哀": "耶利米哀歌", "結": "以西結書", "但": "但以理書",
-            "何": "何西阿書", "珥": "約珥書", "阿": "阿摩司書", "俄": "俄巴底亞書", "拿": "約拿書", "彌": "彌迦書",
+            "何": "何西阿書", "珥": "約珥書", "摩": "阿摩司書", "俄": "俄巴底亞書", "拿": "約拿書", "彌": "彌迦書",
             "鴻": "那鴻書", "哈": "哈巴谷書", "番": "西番雅書", "該": "哈該書", "亞": "撒迦利亞書", "瑪": "瑪拉基書",
             "太": "馬太福音", "可": "馬可福音", "路": "路加福音", "約": "約翰福音", "徒": "使徒行傳",
             "羅": "羅馬書", "林前": "哥林多前書", "林後": "哥林多後書", "加": "加拉太書", "弗": "以弗所書",
             "腓": "腓立比書", "西": "歌羅西書", "帖前": "帖撒羅尼迦前書", "帖後": "帖撒羅尼迦後書",
-            "提前": "提摩太前書", "提後": "提摩太後書", "多": "提多書", "門": "腓利門書", "希": "希伯來書",
+            "提前": "提摩太前書", "提後": "提摩太後書", "多": "提多書", "門": "腓利門書", "來": "希伯來書", // 已修正：希 -> 來
             "雅": "雅各書", "彼前": "彼得前書", "彼後": "彼得後書", "約一": "約翰一書", "約二": "約翰二書", "約三": "約翰三書",
             "猶": "猶大書", "啟": "啟示錄"
         };
         const FULL_TO_ABBREV_ZH = Object.fromEntries(Object.entries(ABBREV_TO_FULL_ZH).map(([k, v]) => [v, k]));
+
+        // 中文(全名或縮寫) 轉 英文縮寫對照表 (Calendar用)
+        const ZH_TO_EN_ABBREV = {
+            "創世記": "Gen", "創": "Gen", "出埃及記": "Exod", "出": "Exod", "利未記": "Lev", "利": "Lev", "民數記": "Num", "民": "Num", "申命記": "Deut", "申": "Deut",
+            "約書亞記": "Josh", "書": "Josh", "士師記": "Judg", "士": "Judg", "路得記": "Ruth", "得": "Ruth",
+            "撒母耳記上": "1 Sam", "撒上": "1 Sam", "撒母耳記下": "2 Sam", "撒下": "2 Sam",
+            "列王紀上": "1 Kgs", "王上": "1 Kgs", "列王紀下": "2 Kgs", "王下": "2 Kgs",
+            "歷代志上": "1 Chr", "代上": "1 Chr", "歷代志下": "2 Chr", "代下": "2 Chr",
+            "以斯拉記": "Ezra", "拉": "Ezra", "尼希米記": "Neh", "尼": "Neh", "以斯帖記": "Esth", "斯": "Esth",
+            "約伯記": "Job", "伯": "Job", "詩篇": "Ps", "詩": "Ps", "箴言": "Prov", "箴": "Prov", "傳道書": "Eccl", "傳": "Eccl", "雅歌": "Song", "歌": "Song",
+            "以賽亞書": "Isa", "賽": "Isa", "耶利米書": "Jer", "耶": "Jer", "耶利米哀歌": "Lam", "哀": "Lam", "以西結書": "Ezek", "結": "Ezek", "但以理書": "Dan", "但": "Dan",
+            "何西阿書": "Hos", "何": "Hos", "約珥書": "Joel", "珥": "Joel", "阿摩司書": "Amos", "摩": "Amos", "俄巴底亞書": "Obad", "俄": "Obad", "約拿書": "Jonah", "拿": "Jonah", "彌迦書": "Mic", "彌": "Mic",
+            "那鴻書": "Nah", "鴻": "Nah", "哈巴谷書": "Hab", "哈": "Hab", "西番雅書": "Zeph", "番": "Zeph", "哈該書": "Hag", "該": "Hag", "撒迦利亞書": "Zech", "亞": "Zech", "瑪拉基書": "Mal", "瑪": "Mal",
+            "馬太福音": "Matt", "太": "Matt", "馬可福音": "Mark", "可": "Mark", "路加福音": "Luke", "路": "Luke", "約翰福音": "John", "約": "John", "使徒行傳": "Acts", "徒": "Acts",
+            "羅馬書": "Rom", "羅": "Rom", "哥林多前書": "1 Cor", "林前": "1 Cor", "哥林多後書": "2 Cor", "林後": "2 Cor", "加拉太書": "Gal", "加": "Gal",
+            "以弗所書": "Eph", "弗": "Eph", "腓立比書": "Phil", "腓": "Phil", "歌羅西書": "Col", "西": "Col",
+            "帖撒羅尼迦前書": "1 Thess", "帖前": "1 Thess", "帖撒羅尼迦後書": "2 Thess", "帖後": "2 Thess",
+            "提摩太前書": "1 Tim", "提前": "1 Tim", "提摩太後書": "2 Tim", "提後": "2 Tim", "提多書": "Titus", "多": "Titus", "腓利門書": "Phlm", "門": "Phlm",
+            "希伯來書": "Heb", "來": "Heb", // 已修正：希 -> 來 (對應 Heb)
+            "雅各書": "Jas", "雅": "Jas", "彼得前書": "1 Pet", "彼前": "1 Pet", "彼得後書": "2 Pet", "彼後": "2 Pet",
+            "約翰一書": "1 John", "約一": "1 John", "約翰二書": "2 John", "約二": "2 John", "約翰三書": "3 John", "約三": "3 John", "猶大書": "Jude", "猶": "Jude", "啟示錄": "Rev", "啟": "Rev"
+        };
 
         const BIBLE_BOOKS_ID = {
           "創世記": 1, "創": 1, "出埃及記": 2, "出": 2, "利未記": 3, "利": 3, "民數記": 4, "民": 4, "申命記": 5, "申": 5,
@@ -409,14 +431,15 @@
           "以斯拉記": 15, "拉": 15, "尼希米記": 16, "尼": 16, "以斯帖記": 17, "斯": 17, "約伯記": 18, "伯": 18,
           "詩篇": 19, "詩": 19, "箴言": 20, "箴": 20, "傳道書": 21, "傳": 21, "雅歌": 22, "歌": 22,
           "以賽亞書": 23, "賽": 23, "耶利米書": 24, "耶": 24, "耶利米哀歌": 25, "哀": 25, "以西結書": 26, "結": 26,
-          "但以理書": 27, "但": 27, "何西阿書": 28, "何": 28, "約珥書": 29, "珥": 29, "阿摩司書": 30, "阿": 30,
+          "但以理書": 27, "但": 27, "何西阿書": 28, "何": 28, "約珥書": 29, "珥": 29, "阿摩司書": 30, "摩": 30,
           "俄巴底亞書": 31, "俄": 31, "約拿書": 32, "拿": 32, "彌迦書": 33, "彌": 33, "那鴻書": 34, "鴻": 34,
           "哈巴谷書": 35, "哈": 35, "西番雅書": 36, "番": 36, "哈該書": 37, "該": 37, "撒迦利亞書": 38, "亞": 38, "瑪拉基書": 39, "瑪": 39,
           "馬太福音": 40, "太": 40, "馬可福音": 41, "可": 41, "路加福音": 42, "路": 42, "約翰福音": 43, "約": 43, "使徒行傳": 44, "徒": 44,
           "羅馬書": 45, "羅": 45, "哥林多前書": 46, "林前": 46, "哥林多後書": 47, "林後": 47, "加拉太書": 48, "加": 48,
           "以弗所書": 49, "弗": 49, "腓立比書": 50, "腓": 50, "歌羅西書": 51, "西": 51, "帖撒羅尼迦前書": 52, "帖前": 52, "帖撒羅尼迦後書": 53, "帖後": 53,
           "提摩太前書": 54, "提前": 54, "提摩太後書": 55, "提後": 55, "提多書": 56, "多": 56, "腓利門書": 57, "門": 57,
-          "希伯來書": 58, "希": 58, "雅各書": 59, "雅": 59, "彼得前書": 60, "彼前": 60, "彼得後書": 61, "彼後": 61,
+          "希伯來書": 58, "來": 58, // 已修正：希 -> 來
+          "雅各書": 59, "雅": 59, "彼得前書": 60, "彼前": 60, "彼得後書": 61, "彼後": 61,
           "約翰一書": 62, "約一": 62, "約翰二書": 63, "約二": 63, "約翰三書": 64, "約三": 64, "猶大書": 65, "猶": 65, "啟示錄": 66, "啟": 66
         };
         const ZH_TO_EN_BOOKS = {
@@ -426,12 +449,12 @@
             "以斯拉記": "Ezra", "拉": "Ezra", "尼希米記": "Nehemiah", "尼": "Nehemiah", "以斯帖記": "Esther", "斯": "Esther", "約伯記": "Job", "伯": "Job",
             "詩篇": "Psalms", "詩": "Psalms", "箴言": "Proverbs", "箴": "Proverbs", "傳道書": "Ecclesiastes", "傳": "Ecclesiastes", "雅歌": "Song of Songs", "歌": "Song of Songs",
             "以賽亞書": "Isaiah", "賽": "Isaiah", "耶利米書": "Jeremiah", "耶": "Jeremiah", "耶利米哀歌": "Lamentations", "哀": "Lamentations", "以西結書": "Ezekiel", "結": "Ezekiel", "但以理書": "Daniel", "但": "Daniel",
-            "何西阿書": "Hosea", "何": "Hosea", "約珥書": "Joel", "珥": "Joel", "阿摩司書": "Amos", "阿": "Amos", "俄巴底亞書": "Obadiah", "俄": "Obadiah", "約拿書": "Jonah", "拿": "Jonah", "彌迦書": "Micah", "彌": "Micah",
+            "何西阿書": "Hosea", "何": "Hosea", "約珥書": "Joel", "珥": "Joel", "阿摩司書": "Amos", "摩": "Amos", "俄巴底亞書": "Obadiah", "俄": "Obadiah", "約拿書": "Jonah", "拿": "Jonah", "彌迦書": "Micah", "彌": "Micah",
             "那鴻書": "Nahum", "鴻": "Nahum", "哈巴谷書": "Habakkuk", "哈": "Habakkuk", "西番雅書": "Zephaniah", "番": "Zephaniah", "哈該書": "Haggai", "該": "Haggai", "撒迦利亞書": "Zechariah", "亞": "Zechariah", "瑪拉基書": "Malachi", "瑪": "Malachi",
             "馬太福音": "Matthew", "太": "Matthew", "馬可福音": "Mark", "可": "Mark", "路加福音": "Luke", "路": "Luke", "約翰福音": "John", "約": "John", "使徒行傳": "Acts", "徒": "Acts",
             "羅馬書": "Romans", "羅": "Romans", "哥林多前書": "1 Corinthians", "林前": "1 Corinthians", "哥林多後書": "2 Corinthians", "林後": "2 Corinthians", "加拉太書": "Galatians", "加": "Galatians", "以弗所書": "Ephesians", "弗": "Ephesians",
             "腓立比書": "Philippians", "腓": "Philippians", "歌羅西書": "Colossians", "西": "Colossians", "帖撒羅尼迦前書": "1 Thessalonians", "帖前": "1 Thessalonians", "帖撒羅尼迦後書": "2 Thessalonians", "帖後": "2 Thessalonians",
-            "提摩太前書": "1 Timothy", "提前": "1 Timothy", "提摩太後書": "2 Timothy", "提後": "2 Timothy", "提多書": "Titus", "多": "Titus", "腓利門書": "Philemon", "門": "Philemon", "希伯來書": "Hebrews", "希": "Hebrews",
+            "提摩太前書": "1 Timothy", "提前": "1 Timothy", "提摩太後書": "2 Timothy", "提後": "2 Timothy", "提多書": "Titus", "多": "Titus", "腓利門書": "Philemon", "門": "Philemon", "希伯來書": "Hebrews", "來": "Hebrews", // 已修正：希 -> 來
             "雅各書": "James", "雅": "James", "彼得前書": "1 Peter", "彼前": "1 Peter", "彼得後書": "2 Peter", "彼後": "2 Peter", "約翰一書": "1 John", "約一": "1 John", "約翰二書": "2 John", "約二": "2 John", "約翰三書": "3 John", "約三": "3 John",
             "猶大書": "Jude", "猶": "Jude", "啟示錄": "Revelation", "啟": "Revelation"
         };
@@ -518,9 +541,28 @@
             return display.trim();
         };
         
-        const formatCalendarDisplay = (text) => {
+        const formatCalendarDisplay = (text, lang) => {
             if (!text) return "";
-            let simplified = text.replace(/\(新循環\)/g, '').replace(/新循環/g, ''); // Calendar 也要移除
+            let simplified = text.replace(/\(.*?\)|\（.*?\）|新循環|卷終/g, '');
+
+            if (lang === 'en') {
+                // 英文縮寫處理邏輯
+                const sortedKeys = Object.keys(ZH_TO_EN_ABBREV).sort((a,b) => b.length - a.length);
+                sortedKeys.forEach(zh => {
+                    const regex = new RegExp(zh, 'g');
+                    // 取代時，加上空格以便區隔
+                    simplified = simplified.replace(regex, ZH_TO_EN_ABBREV[zh] + " ");
+                });
+                // 清理多餘中文字與符號
+                simplified = simplified.replace(/第/g, "").replace(/章/g, "").replace(/；/g, "; ");
+                // 移除重複空格
+                simplified = simplified.replace(/\s+/g, ' ').trim();
+                // 移除逗號前後的空格 (例如 "Matt 1 , 2" -> "Matt 1, 2")
+                simplified = simplified.replace(/\s*,\s*/g, ', ');
+                return simplified;
+            }
+
+            // 中文縮寫處理邏輯
             const sortedFullNames = Object.keys(FULL_TO_ABBREV_ZH).sort((a, b) => b.length - a.length);
             sortedFullNames.forEach(fullName => {
                 if (simplified.includes(fullName)) {
@@ -558,9 +600,9 @@
                 ["2025-12-09", "二", "以西結書 33", "加 4-6；弗 1-6；腓 1"],
                 ["2025-12-10", "三", "以西結書 34", "腓 2-4；歌 1-4；帖前 1-3"],
                 ["2025-12-11", "四", "以西結書 35", "帖前 4-5；帖後 1-3；提前 1-5"],
-                ["2025-12-12", "五", "以西結書 36", "提前 6；提後 1-4；多 1-3；門 1；希 1"],
-                ["2025-12-13", "六", "使徒行傳 5", "希 2-11"],
-                ["2025-12-14", "日", "使徒行傳 6", "希 12-13；雅 1-5；彼前 1-3"],
+                ["2025-12-12", "五", "以西結書 36", "提前 6；提後 1-4；多 1-3；門 1；來 1"], // 希 -> 來
+                ["2025-12-13", "六", "使徒行傳 5", "來 2-11"], // 希 -> 來
+                ["2025-12-14", "日", "使徒行傳 6", "來 12-13；雅 1-5；彼前 1-3"], // 希 -> 來
                 ["2025-12-15", "一", "使徒行傳 7", "彼前 4-5；彼後 1-3；約一 1-5"],
                 ["2025-12-16", "二", "以西結書 37", "約二；約三；猶；啟 1-7"],
                 ["2025-12-17", "三", "以西結書 38", "啟 8-17"],
@@ -636,27 +678,27 @@
                 ["2026-02-22", "日", "羅 8", "箴 28-31；傳 1-6"],
                 ["2026-02-23", "一", "羅 9", "傳 7-12；歌 1-4"],
                 ["2026-02-24", "二", "珥 3 (卷終)", "歌 5-8；賽 1-6"],
-                ["2026-02-25", "三", "阿 1", "賽 7-16"],
-                ["2026-02-26", "四", "阿 2", "賽 17-26"],
-                ["2026-02-27", "五", "阿 3", "賽 27-36"],
+                ["2026-02-25", "三", "摩 1", "賽 7-16"],
+                ["2026-02-26", "四", "摩 2", "賽 17-26"],
+                ["2026-02-27", "五", "摩 3", "賽 27-36"],
                 ["2026-02-28", "六", "羅 10", "賽 37-46"],
                 ["2026-03-01", "日", "羅 11", "賽 47-56"],
                 ["2026-03-02", "一", "羅 12", "賽 57-66"],
-                ["2026-03-03", "二", "阿 4", "耶 1-10"],
-                ["2026-03-04", "三", "阿 5", "耶 11-20"],
-                ["2026-03-05", "四", "阿 6", "耶 21-30"],
-                ["2026-03-06", "五", "阿 7", "耶 31-40"],
+                ["2026-03-03", "二", "摩 4", "耶 1-10"],
+                ["2026-03-04", "三", "摩 5", "耶 11-20"],
+                ["2026-03-05", "四", "摩 6", "耶 21-30"],
+                ["2026-03-06", "五", "摩 7", "耶 31-40"],
                 ["2026-03-07", "六", "羅 13", "耶 41-50"],
                 ["2026-03-08", "日", "羅 14", "耶 51-52；哀 1-5；結 1-3"],
                 ["2026-03-09", "一", "羅 15", "結 4-13"],
-                ["2026-03-10", "二", "阿 8", "結 14-23"],
-                ["2026-03-11", "三", "阿 9 (卷終)", "結 24-33"],
+                ["2026-03-10", "二", "摩 8", "結 14-23"],
+                ["2026-03-11", "三", "摩 9 (卷終)", "結 24-33"],
                 ["2026-03-12", "四", "俄", "結 34-43"],
                 ["2026-03-13", "五", "拿 1", "結 44-48；但 1-5"],
                 ["2026-03-14", "六", "羅 16 (卷終)", "但 6-12；何 1-3"],
                 ["2026-03-15", "日", "林前 1", "何 4-13"],
-                ["2026-03-16", "一", "林前 2", "何 14；珥 1-3；阿 1-6"],
-                ["2026-03-17", "二", "拿 2", "阿 7-9；俄；拿 1-4；彌 1-2"],
+                ["2026-03-16", "一", "林前 2", "何 14；珥 1-3；摩 1-6"],
+                ["2026-03-17", "二", "拿 2", "摩 7-9；俄；拿 1-4；彌 1-2"],
                 ["2026-03-18", "三", "拿 3", "彌 3-7；鴻 1-3；哈 1-2"],
                 ["2026-03-19", "四", "拿 4 (卷終)", "哈 3；番 1-3；該 1-2；亞 1-4"],
                 ["2026-03-20", "五", "彌 1", "亞 5-14"],
@@ -680,9 +722,9 @@
                 ["2026-04-07", "二", "鴻 3 (卷終)", "加 5-6；弗 1-6；腓 1-2"],
                 ["2026-04-08", "三", "哈 1", "腓 3-4；歌 1-4；帖前 1-4"],
                 ["2026-04-09", "四", "哈 2", "帖前 5；帖後 1-3；提前 1-6"],
-                ["2026-04-10", "五", "哈 3 (卷終)", "提後 1-4；多 1-3；門；希 1-2"],
-                ["2026-04-11", "六", "林前 12", "希 3-12"],
-                ["2026-04-12", "日", "林前 13", "希 13；雅 1-5；彼前 1-4"],
+                ["2026-04-10", "五", "哈 3 (卷終)", "提後 1-4；多 1-3；門；來 1-2"], // 希 -> 來
+                ["2026-04-11", "六", "林前 12", "來 3-12"], // 希 -> 來
+                ["2026-04-12", "日", "林前 13", "來 13；雅 1-5；彼前 1-4"], // 希 -> 來
                 ["2026-04-13", "一", "林前 14", "彼前 5；彼後 1-3；約一 1-5；約二"],
                 ["2026-04-14", "二", "番 1", "約三；猶；啟 1-8"],
                 ["2026-04-15", "三", "番 2", "啟 9-18"],
@@ -774,8 +816,8 @@
                 ["2026-07-10", "五", "創 29", "結 45-48；但 1-6"],
                 ["2026-07-11", "六", "帖前 2", "但 7-12；何 1-4"],
                 ["2026-07-12", "日", "帖前 3", "何 5-14"],
-                ["2026-07-13", "一", "帖前 4", "珥 1-3；阿 1-7"],
-                ["2026-07-14", "二", "創 30", "阿 8-9；俄；拿；彌 1-3"],
+                ["2026-07-13", "一", "帖前 4", "珥 1-3；摩 1-7"],
+                ["2026-07-14", "二", "創 30", "摩 8-9；俄；拿；彌 1-3"],
                 ["2026-07-15", "三", "創 31", "彌 4-7；鴻 1-3；哈 1-3"],
                 ["2026-07-16", "四", "創 32", "番 1-3；該 1-2；亞 1-5"],
                 ["2026-07-17", "五", "創 33", "亞 6-14；瑪 1"],
@@ -799,8 +841,8 @@
                 ["2026-08-04", "二", "創 42", "加 6；弗 1-6；腓 1-3"],
                 ["2026-08-05", "三", "創 43", "腓 4；歌 1-4；帖前 1-5"],
                 ["2026-08-06", "四", "創 44", "帖後 1-3；提前 1-6；提後 1"],
-                ["2026-08-07", "五", "創 45", "提後 2-4；多 1-3；門；希 1-3"],
-                ["2026-08-08", "六", "提前 6 (卷終)", "希 4-13"],
+                ["2026-08-07", "五", "創 45", "提後 2-4；多 1-3；門；來 1-3"], // 希 -> 來
+                ["2026-08-08", "六", "提前 6 (卷終)", "來 4-13"], // 希 -> 來
                 ["2026-08-09", "日", "提後 1", "雅 1-5；彼前 1-5"],
                 ["2026-08-10", "一", "提後 2", "彼後 1-3；約一 1-5；約二；約三"],
                 ["2026-08-11", "二", "創 46", "猶；啟 1-9"],
@@ -821,7 +863,7 @@
                 ["2026-08-26", "三", "出 5", "民 11-20"],
                 ["2026-08-27", "四", "出 6", "民 21-30"],
                 ["2026-08-28", "五", "出 7", "民 31-36；申 1-4"],
-                ["2026-08-29", "六", "希 1", "申 5-14"],
+                ["2026-08-29", "六", "希 1", "申 5-14"], // 此處維持全名或簡稱，後續 formatCalendarDisplay 會處理
                 ["2026-08-30", "日", "希 2", "申 15-24"],
                 ["2026-08-31", "一", "希 3", "申 25-34"],
                 ["2026-09-01", "二", "出 8", "書 1-10"],
@@ -893,8 +935,8 @@
                 ["2026-11-06", "五", "利 7", "結 46-48；但 1-7"],
                 ["2026-11-07", "六", "約一 5 (卷終)", "但 8-12；何 1-5"],
                 ["2026-11-08", "日", "約二", "何 6-14；珥 1"],
-                ["2026-11-09", "一", "約三", "珥 2-3；阿 1-8"],
-                ["2026-11-10", "二", "利 8", "阿 9；俄；拿；彌 1-4"],
+                ["2026-11-09", "一", "約三", "珥 2-3；摩 1-8"],
+                ["2026-11-10", "二", "利 8", "摩 9；俄；拿；彌 1-4"],
                 ["2026-11-11", "三", "利 9", "彌 5-7；鴻；哈；番 1-2"],
                 ["2026-11-12", "四", "利 10", "番 3；該；亞 1-7"],
                 ["2026-11-13", "五", "利 11", "亞 8-14；瑪 1-3"],
@@ -918,8 +960,8 @@
                 ["2026-12-01", "二", "利 20", "加 6；弗 1-6；腓 1-3"],
                 ["2026-12-02", "三", "利 21", "腓 4；歌 1-4；帖前 1-5"],
                 ["2026-12-03", "四", "利 22", "帖後 1-3；提前 1-6；提後 1"],
-                ["2026-12-04", "五", "利 23", "提後 2-4；多 1-3；門；希 1-3"],
-                ["2026-12-05", "六", "啟 9", "希 4-13"],
+                ["2026-12-04", "五", "利 23", "提後 2-4；多 1-3；門；來 1-3"], // 希 -> 來
+                ["2026-12-05", "六", "啟 9", "來 4-13"], // 希 -> 來
                 ["2026-12-06", "日", "啟 10", "雅 1-5；彼前 1-5"],
                 ["2026-12-07", "一", "啟 11", "彼後；約一；約二；約三"],
                 ["2026-12-08", "二", "利 24", "猶；啟 1-9"],
@@ -994,17 +1036,25 @@
             if (error) return <div className="p-6 text-center text-red-500 bg-red-50 rounded-lg"><p>{error}</p></div>;
 
             return (
-                <div className="bg-[#fffdf7] p-6 rounded-xl border border-gray-200 shadow-inner max-h-[60vh] overflow-y-auto custom-scrollbar mt-4 animate-in slide-in-from-top-2 fade-in">
-                    <h3 className="text-xl font-bold text-gray-800 mb-4 border-b border-gray-200 pb-2 flex justify-between items-center sticky top-0 bg-[#fffdf7] z-10">
-                        {label} <span className="text-xs font-normal text-gray-400 ml-2">({t.version})</span>
-                    </h3>
-                    <div className="text-lg leading-relaxed text-gray-700 space-y-2 font-serif">
-                        {content.map((v) => (
-                            <div key={v.pk} className="flex gap-2 hover:bg-yellow-50/50 p-0.5 rounded transition-colors">
-                                <span className="text-xs text-gray-400 font-sans mt-1.5 w-6 text-right shrink-0 select-none">{v.verse}</span>
-                                <p className="flex-1">{v.text}</p>
-                            </div>
-                        ))}
+                <div className="bg-[#fffdf7] rounded-xl border border-gray-200 shadow-inner max-h-[60vh] flex flex-col mt-4 animate-in slide-in-from-top-2 fade-in overflow-hidden">
+                    {/* Fixed Header */}
+                    <div className="flex-none p-4 border-b border-gray-200 bg-[#fffdf7] z-10 flex justify-between items-center">
+                        <h3 className="text-xl font-bold text-gray-800">
+                            {label} 
+                        </h3>
+                        <span className="text-xs font-normal text-gray-400">({t.version})</span>
+                    </div>
+                    
+                    {/* Scrollable Content */}
+                    <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+                        <div className="text-lg leading-relaxed text-gray-700 space-y-2 font-serif">
+                            {content.map((v) => (
+                                <div key={v.pk} className="flex gap-2 hover:bg-yellow-50/50 p-0.5 rounded transition-colors">
+                                    <span className="text-xs text-gray-400 font-sans mt-1.5 w-6 text-right shrink-0 select-none">{v.verse}</span>
+                                    <p className="flex-1">{v.text}</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                 </div>
             );
@@ -1101,17 +1151,28 @@
                 printWindow.document.close(); // 必須調用，否則某些瀏覽器載入指示器會一直轉
             };
 
-            const handleDownloadPNG = async () => {
+            const handleDownloadAllPNGs = async () => {
                 if (!contentRef.current) return;
                 setIsGenerating(true);
                 try {
-                    // 只截取第一頁做示範 (如果有多頁，通常下載PDF較好)
-                    const element = contentRef.current.querySelector('.print-page-container');
-                    const canvas = await html2canvas(element, { scale: 2 });
-                    const link = document.createElement('a');
-                    link.download = `PJBC_Schedule_${year}_${pagesData[0].month}.png`;
-                    link.href = canvas.toDataURL('image/png');
-                    link.click();
+                    const pages = contentRef.current.querySelectorAll('.print-page-container');
+                    
+                    // 依序下載每一頁
+                    for (let i = 0; i < pages.length; i++) {
+                        const page = pages[i];
+                        // 等待一小段時間讓瀏覽器喘息，避免卡頓
+                        await new Promise(r => setTimeout(r, 100));
+                        
+                        const canvas = await html2canvas(page, { scale: 2 });
+                        const link = document.createElement('a');
+                        
+                        // 取得月份資訊，若有對應資料則使用，否則用 index
+                        const month = pagesData[i] ? pagesData[i].month : (i + 1);
+                        
+                        link.download = `PJBC_Schedule_${year}_${month}.png`;
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    }
                 } catch (err) {
                     console.error("PNG Generation failed", err);
                     alert("圖片生成失敗，請重試");
@@ -1155,8 +1216,8 @@
                                 </div>
                             ) : (
                                 <>
-                                    <button onClick={handleDownloadPNG} className="px-3 md:px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors flex items-center gap-2 border border-gray-600">
-                                        <ImageIcon size={16}/> <span className="hidden md:inline">{t.download_png}</span> (Single)
+                                    <button onClick={handleDownloadAllPNGs} className="px-3 md:px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors flex items-center gap-2 border border-gray-600">
+                                        <ImageIcon size={16}/> <span className="hidden md:inline">{t.download_png}</span>
                                     </button>
                                     <button onClick={handleDownloadPDF} className="px-3 md:px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded text-sm transition-colors flex items-center gap-2 shadow-sm">
                                         <FileDown size={16}/> {t.download_pdf}
@@ -1434,7 +1495,10 @@
                 return (
                     <div className="space-y-6">
                         <div className="text-center">
-                            <h2 className="text-3xl font-bold text-[#1E3A8A] mb-1">{parseInt(date.split('-')[1])} / {parseInt(date.split('-')[2])}</h2>
+                            <h2 className="text-3xl font-bold text-[#1E3A8A] mb-1">
+                                {parseInt(date.split('-')[1])} / {parseInt(date.split('-')[2])}
+                                <span className="text-lg ml-2 font-medium text-gray-500">({plan.weekday})</span>
+                            </h2>
                             <div className="text-gray-400 font-medium">{date.split('-')[0]}</div>
                         </div>
                         <div className="flex flex-col gap-4">
@@ -1501,10 +1565,10 @@
                                         {plan ? (
                                             <div className="space-y-1 mt-2">
                                                 <div className="text-[9px] text-[#1E3A8A] font-medium bg-blue-100/40 px-1.5 py-0.5 rounded leading-tight truncate">
-                                                    {formatCalendarDisplay(plan.dailyOne)}
+                                                    {formatCalendarDisplay(plan.dailyOne, lang)}
                                                 </div>
                                                 <div className="hidden md:block text-[9px] text-gray-500 px-1 mt-0.5 leading-tight truncate">
-                                                    {formatCalendarDisplay(plan.dailyTen)}
+                                                    {formatCalendarDisplay(plan.dailyTen, lang)}
                                                 </div>
                                             </div>
                                         ) : <span className="text-[10px] text-gray-300"></span>}
