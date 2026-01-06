@@ -1561,6 +1561,14 @@
                                 <ChevronRight size={28} />
                             </button>
                         </div>
+
+                        {/* Moved Mark Read Button Here */}
+                        <div className="flex justify-center">
+                             <button onClick={() => toggleRead(date)} className={`w-full max-w-xs py-3 rounded-full flex items-center justify-center gap-2 font-bold transition-all shadow-md transform hover:scale-[1.02] active:scale-95 ${isRead ? "bg-green-500 text-white shadow-green-200 ring-2 ring-green-100" : "bg-white border-2 border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600"}`}>
+                                {isRead ? <CheckCircle size={22} /> : <Circle size={22} />}{isRead ? t.marked : t.mark_read}
+                             </button>
+                        </div>
+
                         <div className="flex flex-col gap-4">
                              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 relative group hover:border-blue-200 transition-all">
                                 <div className="absolute right-0 top-0 p-2 opacity-10"><BookOpen size={40} className="text-[#1E3A8A]" /></div>
@@ -1581,11 +1589,7 @@
                                 )}
                              </div>
                         </div>
-                        <div className="flex gap-3">
-                             <button onClick={() => toggleRead(date)} className={`flex-1 py-3 rounded-xl flex items-center justify-center gap-2 font-bold transition-all shadow-sm ${isRead ? "bg-green-500 text-white shadow-green-200" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"}`}>
-                                {isRead ? <CheckCircle size={20} /> : <Circle size={20} />}{isRead ? t.marked : t.mark_read}
-                             </button>
-                        </div>
+                        
                         {/* 移除了筆記欄位 */}
                     </div>
                 );
