@@ -15,7 +15,7 @@
                         'print': {'raw': 'print'},
                     },
                     animation: {
-                        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+                        'fade-in-up': 'fadeInUp 0.3s ease-out forwards', /* 加快動畫速度 */
                         'bounce-short': 'bounceShort 1s ease-in-out 1'
                     },
                     keyframes: {
@@ -243,31 +243,31 @@
           Map, Award, Anchor, Milestone, Lock, Gift, Bell, User
         } from 'lucide-react';
 
-        // --- 旅程資料庫 (更新：加入性別 gender: 'm' | 'f') ---
+        // --- 旅程資料庫 (更新：加入英文翻譯) ---
         const JOURNEY_DATA = {
             characters: [
-                { id: 1, stars: 3, name: "亞伯拉罕", gender: 'm', theme: "信心之父", blessing: "願你在未知的旅途中，依然信靠神的應許，因為祂是信實的。" },
-                { id: 2, stars: 6, name: "約瑟", gender: 'm', theme: "神旨意的美好", blessing: "無論處在高山或低谷，願你深信神的意思原是好的，祂必親自引領。" },
-                { id: 3, stars: 9, name: "摩西", gender: 'm', theme: "謙和與忠心", blessing: "願神賜你溫柔的心與堅定的靈，在日常的小事上顯出大忠心。" },
-                { id: 4, stars: 12, name: "路得", gender: 'f', theme: "堅定的跟隨", blessing: "願你的心單純而堅定，在平凡的拾穗中，遇見神預備的豐盛恩典。" },
-                { id: 5, stars: 15, name: "大衛", gender: 'm', theme: "合神心意", blessing: "願你像大衛一樣，在軟弱時懂得倚靠，在得勝時懂得歸榮耀給神。" },
-                { id: 6, stars: 18, name: "以斯帖", gender: 'f', theme: "勇敢的位份", blessing: "願你知道你得著今日的位份，是為了神國度的緣故，剛強壯膽吧！" },
-                { id: 7, stars: 21, name: "彼得", gender: 'm', theme: "跌倒後的更新", blessing: "即使曾經軟弱，主的愛依然尋找你。願你再次被愛充滿，牧養祂的羊。" },
-                { id: 8, stars: 24, name: "保羅", gender: 'm', theme: "奔跑不放棄", blessing: "忘記背後，努力面前，願你向著標竿直跑，得著神在基督耶穌裡召你得的獎賞。" },
-                { id: 9, stars: 27, name: "約翰", gender: 'm', theme: "愛的使徒", blessing: "願你住在愛裡面，不僅被愛，更能成為流通神愛的器皿。" },
-                { id: 10, stars: 30, name: "馬利亞", gender: 'f', theme: "尊主為大", blessing: "願你的心尊主為大，靈以神為樂，順服神話語的成就。" }
+                { id: 1, stars: 3, name: "亞伯拉罕", name_en: "Abraham", gender: 'm', theme: "信心之父", theme_en: "Father of Faith", blessing: "願你在未知的旅途中，依然信靠神的應許，因為祂是信實的。", blessing_en: "May you trust God's promises in the unknown journey, for He is faithful." },
+                { id: 2, stars: 6, name: "約瑟", name_en: "Joseph", gender: 'm', theme: "神旨意的美好", theme_en: "Goodness of God's Will", blessing: "無論處在高山或低谷，願你深信神的意思原是好的，祂必親自引領。", blessing_en: "Whether on mountaintops or in valleys, may you believe God means it for good and He will lead." },
+                { id: 3, stars: 9, name: "摩西", name_en: "Moses", gender: 'm', theme: "謙和與忠心", theme_en: "Humility and Faithfulness", blessing: "願神賜你溫柔的心與堅定的靈，在日常的小事上顯出大忠心。", blessing_en: "May God grant you a gentle heart and steadfast spirit to show great faithfulness in daily small things." },
+                { id: 4, stars: 12, name: "路得", name_en: "Ruth", gender: 'f', theme: "堅定的跟隨", theme_en: "Steadfast Following", blessing: "願你的心單純而堅定，在平凡的拾穗中，遇見神預備的豐盛恩典。", blessing_en: "May your heart be pure and steadfast, encountering God's prepared abundance in ordinary gleaning." },
+                { id: 5, stars: 15, name: "大衛", name_en: "David", gender: 'm', theme: "合神心意", theme_en: "After God's Own Heart", blessing: "願你像大衛一樣，在軟弱時懂得倚靠，在得勝時懂得歸榮耀給神。", blessing_en: "May you rely on God in weakness like David, and give glory to Him in victory." },
+                { id: 6, stars: 18, name: "以斯帖", name_en: "Esther", gender: 'f', theme: "勇敢的位份", theme_en: "Courageous Position", blessing: "願你知道你得著今日的位份，是為了神國度的緣故，剛強壯膽吧！", blessing_en: "May you know your position today is for God's Kingdom. Be strong and courageous!" },
+                { id: 7, stars: 21, name: "彼得", name_en: "Peter", gender: 'm', theme: "跌倒後的更新", theme_en: "Renewal After Falling", blessing: "即使曾經軟弱，主的愛依然尋找你。願你再次被愛充滿，牧養祂的羊。", blessing_en: "Even if you were weak, the Lord's love still seeks you. May you be filled with love again to shepherd His sheep." },
+                { id: 8, stars: 24, name: "保羅", name_en: "Paul", gender: 'm', theme: "奔跑不放棄", theme_en: "Running Without Giving Up", blessing: "忘記背後，努力面前，願你向著標竿直跑，得著神在基督耶穌裡召你得的獎賞。", blessing_en: "Forgetting what is behind and straining toward what is ahead, may you press on toward the goal for the prize." },
+                { id: 9, stars: 27, name: "約翰", name_en: "John", gender: 'm', theme: "愛的使徒", theme_en: "Apostle of Love", blessing: "願你住在愛裡面，不僅被愛，更能成為流通神愛的器皿。", blessing_en: "May you abide in love, not only being loved but becoming a vessel for God's flowing love." },
+                { id: 10, stars: 30, name: "馬利亞", name_en: "Mary", gender: 'f', theme: "尊主為大", theme_en: "Magnifying the Lord", blessing: "願你的心尊主為大，靈以神為樂，順服神話語的成就。", blessing_en: "May your soul magnify the Lord and your spirit rejoice in God, submitting to the fulfillment of His word." }
             ],
             locations: [
-                { id: 1, stars: 7, name: "伊甸園", theme: "起初的愛", meditation: "回到起初，神看一切都甚好。願你在忙碌中，找回與神同行的單純快樂。" },
-                { id: 2, stars: 14, name: "亞拉臘山", theme: "新的開始", meditation: "洪水退去，彩虹立約。願舊事已過，你的生命在基督裡成為新造的人。" },
-                { id: 3, stars: 21, name: "吾珥", theme: "呼召之地", meditation: "離開本地本族，不是流浪，而是跟隨。願你聽見那溫柔的呼喚，勇敢起行。" },
-                { id: 4, stars: 28, name: "紅海", theme: "神蹟與拯救", meditation: "前有紅海，後有追兵，正是神顯榮耀的時刻。只管站住，看耶和華為你施行救恩。" },
-                { id: 5, stars: 35, name: "西奈山", theme: "聖潔之約", meditation: "神的話語是腳前的燈。願你在山上領受的亮光，成為山下行走的準則。" },
-                { id: 6, stars: 42, name: "迦南地", theme: "應許之地", meditation: "流奶與蜜之地需要爭戰得地為業。願你剛強壯膽，不看巨人的高大，只看神的應許。" },
-                { id: 7, stars: 49, name: "伯利恆", theme: "謙卑的降生", meditation: "最偉大的王，降生在最卑微的馬槽。願你的心也成為虛己的器皿，迎接主的同在。" },
-                { id: 8, stars: 56, name: "加利利湖", theme: "平靜風浪", meditation: "人生的風浪再大，主都在船上。願你聽見那聲「住了吧！靜了吧！」，得享屬天的安息。" },
-                { id: 9, stars: 63, name: "各各他", theme: "捨己的愛", meditation: "十字架是愛的記號。願你常常思念那為你捨命的主，生命再次被更新。" },
-                { id: 10, stars: 70, name: "新耶路撒冷", theme: "永恆的盼望", meditation: "眼淚必被擦去，不再有死亡與悲哀。願這永恆的家鄉，成為你今日奔跑的力量。" }
+                { id: 1, stars: 7, name: "伊甸園", name_en: "Eden", theme: "起初的愛", theme_en: "First Love", meditation: "回到起初，神看一切都甚好。願你在忙碌中，找回與神同行的單純快樂。", meditation_en: "Back to the beginning, God saw it was good. May you find the pure joy of walking with God amidst busyness." },
+                { id: 2, stars: 14, name: "亞拉臘山", name_en: "Ararat", theme: "新的開始", theme_en: "New Beginning", meditation: "洪水退去，彩虹立約。願舊事已過，你的生命在基督裡成為新造的人。", meditation_en: "The flood receded, the rainbow covenant stands. May old things pass away, and you become a new creation in Christ." },
+                { id: 3, stars: 21, name: "吾珥", name_en: "Ur", theme: "呼召之地", theme_en: "Land of Calling", meditation: "離開本地本族，不是流浪，而是跟隨。願你聽見那溫柔的呼喚，勇敢起行。", meditation_en: "Leaving home is not wandering but following. May you hear that gentle call and set out courageously." },
+                { id: 4, stars: 28, name: "紅海", name_en: "Red Sea", theme: "神蹟與拯救", theme_en: "Miracles and Salvation", meditation: "前有紅海，後有追兵，正是神顯榮耀的時刻。只管站住，看耶和華為你施行救恩。", meditation_en: "Red Sea ahead, soldiers behind—time for God's glory. Stand firm and see the salvation of the Lord." },
+                { id: 5, stars: 35, name: "西奈山", name_en: "Sinai", theme: "聖潔之約", theme_en: "Covenant of Holiness", meditation: "神的話語是腳前的燈。願你在山上領受的亮光，成為山下行走的準則。", meditation_en: "God's word is a lamp to your feet. May the light received on the mountain become the rule for walking below." },
+                { id: 6, stars: 42, name: "迦南地", name_en: "Canaan", theme: "應許之地", theme_en: "Promised Land", meditation: "流奶與蜜之地需要爭戰得地為業。願你剛強壯膽，不看巨人的高大，只看神的應許。", meditation_en: "Land of milk and honey requires fighting to possess. Be strong, look not at giants, but at God's promises." },
+                { id: 7, stars: 49, name: "伯利恆", name_en: "Bethlehem", theme: "謙卑的降生", theme_en: "Humble Birth", meditation: "最偉大的王，降生在最卑微的馬槽。願你的心也成為虛己的器皿，迎接主的同在。", meditation_en: "The greatest King born in a humble manger. May your heart be an empty vessel to welcome the Lord's presence." },
+                { id: 8, stars: 56, name: "加利利湖", name_en: "Galilee", theme: "平靜風浪", theme_en: "Calming the Storm", meditation: "人生的風浪再大，主都在船上。願你聽見那聲「住了吧！靜了吧！」，得享屬天的安息。", meditation_en: "No matter the storm, the Lord is in the boat. May you hear \"Peace! Be still!\" and enjoy heavenly rest." },
+                { id: 9, stars: 63, name: "各各他", name_en: "Golgotha", theme: "捨己的愛", theme_en: "Sacrificial Love", meditation: "十字架是愛的記號。願你常常思念那為你捨命的主，生命再次被更新。", meditation_en: "The cross is the mark of love. May you often remember the Lord who gave His life for you, renewing your life." },
+                { id: 10, stars: 70, name: "新耶路撒冷", name_en: "New Jerusalem", theme: "永恆的盼望", theme_en: "Eternal Hope", meditation: "眼淚必被擦去，不再有死亡與悲哀。願這永恆的家鄉，成為你今日奔跑的力量。", meditation_en: "Tears wiped away, no more death or sorrow. May this eternal home be your strength for running today." }
             ]
         };
 
@@ -360,6 +360,12 @@
                 current_pos: "目前位置",
                 star_toast: "你今天選擇了神的話，這一顆星星為你記念。",
                 unlock_toast: "🎉 恭喜！你解鎖了新的獎勵：",
+                next_witness: "下一位人物",
+                next_location: "下一個地點",
+                need_stars: "需累積",
+                start_point: "旅程起點",
+                start_desc: "累積 7 顆星解鎖第一個地點...",
+                char_locked_desc: "持續讀經，每收集 3 顆星星解鎖一位聖經人物...",
                 nav: { home: "首頁", calendar: "月曆", table: "列表", journey: "旅程" }
             },
             en: {
@@ -400,12 +406,18 @@
                 deselect_all: "Clear",
                 journey_title: "My Journey",
                 journey_subtitle: "God remembers every step",
-                character_unlock: "Witnesses",
+                character_unlock: "Characters",
                 location_map: "Bible Map",
                 locked: "Locked",
                 current_pos: "Current",
                 star_toast: "You chose God's word today. A star marks your journey.",
                 unlock_toast: "🎉 Congrats! You unlocked: ",
+                next_witness: "Next Character",
+                next_location: "Next Location",
+                need_stars: "Need",
+                start_point: "Journey Start",
+                start_desc: "Collect 7 stars to unlock the first location...",
+                char_locked_desc: "Read daily, unlock a Bible character every 3 stars...",
                 nav: { home: "Home", calendar: "Calendar", table: "List", journey: "Journey" }
             }
         };
@@ -1309,6 +1321,9 @@
             const unlockedLocs = JOURNEY_DATA.locations.filter(l => starCount >= l.stars);
             const nextLockedLoc = JOURNEY_DATA.locations.find(l => starCount < l.stars);
             
+            // Helper to get text based on lang
+            const getText = (obj, key) => lang === 'zh' ? obj[key] : (obj[`${key}_en`] || obj[key]);
+            
             return (
                 <div className="max-w-4xl mx-auto space-y-6 pb-24 animate-in slide-in-from-bottom-4 duration-500">
                     
@@ -1363,7 +1378,7 @@
                                 {unlockedChars.length === 0 && (
                                     <div className="col-span-full py-12 text-center bg-white rounded-2xl border border-dashed border-gray-300 text-gray-400">
                                         <Sparkles size={32} className="mx-auto mb-2 opacity-50" />
-                                        <p>持續讀經，每收集 3 顆星星解鎖一位聖經人物...</p>
+                                        <p>{t.char_locked_desc}</p>
                                     </div>
                                 )}
 
@@ -1379,10 +1394,10 @@
                                                     {char.gender === 'm' ? <AvatarMale /> : <AvatarFemale />}
                                                 </div>
                                                 <div className="flex-1">
-                                                    <div className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-2">{char.theme}</div>
+                                                    <div className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-2">{getText(char, 'theme')}</div>
                                                     {/* 人物名稱加上淺色專業感方塊底色 */}
                                                     <div className="inline-block bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100">
-                                                        <div className="text-2xl font-bold text-indigo-900 leading-none">{char.name}</div>
+                                                        <div className="text-2xl font-bold text-indigo-900 leading-none">{getText(char, 'name')}</div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1394,7 +1409,7 @@
                                         {/* 祝福語移除底色色塊，保持乾淨 */}
                                         <div className="relative z-10 pl-1 mt-2">
                                             <p className="text-gray-900 leading-relaxed font-bold text-base">
-                                                「{char.blessing}」
+                                                「{getText(char, 'blessing')}」
                                             </p>
                                         </div>
                                     </div>
@@ -1404,8 +1419,8 @@
                                     <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 border-dashed flex items-center justify-center text-center opacity-70">
                                         <div>
                                             <Lock size={24} className="mx-auto text-gray-400 mb-2" />
-                                            <div className="font-bold text-gray-500">下一位見證人</div>
-                                            <div className="text-xs text-gray-400 mt-1">需累積 {lockedChars[0].stars} 顆星星</div>
+                                            <div className="font-bold text-gray-500">{t.next_witness}</div>
+                                            <div className="text-xs text-gray-400 mt-1">{t.need_stars} {lockedChars[0].stars} {t.days_unit}</div>
                                         </div>
                                     </div>
                                 )}
@@ -1430,8 +1445,8 @@
                                                 <Anchor size={18} className="text-blue-600" />
                                             </div>
                                             <div className="pt-2">
-                                                <div className="font-bold text-gray-800 text-lg">旅程起點</div>
-                                                <div className="text-sm text-gray-500 mt-1">累積 7 顆星解鎖第一個地點...</div>
+                                                <div className="font-bold text-gray-800 text-lg">{t.start_point}</div>
+                                                <div className="text-sm text-gray-500 mt-1">{t.start_desc}</div>
                                             </div>
                                         </div>
                                     )}
@@ -1446,13 +1461,13 @@
                                                 <div className="pt-1 flex-1">
                                                     <div className="flex items-center gap-3 mb-1">
                                                         <div className={`font-bold text-lg ${isCurrent ? 'text-blue-700' : 'text-gray-800'}`}>
-                                                            {loc.name}
+                                                            {getText(loc, 'name')}
                                                         </div>
                                                         {isCurrent && <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">{t.current_pos}</span>}
                                                     </div>
-                                                    <div className="text-sm text-gray-500 font-medium mb-2">{loc.theme}</div>
+                                                    <div className="text-sm text-gray-500 font-medium mb-2">{getText(loc, 'theme')}</div>
                                                     <div className="text-base text-gray-900 leading-relaxed font-bold bg-gray-50 p-3 rounded-lg border border-gray-100 group-hover:bg-blue-50/30 transition-colors">
-                                                        {loc.meditation}
+                                                        {getText(loc, 'meditation')}
                                                     </div>
                                                 </div>
                                             </div>
@@ -1466,7 +1481,7 @@
                                             </div>
                                             <div className="pt-2 opacity-60">
                                                 <div className="font-bold text-gray-500 text-lg flex items-center gap-2">
-                                                    {nextLockedLoc.name}
+                                                    {getText(nextLockedLoc, 'name')}
                                                     <span className="text-xs font-normal border border-gray-300 rounded px-1.5 py-0.5">{nextLockedLoc.stars} {t.days_unit}</span>
                                                 </div>
                                                 <div className="text-sm text-gray-400 mt-1">{t.locked}</div>
@@ -1484,11 +1499,11 @@
         // --- 輕量級 Toast 元件 ---
         const Toast = ({ message, subMessage, onClose, type = 'star' }) => {
             useEffect(() => {
-                // 如果有副標題文字，延長顯示時間以便閱讀
-                const duration = subMessage ? 6000 : 4000;
+                // 修改：通知顯示時間設為 1.5 秒
+                const duration = 1500;
                 const timer = setTimeout(onClose, duration);
                 return () => clearTimeout(timer);
-            }, [onClose, subMessage]);
+            }, [onClose]);
 
             const isUnlock = type === 'unlock';
             return (
@@ -1568,15 +1583,21 @@
                     const unlockedLoc = JOURNEY_DATA.locations.find(l => l.stars === newCount);
 
                     if (unlockedChar) {
+                        const name = lang === 'zh' ? unlockedChar.name : unlockedChar.name_en;
+                        const blessing = lang === 'zh' ? unlockedChar.blessing : unlockedChar.blessing_en;
+                        const title = lang === 'zh' ? `聖經人物「${name}」` : `Character "${name}"`;
                         setToast({ 
-                            msg: `${t.unlock_toast}見證人「${unlockedChar.name}」`, 
-                            subMsg: unlockedChar.blessing,
+                            msg: `${t.unlock_toast}${title}`, 
+                            subMsg: blessing,
                             type: 'unlock' 
                         });
                     } else if (unlockedLoc) {
+                        const name = lang === 'zh' ? unlockedLoc.name : unlockedLoc.name_en;
+                        const meditation = lang === 'zh' ? unlockedLoc.meditation : unlockedLoc.meditation_en;
+                        const title = lang === 'zh' ? `地點「${name}」` : `Location "${name}"`;
                         setToast({ 
-                            msg: `${t.unlock_toast}地點「${unlockedLoc.name}」`, 
-                            subMsg: unlockedLoc.meditation,
+                            msg: `${t.unlock_toast}${title}`, 
+                            subMsg: meditation,
                             type: 'unlock' 
                         });
                     } else {
