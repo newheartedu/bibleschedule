@@ -240,22 +240,22 @@
           Calendar as CalendarIcon, List, Home, Settings, ChevronLeft, ChevronRight, CheckCircle, Circle, 
           Star, BookOpen, Edit3, X, Search, Download, RefreshCw, Sparkles, Bookmark, Book, ArrowRight, 
           TrendingUp, LayoutGrid, Sun, Globe, Printer, Eye, FileDown, Image as ImageIcon, FileText, Fish,
-          Map, Award, Anchor, Milestone, Lock, Gift, Bell
+          Map, Award, Anchor, Milestone, Lock, Gift, Bell, User
         } from 'lucide-react';
 
-        // --- 旅程資料庫 (更新：人物 3天/位，地點 7天/處) ---
+        // --- 旅程資料庫 (更新：加入性別 gender: 'm' | 'f') ---
         const JOURNEY_DATA = {
             characters: [
-                { id: 1, stars: 3, name: "亞伯拉罕", theme: "信心之父", blessing: "願你在未知的旅途中，依然信靠神的應許，因為祂是信實的。" },
-                { id: 2, stars: 6, name: "約瑟", theme: "神旨意的美好", blessing: "無論處在高山或低谷，願你深信神的意思原是好的，祂必親自引領。" },
-                { id: 3, stars: 9, name: "摩西", theme: "謙和與忠心", blessing: "願神賜你溫柔的心與堅定的靈，在日常的小事上顯出大忠心。" },
-                { id: 4, stars: 12, name: "路得", theme: "堅定的跟隨", blessing: "願你的心單純而堅定，在平凡的拾穗中，遇見神預備的豐盛恩典。" },
-                { id: 5, stars: 15, name: "大衛", theme: "合神心意", blessing: "願你像大衛一樣，在軟弱時懂得倚靠，在得勝時懂得歸榮耀給神。" },
-                { id: 6, stars: 18, name: "以斯帖", theme: "勇敢的位份", blessing: "願你知道你得著今日的位份，是為了神國度的緣故，剛強壯膽吧！" },
-                { id: 7, stars: 21, name: "彼得", theme: "跌倒後的更新", blessing: "即使曾經軟弱，主的愛依然尋找你。願你再次被愛充滿，牧養祂的羊。" },
-                { id: 8, stars: 24, name: "保羅", theme: "奔跑不放棄", blessing: "忘記背後，努力面前，願你向著標竿直跑，得著神在基督耶穌裡召你得的獎賞。" },
-                { id: 9, stars: 27, name: "約翰", theme: "愛的使徒", blessing: "願你住在愛裡面，不僅被愛，更能成為流通神愛的器皿。" },
-                { id: 10, stars: 30, name: "馬利亞", theme: "尊主為大", blessing: "願你的心尊主為大，靈以神為樂，順服神話語的成就。" }
+                { id: 1, stars: 3, name: "亞伯拉罕", gender: 'm', theme: "信心之父", blessing: "願你在未知的旅途中，依然信靠神的應許，因為祂是信實的。" },
+                { id: 2, stars: 6, name: "約瑟", gender: 'm', theme: "神旨意的美好", blessing: "無論處在高山或低谷，願你深信神的意思原是好的，祂必親自引領。" },
+                { id: 3, stars: 9, name: "摩西", gender: 'm', theme: "謙和與忠心", blessing: "願神賜你溫柔的心與堅定的靈，在日常的小事上顯出大忠心。" },
+                { id: 4, stars: 12, name: "路得", gender: 'f', theme: "堅定的跟隨", blessing: "願你的心單純而堅定，在平凡的拾穗中，遇見神預備的豐盛恩典。" },
+                { id: 5, stars: 15, name: "大衛", gender: 'm', theme: "合神心意", blessing: "願你像大衛一樣，在軟弱時懂得倚靠，在得勝時懂得歸榮耀給神。" },
+                { id: 6, stars: 18, name: "以斯帖", gender: 'f', theme: "勇敢的位份", blessing: "願你知道你得著今日的位份，是為了神國度的緣故，剛強壯膽吧！" },
+                { id: 7, stars: 21, name: "彼得", gender: 'm', theme: "跌倒後的更新", blessing: "即使曾經軟弱，主的愛依然尋找你。願你再次被愛充滿，牧養祂的羊。" },
+                { id: 8, stars: 24, name: "保羅", gender: 'm', theme: "奔跑不放棄", blessing: "忘記背後，努力面前，願你向著標竿直跑，得著神在基督耶穌裡召你得的獎賞。" },
+                { id: 9, stars: 27, name: "約翰", gender: 'm', theme: "愛的使徒", blessing: "願你住在愛裡面，不僅被愛，更能成為流通神愛的器皿。" },
+                { id: 10, stars: 30, name: "馬利亞", gender: 'f', theme: "尊主為大", blessing: "願你的心尊主為大，靈以神為樂，順服神話語的成就。" }
             ],
             locations: [
                 { id: 1, stars: 7, name: "伊甸園", theme: "起初的愛", meditation: "回到起初，神看一切都甚好。願你在忙碌中，找回與神同行的單純快樂。" },
@@ -270,6 +270,49 @@
                 { id: 10, stars: 70, name: "新耶路撒冷", theme: "永恆的盼望", meditation: "眼淚必被擦去，不再有死亡與悲哀。願這永恆的家鄉，成為你今日奔跑的力量。" }
             ]
         };
+
+        // --- 專業版頭像組件 ---
+        const AvatarMale = () => (
+            <div className="w-12 h-12 rounded-full overflow-hidden bg-blue-50 border-2 border-white shadow-sm shrink-0 ring-1 ring-blue-100/50">
+                <svg viewBox="0 0 100 100" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
+                    {/* 背景 */}
+                    <rect width="100" height="100" fill="#EFF6FF" />
+                    {/* 身體 */}
+                    <path d="M15 100 C 15 75, 85 75, 85 100 Z" fill="#1E3A8A" />
+                    {/* 脖子 */}
+                    <rect x="42" y="55" width="16" height="15" fill="#EAC0A6" />
+                    {/* 臉部陰影 */}
+                    <ellipse cx="50" cy="46" rx="18" ry="21" fill="#D4A48E" /> 
+                    {/* 臉 */}
+                    <ellipse cx="50" cy="45" rx="18" ry="21" fill="#EAC0A6" />
+                    {/* 頭髮後部 */}
+                    <path d="M30 40 C 30 20, 70 20, 70 40 L 70 45 C 70 35, 60 30, 50 30 C 40 30, 32 35, 32 45 Z" fill="#2C3E50" />
+                    {/* 頭髮前部 */}
+                    <path d="M28 38 C 28 25, 72 25, 72 38 C 72 45, 68 35, 50 35 C 32 35, 28 45, 28 38 Z" fill="#2C3E50" />
+                </svg>
+            </div>
+        );
+
+        const AvatarFemale = () => (
+            <div className="w-12 h-12 rounded-full overflow-hidden bg-pink-50 border-2 border-white shadow-sm shrink-0 ring-1 ring-pink-100/50">
+                <svg viewBox="0 0 100 100" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
+                    {/* 背景 */}
+                    <rect width="100" height="100" fill="#FDF2F8" />
+                    {/* 頭髮後部 */}
+                    <circle cx="50" cy="48" r="24" fill="#5D4037" />
+                    {/* 身體 */}
+                    <path d="M15 100 C 15 80, 85 80, 85 100 Z" fill="#BE185D" />
+                    {/* 脖子 */}
+                    <rect x="44" y="60" width="12" height="10" fill="#EAC0A6" />
+                    {/* 臉部陰影 */}
+                    <ellipse cx="50" cy="51" rx="17" ry="19" fill="#D4A48E" />
+                    {/* 臉 */}
+                    <ellipse cx="50" cy="50" rx="17" ry="19" fill="#EAC0A6" />
+                    {/* 劉海 */}
+                    <path d="M33 50 C 33 30, 67 30, 67 50 C 67 40, 50 38, 50 38 C 50 38, 33 40, 33 50 Z" fill="#5D4037" />
+                </svg>
+            </div>
+        );
 
         // --- 全域資料設定 ---
         const TRANSLATIONS = {
@@ -1258,6 +1301,7 @@
 
         const JourneyView = ({ starCount, lang }) => {
             const t = TRANSLATIONS[lang];
+            const [activeSection, setActiveSection] = useState('characters'); // 'characters' or 'locations'
             
             const unlockedChars = JOURNEY_DATA.characters.filter(c => starCount >= c.stars);
             const lockedChars = JOURNEY_DATA.characters.filter(c => starCount < c.stars);
@@ -1266,8 +1310,9 @@
             const nextLockedLoc = JOURNEY_DATA.locations.find(l => starCount < l.stars);
             
             return (
-                <div className="max-w-4xl mx-auto space-y-8 pb-24 animate-in slide-in-from-bottom-4 duration-500">
+                <div className="max-w-4xl mx-auto space-y-6 pb-24 animate-in slide-in-from-bottom-4 duration-500">
                     
+                    {/* Header Card */}
                     <div className="bg-gradient-to-br from-[#1E3A8A] to-[#2563EB] text-white p-6 md:p-8 rounded-2xl shadow-lg relative overflow-hidden">
                         <div className="relative z-10">
                             <div className="flex items-center gap-2 text-blue-200 mb-1 font-medium">
@@ -1285,123 +1330,153 @@
                         </div>
                     </div>
 
-                    {/* 1. 聖經人物解鎖榜 (順序移到上方) */}
-                    <div>
-                        <div className="flex items-center gap-2 mb-4 px-1">
-                            <Award className="text-amber-500" size={24} />
-                            <h3 className="font-bold text-gray-800 text-xl">{t.character_unlock}</h3>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {unlockedChars.length === 0 && (
-                                <div className="col-span-full py-12 text-center bg-white rounded-2xl border border-dashed border-gray-300 text-gray-400">
-                                    <Sparkles size={32} className="mx-auto mb-2 opacity-50" />
-                                    <p>持續讀經，每收集 3 顆星星解鎖一位聖經人物...</p>
-                                </div>
-                            )}
-
-                            {unlockedChars.map(char => (
-                                <div key={char.id} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
-                                        <Award size={60} className="text-amber-500" />
-                                    </div>
-                                    <div className="flex items-start justify-between mb-4 relative z-10">
-                                        <div className="flex-1">
-                                            <div className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-2">{char.theme}</div>
-                                            
-                                            {/* 修改：人物名稱加上淺色專業感方塊底色 */}
-                                            <div className="inline-block bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100">
-                                                <div className="text-2xl font-bold text-indigo-900 leading-none">{char.name}</div>
-                                            </div>
-                                        </div>
-                                        <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 font-bold text-xs shrink-0 ml-2">
-                                            {char.stars}
-                                        </div>
-                                    </div>
-                                    
-                                    {/* 修改：祝福語移除底色色塊，保持乾淨 */}
-                                    <div className="relative z-10 pl-1 mt-2">
-                                        <p className="text-gray-900 leading-relaxed font-bold text-base">
-                                            「{char.blessing}」
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-
-                            {lockedChars.length > 0 && (
-                                <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 border-dashed flex items-center justify-center text-center opacity-70">
-                                    <div>
-                                        <Lock size={24} className="mx-auto text-gray-400 mb-2" />
-                                        <div className="font-bold text-gray-500">下一位見證人</div>
-                                        <div className="text-xs text-gray-400 mt-1">需累積 {lockedChars[0].stars} 顆星星</div>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                    {/* Navigation Buttons */}
+                    <div className="flex p-1 bg-gray-200/80 rounded-xl">
+                        <button 
+                            onClick={() => setActiveSection('characters')}
+                            className={`flex-1 py-3 rounded-lg font-bold text-sm md:text-base flex items-center justify-center gap-2 transition-all ${
+                                activeSection === 'characters' 
+                                ? 'bg-white text-[#1E3A8A] shadow-sm ring-1 ring-gray-200' 
+                                : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                        >
+                            <Award size={18} />
+                            {t.character_unlock}
+                        </button>
+                        <button 
+                            onClick={() => setActiveSection('locations')}
+                            className={`flex-1 py-3 rounded-lg font-bold text-sm md:text-base flex items-center justify-center gap-2 transition-all ${
+                                activeSection === 'locations' 
+                                ? 'bg-white text-blue-600 shadow-sm ring-1 ring-gray-200' 
+                                : 'text-gray-500 hover:text-gray-700'
+                            }`}
+                        >
+                            <Map size={18} />
+                            {t.location_map}
+                        </button>
                     </div>
 
-                    {/* 2. 聖經地圖 (順序移到下方) */}
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                        <div className="p-5 border-b border-gray-100 flex items-center gap-2 bg-gray-50/50">
-                            <Map className="text-blue-600" size={20} />
-                            <h3 className="font-bold text-gray-800 text-lg">{t.location_map}</h3>
-                        </div>
-                        <div className="p-6">
-                            <div className="space-y-0 relative">
-                                <div className="absolute left-[19px] top-4 bottom-4 w-0.5 bg-gray-200 z-0"></div>
-
-                                {unlockedLocs.length === 0 && (
-                                    <div className="relative z-10 flex gap-4 pb-8">
-                                        <div className="w-10 h-10 rounded-full bg-blue-100 border-4 border-white shadow-sm flex items-center justify-center shrink-0">
-                                            <Anchor size={18} className="text-blue-600" />
-                                        </div>
-                                        <div className="pt-2">
-                                            <div className="font-bold text-gray-800 text-lg">旅程起點</div>
-                                            <div className="text-sm text-gray-500 mt-1">累積 7 顆星解鎖第一個地點...</div>
-                                        </div>
+                    {/* 1. 聖經人物解鎖榜 */}
+                    {activeSection === 'characters' && (
+                        <div className="animate-in fade-in slide-in-from-right-4 duration-300">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {unlockedChars.length === 0 && (
+                                    <div className="col-span-full py-12 text-center bg-white rounded-2xl border border-dashed border-gray-300 text-gray-400">
+                                        <Sparkles size={32} className="mx-auto mb-2 opacity-50" />
+                                        <p>持續讀經，每收集 3 顆星星解鎖一位聖經人物...</p>
                                     </div>
                                 )}
 
-                                {unlockedLocs.map((loc, idx) => {
-                                    const isCurrent = idx === unlockedLocs.length - 1;
-                                    return (
-                                        <div key={loc.id} className="relative z-10 flex gap-4 pb-8 last:pb-0 group">
-                                            <div className={`w-10 h-10 rounded-full border-4 border-white shadow-sm flex items-center justify-center shrink-0 transition-colors ${isCurrent ? 'bg-blue-600 text-white ring-2 ring-blue-200' : 'bg-blue-100 text-blue-600'}`}>
-                                                {isCurrent ? <Map size={18} /> : <CheckCircle size={18} />}
-                                            </div>
-                                            <div className="pt-1 flex-1">
-                                                <div className="flex items-center gap-3 mb-1">
-                                                    <div className={`font-bold text-lg ${isCurrent ? 'text-blue-700' : 'text-gray-800'}`}>
-                                                        {loc.name}
+                                {unlockedChars.map(char => (
+                                    <div key={char.id} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                                        <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
+                                            <Award size={60} className="text-amber-500" />
+                                        </div>
+                                        <div className="flex items-start justify-between mb-4 relative z-10">
+                                            <div className="flex-1 flex gap-3">
+                                                {/* 頭像 */}
+                                                <div className="shrink-0 mt-1">
+                                                    {char.gender === 'm' ? <AvatarMale /> : <AvatarFemale />}
+                                                </div>
+                                                <div className="flex-1">
+                                                    <div className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-2">{char.theme}</div>
+                                                    {/* 人物名稱加上淺色專業感方塊底色 */}
+                                                    <div className="inline-block bg-indigo-50 px-4 py-2 rounded-lg border border-indigo-100">
+                                                        <div className="text-2xl font-bold text-indigo-900 leading-none">{char.name}</div>
                                                     </div>
-                                                    {isCurrent && <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">{t.current_pos}</span>}
-                                                </div>
-                                                <div className="text-sm text-gray-500 font-medium mb-2">{loc.theme}</div>
-                                                <div className="text-base text-gray-900 leading-relaxed font-bold bg-gray-50 p-3 rounded-lg border border-gray-100 group-hover:bg-blue-50/30 transition-colors">
-                                                    {loc.meditation}
                                                 </div>
                                             </div>
+                                            <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 font-bold text-xs shrink-0 ml-2">
+                                                {char.stars}
+                                            </div>
                                         </div>
-                                    );
-                                })}
+                                        
+                                        {/* 祝福語移除底色色塊，保持乾淨 */}
+                                        <div className="relative z-10 pl-1 mt-2">
+                                            <p className="text-gray-900 leading-relaxed font-bold text-base">
+                                                「{char.blessing}」
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
 
-                                {nextLockedLoc && (
-                                    <div className="relative z-10 flex gap-4 pt-8">
-                                        <div className="w-10 h-10 rounded-full bg-gray-100 border-4 border-white flex items-center justify-center shrink-0 grayscale opacity-70">
-                                            <Lock size={16} className="text-gray-400" />
-                                        </div>
-                                        <div className="pt-2 opacity-60">
-                                            <div className="font-bold text-gray-500 text-lg flex items-center gap-2">
-                                                {nextLockedLoc.name}
-                                                <span className="text-xs font-normal border border-gray-300 rounded px-1.5 py-0.5">{nextLockedLoc.stars} {t.days_unit}</span>
-                                            </div>
-                                            <div className="text-sm text-gray-400 mt-1">{t.locked}</div>
+                                {lockedChars.length > 0 && (
+                                    <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 border-dashed flex items-center justify-center text-center opacity-70">
+                                        <div>
+                                            <Lock size={24} className="mx-auto text-gray-400 mb-2" />
+                                            <div className="font-bold text-gray-500">下一位見證人</div>
+                                            <div className="text-xs text-gray-400 mt-1">需累積 {lockedChars[0].stars} 顆星星</div>
                                         </div>
                                     </div>
                                 )}
                             </div>
                         </div>
-                    </div>
+                    )}
+
+                    {/* 2. 聖經地圖 */}
+                    {activeSection === 'locations' && (
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden animate-in fade-in slide-in-from-right-4 duration-300">
+                            <div className="p-5 border-b border-gray-100 flex items-center gap-2 bg-gray-50/50">
+                                <Map className="text-blue-600" size={20} />
+                                <h3 className="font-bold text-gray-800 text-lg">{t.location_map}</h3>
+                            </div>
+                            <div className="p-6">
+                                <div className="space-y-0 relative">
+                                    <div className="absolute left-[19px] top-4 bottom-4 w-0.5 bg-gray-200 z-0"></div>
+
+                                    {unlockedLocs.length === 0 && (
+                                        <div className="relative z-10 flex gap-4 pb-8">
+                                            <div className="w-10 h-10 rounded-full bg-blue-100 border-4 border-white shadow-sm flex items-center justify-center shrink-0">
+                                                <Anchor size={18} className="text-blue-600" />
+                                            </div>
+                                            <div className="pt-2">
+                                                <div className="font-bold text-gray-800 text-lg">旅程起點</div>
+                                                <div className="text-sm text-gray-500 mt-1">累積 7 顆星解鎖第一個地點...</div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {unlockedLocs.map((loc, idx) => {
+                                        const isCurrent = idx === unlockedLocs.length - 1;
+                                        return (
+                                            <div key={loc.id} className="relative z-10 flex gap-4 pb-8 last:pb-0 group">
+                                                <div className={`w-10 h-10 rounded-full border-4 border-white shadow-sm flex items-center justify-center shrink-0 transition-colors ${isCurrent ? 'bg-blue-600 text-white ring-2 ring-blue-200' : 'bg-blue-100 text-blue-600'}`}>
+                                                    {isCurrent ? <Map size={18} /> : <CheckCircle size={18} />}
+                                                </div>
+                                                <div className="pt-1 flex-1">
+                                                    <div className="flex items-center gap-3 mb-1">
+                                                        <div className={`font-bold text-lg ${isCurrent ? 'text-blue-700' : 'text-gray-800'}`}>
+                                                            {loc.name}
+                                                        </div>
+                                                        {isCurrent && <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">{t.current_pos}</span>}
+                                                    </div>
+                                                    <div className="text-sm text-gray-500 font-medium mb-2">{loc.theme}</div>
+                                                    <div className="text-base text-gray-900 leading-relaxed font-bold bg-gray-50 p-3 rounded-lg border border-gray-100 group-hover:bg-blue-50/30 transition-colors">
+                                                        {loc.meditation}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+
+                                    {nextLockedLoc && (
+                                        <div className="relative z-10 flex gap-4 pt-8">
+                                            <div className="w-10 h-10 rounded-full bg-gray-100 border-4 border-white flex items-center justify-center shrink-0 grayscale opacity-70">
+                                                <Lock size={16} className="text-gray-400" />
+                                            </div>
+                                            <div className="pt-2 opacity-60">
+                                                <div className="font-bold text-gray-500 text-lg flex items-center gap-2">
+                                                    {nextLockedLoc.name}
+                                                    <span className="text-xs font-normal border border-gray-300 rounded px-1.5 py-0.5">{nextLockedLoc.stars} {t.days_unit}</span>
+                                                </div>
+                                                <div className="text-sm text-gray-400 mt-1">{t.locked}</div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
             );
         };
