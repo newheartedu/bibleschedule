@@ -13,6 +13,20 @@
                 extend: {
                     screens: {
                         'print': {'raw': 'print'},
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.5s ease-out forwards',
+                        'bounce-short': 'bounceShort 1s ease-in-out 1'
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px) translateX(-50%)' },
+                            '100%': { opacity: '1', transform: 'translateY(0) translateX(-50%)' },
+                        },
+                        bounceShort: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        }
                     }
                 }
             }
@@ -35,7 +49,7 @@
     }
     </script>
     
-    <!-- 引入 Google Fonts: Noto Serif TC (列印用) -->
+    <!-- 引入 Google Fonts: Noto Serif TC (列印與標題用) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -53,20 +67,22 @@
         .custom-scrollbar::-webkit-scrollbar { width: 6px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #cbd5e1; border-radius: 20px; }
-
-        /* --- 列印與預覽專用樣式 (Print Styles) --- */
         
-        /* A4 設定：精確控制 */
-        @page {
-            size: A4 portrait;
-            margin: 0; /* 清除瀏覽器預設邊距，由 CSS 控制內容邊距 */
+        /* 祝福卡片專用字體 */
+        .font-serif-tc {
+            font-family: 'Noto Serif TC', serif;
         }
 
-        /* 列印容器：單頁強制設定 */
+        /* --- 列印與預覽專用樣式 (Print Styles) --- */
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+
         .print-page-container {
             width: 210mm;
-            height: 296mm; /* A4 高度 */
-            padding: 12mm 15mm; /* 舒適的邊距 */
+            height: 296mm;
+            padding: 12mm 15mm;
             background: white;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
             margin: 0 auto 20px auto;
@@ -74,23 +90,17 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* 防止溢出 */
-            page-break-after: always; /* 預覽時每頁後換頁 */
+            overflow: hidden;
+            page-break-after: always;
+            font-family: 'Noto Serif TC', serif;
+            color: #000;
         }
 
-        /* 最後一頁取消強制換頁，避免多出空白頁 */
         .print-page-container:last-child {
             page-break-after: auto;
             margin-bottom: 0;
         }
 
-        /* --- 列印專用字體設定 (只影響預覽區塊) --- */
-        .print-page-container {
-            font-family: 'Noto Serif TC', serif; /* 統一使用襯線體增加書卷氣與專業感 */
-            color: #000;
-        }
-
-        /* 設計感標題區 */
         .print-header {
             border-bottom: 3px double #000;
             padding-bottom: 10px;
@@ -99,18 +109,17 @@
         }
 
         .print-title {
-            font-size: 36px; /* 加大標題 */
-            font-weight: 900; /* 最粗體 */
-            color: #000; /* 全黑 */
+            font-size: 36px;
+            font-weight: 900;
+            color: #000;
             letter-spacing: 2px;
             line-height: 1.1;
             margin-bottom: 4px;
-            /* 模擬更粗的字重，以防字體不支援 */
             text-shadow: 0.5px 0 0 currentColor; 
         }
 
         .print-subtitle {
-            font-size: 20px; /* 副標題放大 */
+            font-size: 20px;
             font-weight: 700;
             letter-spacing: 4px;
             color: #222;
@@ -131,25 +140,15 @@
 
         .print-meta {
             position: absolute;
-            /* top 由 React 動態控制 */
             right: 15mm;
             text-align: right;
             font-family: 'Noto Sans TC', sans-serif;
             color: #000;
         }
         
-        .print-meta-year {
-            font-size: 14px;
-            font-weight: bold;
-        }
+        .print-meta-year { font-size: 14px; font-weight: bold; }
+        .print-meta-month { font-size: 36px; font-weight: 900; line-height: 0.9; }
 
-        .print-meta-month {
-            font-size: 36px;
-            font-weight: 900;
-            line-height: 0.9;
-        }
-
-        /* 表格容器：Flex 1 自動填滿剩餘高度 */
         .table-wrapper {
             flex: 1;
             display: flex;
@@ -158,12 +157,11 @@
             overflow: hidden;
         }
 
-        /* 表格樣式 */
         .design-table {
             width: 100%;
-            height: 100%; /* 強制撐滿容器高度 */
+            height: 100%;
             border-collapse: collapse;
-            table-layout: fixed; /* 固定佈局 */
+            table-layout: fixed;
         }
         
         .design-table th {
@@ -176,8 +174,8 @@
             font-weight: 800;
             text-align: center;
             font-size: 16px;
-            font-family: 'Noto Sans TC', sans-serif; /* 標題用黑體較清晰 */
-            height: 36px; /* 固定標題高度 */
+            font-family: 'Noto Sans TC', sans-serif;
+            height: 36px;
             color: #000;
         }
 
@@ -190,47 +188,15 @@
             border-right: 1px solid #eee;
             vertical-align: middle;
             padding: 0 6px;
-            /* height 不設定，由瀏覽器自動均分 tbody 的高度 */
         }
 
-        .design-table tr:last-child td {
-            border-bottom: 2px solid #000; /* 表格底部粗線 */
-        }
+        .design-table tr:last-child td { border-bottom: 2px solid #000; }
+        .design-table tr:nth-child(even) { background-color: #fafafa; }
 
-        .design-table tr:nth-child(even) {
-            background-color: #fafafa; /* 隔行底色，增加閱讀性 */
-        }
-
-        /* 單元格內容優化 */
-        .cell-date {
-            text-align: center;
-            font-family: 'Noto Sans TC', sans-serif;
-            font-weight: 700;
-            font-size: 16px;
-            color: #000;
-        }
-        
-        .cell-weekday {
-            font-size: 12px;
-            font-weight: normal;
-            color: #444;
-            margin-left: 4px;
-        }
-
-        .cell-scripture {
-            font-size: 13px; /* 稍微縮小以容納長英文單字 */
-            font-weight: 600;
-            white-space: nowrap; /* 保持單行，若太長可能會截斷，但保持整潔 */
-            overflow: hidden;
-            text-overflow: clip; 
-            letter-spacing: 0.5px;
-            color: #000;
-        }
-
-        .cell-check {
-            text-align: center;
-            padding: 0;
-        }
+        .cell-date { text-align: center; font-family: 'Noto Sans TC', sans-serif; font-weight: 700; font-size: 16px; color: #000; }
+        .cell-weekday { font-size: 12px; font-weight: normal; color: #444; margin-left: 4px; }
+        .cell-scripture { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: clip; letter-spacing: 0.5px; color: #000; }
+        .cell-check { text-align: center; padding: 0; }
 
         .design-checkbox {
             width: 16px;
@@ -240,7 +206,6 @@
             margin: 0 auto;
         }
 
-        /* 頁尾 */
         .print-footer {
             margin-top: 8px;
             font-size: 10px;
@@ -253,41 +218,13 @@
             height: 12px;
         }
 
-        /* 列印時隱藏非預覽元素 */
         @media print {
             body { background: white; margin: 0; padding: 0; }
             body > *:not(#print-preview-root) { display: none !important; }
-            
-            /* 修正列印時的容器行為 */
-            #print-preview-root {
-                display: block !important;
-                position: static !important; /* 關鍵：改為 static 以支援自然換頁 */
-                width: 100%;
-                height: auto;
-                overflow: visible !important;
-                background: white;
-            }
-
+            #print-preview-root { display: block !important; position: static !important; width: 100%; height: auto; overflow: visible !important; background: white; }
             .no-print-in-preview { display: none !important; }
-            
-            .print-page-container {
-                box-shadow: none; 
-                margin: 0; 
-                width: 210mm;
-                height: 296mm; /* 維持固定高度 */
-                page-break-after: always;
-                break-after: page; /* 現代瀏覽器支援 */
-                overflow: hidden;
-            }
-
-            .print-page-container:last-child {
-                page-break-after: auto; /* 避免最後一頁後空白 */
-                break-after: auto;
-                height: auto; /* 最後一頁允許自動高度，減少空白頁風險 */
-                min-height: 296mm;
-            }
-            
-            /* 強制列印背景色 (為了隔行底色) */
+            .print-page-container { box-shadow: none; margin: 0; width: 210mm; height: 296mm; page-break-after: always; break-after: page; overflow: hidden; }
+            .print-page-container:last-child { page-break-after: auto; break-after: auto; height: auto; min-height: 296mm; }
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
     </style>
@@ -302,21 +239,51 @@
         import { 
           Calendar as CalendarIcon, List, Home, Settings, ChevronLeft, ChevronRight, CheckCircle, Circle, 
           Star, BookOpen, Edit3, X, Search, Download, RefreshCw, Sparkles, Bookmark, Book, ArrowRight, 
-          TrendingUp, LayoutGrid, Sun, Globe, Printer, Eye, FileDown, Image as ImageIcon, FileText, Fish
+          TrendingUp, LayoutGrid, Sun, Globe, Printer, Eye, FileDown, Image as ImageIcon, FileText, Fish,
+          Map, Award, Anchor, Milestone, Lock, Gift, Bell
         } from 'lucide-react';
 
-        // --- 全域資料設定 (移至最上方以確保讀取) ---
+        // --- 旅程資料庫 (更新：人物 3天/位，地點 7天/處) ---
+        const JOURNEY_DATA = {
+            characters: [
+                { id: 1, stars: 3, name: "亞伯拉罕", theme: "信心之父", blessing: "願你在未知的旅途中，依然信靠神的應許，因為祂是信實的。" },
+                { id: 2, stars: 6, name: "約瑟", theme: "神旨意的美好", blessing: "無論處在高山或低谷，願你深信神的意思原是好的，祂必親自引領。" },
+                { id: 3, stars: 9, name: "摩西", theme: "謙和與忠心", blessing: "願神賜你溫柔的心與堅定的靈，在日常的小事上顯出大忠心。" },
+                { id: 4, stars: 12, name: "路得", theme: "堅定的跟隨", blessing: "願你的心單純而堅定，在平凡的拾穗中，遇見神預備的豐盛恩典。" },
+                { id: 5, stars: 15, name: "大衛", theme: "合神心意", blessing: "願你像大衛一樣，在軟弱時懂得倚靠，在得勝時懂得歸榮耀給神。" },
+                { id: 6, stars: 18, name: "以斯帖", theme: "勇敢的位份", blessing: "願你知道你得著今日的位份，是為了神國度的緣故，剛強壯膽吧！" },
+                { id: 7, stars: 21, name: "彼得", theme: "跌倒後的更新", blessing: "即使曾經軟弱，主的愛依然尋找你。願你再次被愛充滿，牧養祂的羊。" },
+                { id: 8, stars: 24, name: "保羅", theme: "奔跑不放棄", blessing: "忘記背後，努力面前，願你向著標竿直跑，得著神在基督耶穌裡召你得的獎賞。" },
+                { id: 9, stars: 27, name: "約翰", theme: "愛的使徒", blessing: "願你住在愛裡面，不僅被愛，更能成為流通神愛的器皿。" },
+                { id: 10, stars: 30, name: "馬利亞", theme: "尊主為大", blessing: "願你的心尊主為大，靈以神為樂，順服神話語的成就。" }
+            ],
+            locations: [
+                { id: 1, stars: 7, name: "伊甸園", theme: "起初的愛", meditation: "回到起初，神看一切都甚好。願你在忙碌中，找回與神同行的單純快樂。" },
+                { id: 2, stars: 14, name: "亞拉臘山", theme: "新的開始", meditation: "洪水退去，彩虹立約。願舊事已過，你的生命在基督裡成為新造的人。" },
+                { id: 3, stars: 21, name: "吾珥", theme: "呼召之地", meditation: "離開本地本族，不是流浪，而是跟隨。願你聽見那溫柔的呼喚，勇敢起行。" },
+                { id: 4, stars: 28, name: "紅海", theme: "神蹟與拯救", meditation: "前有紅海，後有追兵，正是神顯榮耀的時刻。只管站住，看耶和華為你施行救恩。" },
+                { id: 5, stars: 35, name: "西奈山", theme: "聖潔之約", meditation: "神的話語是腳前的燈。願你在山上領受的亮光，成為山下行走的準則。" },
+                { id: 6, stars: 42, name: "迦南地", theme: "應許之地", meditation: "流奶與蜜之地需要爭戰得地為業。願你剛強壯膽，不看巨人的高大，只看神的應許。" },
+                { id: 7, stars: 49, name: "伯利恆", theme: "謙卑的降生", meditation: "最偉大的王，降生在最卑微的馬槽。願你的心也成為虛己的器皿，迎接主的同在。" },
+                { id: 8, stars: 56, name: "加利利湖", theme: "平靜風浪", meditation: "人生的風浪再大，主都在船上。願你聽見那聲「住了吧！靜了吧！」，得享屬天的安息。" },
+                { id: 9, stars: 63, name: "各各他", theme: "捨己的愛", meditation: "十字架是愛的記號。願你常常思念那為你捨命的主，生命再次被更新。" },
+                { id: 10, stars: 70, name: "新耶路撒冷", theme: "永恆的盼望", meditation: "眼淚必被擦去，不再有死亡與悲哀。願這永恆的家鄉，成為你今日奔跑的力量。" }
+            ]
+        };
+
+        // --- 全域資料設定 ---
         const TRANSLATIONS = {
             zh: {
                 title: "PJBC 平鎮浸信會",
-                subtitle: "讀經進度", // 網站用
-                print_subtitle: "讀經進度表", // 列印用
+                subtitle: "讀經進度",
+                print_subtitle: "讀經進度表",
                 greeting: "平安！願神的話語成為你腳前的燈",
                 today_btn: "今日進度",
-                days_read: "已讀天數",
-                days_unit: "天",
+                days_read: "星星記念",
+                days_unit: "顆星",
                 full_schedule: "完整進度表",
                 view_list: "查看列表",
+                view_journey: "查看旅程",
                 daily_one: "每日一章", 
                 daily_ten: "每日十章", 
                 mark_read: "標記已讀",
@@ -342,7 +309,15 @@
                 date_col: "日期",
                 select_all: "全選",
                 deselect_all: "取消全選",
-                nav: { home: "首頁", calendar: "月曆", table: "列表", admin: "管理" }
+                journey_title: "我的聖經旅程",
+                journey_subtitle: "每一個腳步，神都記念",
+                character_unlock: "雲彩見證人",
+                location_map: "聖經地圖",
+                locked: "尚未解鎖",
+                current_pos: "目前位置",
+                star_toast: "你今天選擇了神的話，這一顆星星為你記念。",
+                unlock_toast: "🎉 恭喜！你解鎖了新的獎勵：",
+                nav: { home: "首頁", calendar: "月曆", table: "列表", journey: "旅程" }
             },
             en: {
                 title: "PJBC", 
@@ -350,10 +325,11 @@
                 print_subtitle: "Bible Reading Schedule",
                 greeting: "Peace! Your word is a lamp for my feet",
                 today_btn: "Today's Plan",
-                days_read: "Days Read",
-                days_unit: "days",
+                days_read: "Stars",
+                days_unit: "stars",
                 full_schedule: "Full Schedule",
                 view_list: "View List",
+                view_journey: "My Journey",
                 daily_one: "Daily One",
                 daily_ten: "Daily Ten",
                 mark_read: "Mark Read",
@@ -375,15 +351,22 @@
                 cancel: "Cancel",
                 year: "",
                 month: "",
-                check_col: "✓", // 修改：Checkmark symbol
+                check_col: "✓",
                 date_col: "Date",
                 select_all: "Select All",
                 deselect_all: "Clear",
-                nav: { home: "Home", calendar: "Calendar", table: "List", admin: "Admin" }
+                journey_title: "My Journey",
+                journey_subtitle: "God remembers every step",
+                character_unlock: "Witnesses",
+                location_map: "Bible Map",
+                locked: "Locked",
+                current_pos: "Current",
+                star_toast: "You chose God's word today. A star marks your journey.",
+                unlock_toast: "🎉 Congrats! You unlocked: ",
+                nav: { home: "Home", calendar: "Calendar", table: "List", journey: "Journey" }
             }
         };
 
-        // 星期對照表
         const WEEKDAY_MAP = { "日": "Sun", "一": "Mon", "二": "Tue", "三": "Wed", "四": "Thu", "五": "Fri", "六": "Sat" };
 
         const ABBREV_TO_FULL_ZH = {
@@ -404,7 +387,6 @@
         };
         const FULL_TO_ABBREV_ZH = Object.fromEntries(Object.entries(ABBREV_TO_FULL_ZH).map(([k, v]) => [v, k]));
 
-        // 中文(全名或縮寫) 轉 英文縮寫對照表 (Calendar用)
         const ZH_TO_EN_ABBREV = {
             "創世記": "Gen", "創": "Gen", "出埃及記": "Exod", "出": "Exod", "利未記": "Lev", "利": "Lev", "民數記": "Num", "民": "Num", "申命記": "Deut", "申": "Deut",
             "約書亞記": "Josh", "書": "Josh", "士師記": "Judg", "士": "Judg", "路得記": "Ruth", "得": "Ruth",
@@ -423,7 +405,8 @@
             "提摩太前書": "1 Tim", "提前": "1 Tim", "提摩太後書": "2 Tim", "提後": "2 Tim", "提多書": "Titus", "多": "Titus", "腓利門書": "Phlm", "門": "Phlm",
             "希伯來書": "Heb", "來": "Heb", 
             "雅各書": "Jas", "雅": "Jas", "彼得前書": "1 Pet", "彼前": "1 Pet", "彼得後書": "2 Pet", "彼後": "2 Pet",
-            "約翰一書": "1 John", "約一": "1 John", "約翰二書": "2 John", "約二": "2 John", "約翰三書": "3 John", "約三": "3 John", "猶大書": "Jude", "猶": "Jude", "啟示錄": "Rev", "啟": "Rev"
+            "約翰一書": "1 John", "約一": "1 John", "約翰二書": "2 John", "約二": "2 John", "約翰三書": "3 John", "約三": "3 John",
+            "猶大書": "Jude", "猶": "Jude", "啟示錄": "Rev", "啟": "Rev"
         };
 
         const BIBLE_BOOKS_ID = {
@@ -445,7 +428,6 @@
           "約翰一書": 62, "約一": 62, "約翰二書": 63, "約二": 63, "約翰三書": 64, "約三": 64, "猶大書": 65, "猶": 65, "啟示錄": 66, "啟": 66
         };
 
-        // 詳細英文書名對照表 (用於 formatScriptureDisplay 與 BibleReader)
         const ZH_TO_EN_BOOKS = {
              "創世記": "Genesis", "創": "Genesis", "出埃及記": "Exodus", "出": "Exodus", "利未記": "Leviticus", "利": "Leviticus", "民數記": "Numbers", "民": "Numbers", "申命記": "Deuteronomy", "申": "Deuteronomy",
             "約書亞記": "Joshua", "書": "Joshua", "士師記": "Judges", "士": "Judges", "路得記": "Ruth", "得": "Ruth", "撒母耳記上": "1 Samuel", "撒上": "1 Samuel", "撒母耳記下": "2 Samuel", "撒下": "2 Samuel",
@@ -506,7 +488,6 @@
 
         const formatScriptureDisplay = (text, lang) => {
             if (!text) return "";
-            // 加強版：移除所有與書卷結束相關的標記，包含括號（全形/半形）
             let display = text.replace(/\s*[（(]新循環[)）]/g, '')
                               .replace(/新循環/g, '')
                               .replace(/\s*[（(]第一遍讀完[)）]/g, '')
@@ -550,23 +531,17 @@
             let simplified = text.replace(/\(.*?\)|\（.*?\）|新循環|卷終/g, '');
 
             if (lang === 'en') {
-                // 英文縮寫處理邏輯
                 const sortedKeys = Object.keys(ZH_TO_EN_ABBREV).sort((a,b) => b.length - a.length);
                 sortedKeys.forEach(zh => {
                     const regex = new RegExp(zh, 'g');
-                    // 取代時，加上空格以便區隔
                     simplified = simplified.replace(regex, ZH_TO_EN_ABBREV[zh] + " ");
                 });
-                // 清理多餘中文字與符號
                 simplified = simplified.replace(/第/g, "").replace(/章/g, "").replace(/；/g, "; ");
-                // 移除重複空格
                 simplified = simplified.replace(/\s+/g, ' ').trim();
-                // 移除逗號前後的空格 (例如 "Matt 1 , 2" -> "Matt 1, 2")
                 simplified = simplified.replace(/\s*,\s*/g, ', ');
                 return simplified;
             }
 
-            // 中文縮寫處理邏輯
             const sortedFullNames = Object.keys(FULL_TO_ABBREV_ZH).sort((a, b) => b.length - a.length);
             sortedFullNames.forEach(fullName => {
                 if (simplified.includes(fullName)) {
@@ -587,6 +562,7 @@
             }
         };
 
+        // ... data ...
         const generateInitialData = () => {
              const plans = [];
             const addDay = (date, wd, one, ten) => plans.push({ date, weekday: wd, dailyOne: one, dailyTen: ten });
@@ -1041,15 +1017,10 @@
 
             return (
                 <div className="bg-[#fffdf7] rounded-xl border border-gray-200 shadow-inner max-h-[60vh] flex flex-col mt-4 animate-in slide-in-from-top-2 fade-in overflow-hidden">
-                    {/* Fixed Header */}
                     <div className="flex-none p-4 border-b border-gray-200 bg-[#fffdf7] z-10 flex justify-between items-center">
-                        <h3 className="text-xl font-bold text-gray-800">
-                            {label} 
-                        </h3>
+                        <h3 className="text-xl font-bold text-gray-800">{label}</h3>
                         <span className="text-xs font-normal text-gray-400">({t.version})</span>
                     </div>
-                    
-                    {/* Scrollable Content */}
                     <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
                         <div className="text-lg leading-relaxed text-gray-700 space-y-2 font-serif">
                             {content.map((v) => (
@@ -1064,13 +1035,11 @@
             );
         };
 
-        // --- 全新的預覽與列印組件 (PrintPreviewOverlay) ---
         const PrintPreviewOverlay = ({ year, selectedMonths, plans, lang, onClose }) => {
             const t = TRANSLATIONS[lang];
             const contentRef = useRef(null);
             const [isGenerating, setIsGenerating] = useState(false);
             
-            // 根據選取的月份生成資料
             const pagesData = useMemo(() => {
                 return selectedMonths.sort((a,b) => a-b).map(month => {
                     const prefix = `${year}-${String(month).padStart(2,'0')}`;
@@ -1081,78 +1050,12 @@
 
             const handlePrint = () => {
                 if (!contentRef.current) return;
-
-                // 開啟新視窗
                 const printWindow = window.open('', '_blank');
-                if (!printWindow) {
-                    alert("請允許本網站開啟彈跳視窗以進行列印");
-                    return;
-                }
-
-                // 獲取當前頁面的樣式 (包含 Google Fonts 和自定義 CSS)
-                // 這裡特別抓取所有的 style 標籤和 link 標籤
-                const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]'))
-                    .map(style => style.outerHTML)
-                    .join('\n');
-                
-                // 獲取預覽區域的 HTML
+                if (!printWindow) { alert("請允許本網站開啟彈跳視窗以進行列印"); return; }
+                const styles = Array.from(document.querySelectorAll('style, link[rel="stylesheet"]')).map(style => style.outerHTML).join('\n');
                 const content = contentRef.current.innerHTML;
-
-                // 寫入新視窗
-                printWindow.document.write(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>PJBC Schedule Print</title>
-                        <meta charset="UTF-8">
-                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                        
-                        <!-- 重新引入 Tailwind (確保樣式正確) -->
-                        <script src="https://cdn.tailwindcss.com"><\/script>
-                        <script>
-                            tailwind.config = {
-                                theme: {
-                                    extend: {
-                                        screens: { 'print': {'raw': 'print'} }
-                                    }
-                                }
-                            }
-                        <\/script>
-
-                        <!-- 引入原有的樣式 (包含 Font, Custom CSS) -->
-                        ${styles}
-
-                        <style>
-                            /* 強制覆蓋：列印視窗的基礎設定 */
-                            body { 
-                                background-color: white !important; 
-                                margin: 0; 
-                                padding: 0;
-                                -webkit-print-color-adjust: exact !important; 
-                                print-color-adjust: exact !important; 
-                            }
-                            
-                            /* 隱藏預覽介面中不該出現的捲軸等 */
-                            ::-webkit-scrollbar { display: none; }
-                        </style>
-                    </head>
-                    <body>
-                        <div id="print-preview-root" style="position: static; width: 100%; height: auto; overflow: visible;">
-                            ${content}
-                        </div>
-                        <script>
-                            // 等待資源載入後執行列印
-                            window.onload = function() {
-                                setTimeout(function() {
-                                    window.print();
-                                    // window.close(); // 選擇性開啟自動關閉
-                                }, 800);
-                            };
-                        <\/script>
-                    </body>
-                    </html>
-                `);
-                printWindow.document.close(); // 必須調用，否則某些瀏覽器載入指示器會一直轉
+                printWindow.document.write(`<!DOCTYPE html><html><head><title>PJBC Schedule Print</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><script src="https://cdn.tailwindcss.com"><\/script><script>tailwind.config = {theme: {extend: {screens: {'print': {'raw': 'print'}}}}}}<\/script>${styles}<style>body{background-color:white!important;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}::-webkit-scrollbar{display:none;}</style></head><body><div id="print-preview-root" style="position:static;width:100%;height:auto;overflow:visible;">${content}</div><script>window.onload=function(){setTimeout(function(){window.print();},800);};<\/script></body></html>`);
+                printWindow.document.close();
             };
 
             const handleDownloadAllPNGs = async () => {
@@ -1160,8 +1063,6 @@
                 setIsGenerating(true);
                 try {
                     const pages = contentRef.current.querySelectorAll('.print-page-container');
-                    
-                    // 單張圖片直接下載
                     if (pages.length === 1) {
                         const page = pages[0];
                         const canvas = await html2canvas(page, { scale: 2 });
@@ -1170,29 +1071,17 @@
                         link.download = `PJBC_Schedule_${year}_${month}.png`;
                         link.href = canvas.toDataURL('image/png');
                         link.click();
-                    } 
-                    // 多張圖片打包成 ZIP
-                    else if (pages.length > 1) {
+                    } else if (pages.length > 1) {
                         const zip = new JSZip();
-                        
-                        // 依序處理每一頁
                         for (let i = 0; i < pages.length; i++) {
                             const page = pages[i];
-                            // 讓瀏覽器有機會渲染畫面進度，避免無回應
                             await new Promise(r => setTimeout(r, 100));
-                            
                             const canvas = await html2canvas(page, { scale: 2 });
                             const imgData = canvas.toDataURL('image/png');
-                            
-                            // 去除 Data URL 前綴 (data:image/png;base64,) 以便存入 zip
                             const base64Data = imgData.split(',')[1];
-                            
                             const month = pagesData[i] ? pagesData[i].month : (i + 1);
-                            // 檔名：PJBC_Schedule_2025_1.png
                             zip.file(`PJBC_Schedule_${year}_${month}.png`, base64Data, { base64: true });
                         }
-                        
-                        // 生成 ZIP 並觸發下載
                         const content = await zip.generateAsync({ type: "blob" });
                         const link = document.createElement('a');
                         link.href = window.URL.createObjectURL(content);
@@ -1230,7 +1119,6 @@
 
             return (
                 <div className="fixed inset-0 z-[9999] bg-gray-100 overflow-auto flex flex-col">
-                    {/* 控制列 (列印時隱藏) */}
                     <div className="no-print-in-preview sticky top-0 bg-gray-900 text-white p-4 shadow-md flex flex-wrap justify-between items-center z-50 gap-4">
                         <div className="font-bold flex items-center gap-2 text-lg">
                             <FileText size={24} className="text-blue-400"/> {t.print_preview_btn}
@@ -1259,27 +1147,14 @@
                             </button>
                         </div>
                     </div>
-
-                    {/* 預覽內容 (實際列印區域) */}
                     <div className="flex-1 p-4 md:p-8 print:p-0 flex justify-center print:block overflow-x-hidden bg-gray-200">
                         <div ref={contentRef} className="print:w-full">
                             {pagesData.map((page, idx) => {
-                                // 計算月份標籤
-                                const monthLabel = lang === 'en' 
-                                    ? ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][page.month - 1]
-                                    : page.month;
-                                
-                                // 針對英文月份調整字體大小，避免與上方橫線重疊
+                                const monthLabel = lang === 'en' ? ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"][page.month - 1] : page.month;
                                 const monthFontSize = lang === 'en' ? '24px' : '36px';
-                                
-                                // 針對中文月份調整 top 位置，使其位於格線上方 (14mm)
-                                // 英文維持原位 (22mm)
                                 const metaTop = lang === 'en' ? '22mm' : '14mm';
-
                                 return (
                                 <div key={page.month} className="print-page-container">
-                                    
-                                    {/* 裝飾性標題區 */}
                                     <div className="print-header">
                                         <div className="print-title">{t.title}</div>
                                         <div className="print-subtitle">{t.print_subtitle}</div>
@@ -1288,8 +1163,6 @@
                                             <div className="print-meta-month" style={{fontSize: monthFontSize}}>{monthLabel} <span style={{fontSize:'16px', fontWeight:'normal'}}>{t.month}</span></div>
                                         </div>
                                     </div>
-
-                                    {/* 表格 */}
                                     <div className="table-wrapper">
                                         <table className="design-table">
                                             <thead>
@@ -1304,45 +1177,24 @@
                                             <tbody>
                                                 {page.plans.map((p, idx) => (
                                                     <tr key={p.date}>
-                                                        <td className="cell-date">
-                                                            {/* 移除星期旁的括號 */}
-                                                            {parseInt(p.date.split('-')[2])} <span className="cell-weekday">{lang === 'en' ? WEEKDAY_MAP[p.weekday] : p.weekday}</span>
-                                                        </td>
-                                                        <td className="cell-scripture pl-2">
-                                                            {formatScriptureDisplay(p.dailyOne, lang)}
-                                                        </td>
-                                                        <td className="cell-check">
-                                                            <div className="design-checkbox"></div>
-                                                        </td>
-                                                        <td className="cell-scripture text-gray-700 pl-2">
-                                                            {formatScriptureDisplay(p.dailyTen, lang)}
-                                                        </td>
-                                                        <td className="cell-check">
-                                                            <div className="design-checkbox"></div>
-                                                        </td>
+                                                        <td className="cell-date">{parseInt(p.date.split('-')[2])} <span className="cell-weekday">{lang === 'en' ? WEEKDAY_MAP[p.weekday] : p.weekday}</span></td>
+                                                        <td className="cell-scripture pl-2">{formatScriptureDisplay(p.dailyOne, lang)}</td>
+                                                        <td className="cell-check"><div className="design-checkbox"></div></td>
+                                                        <td className="cell-scripture text-gray-700 pl-2">{formatScriptureDisplay(p.dailyTen, lang)}</td>
+                                                        <td className="cell-check"><div className="design-checkbox"></div></td>
                                                     </tr>
                                                 ))}
-                                                {/* 自動填補空行以維持滿版高度 */}
                                                 {Array.from({length: 31 - page.plans.length}).map((_, i) => (
                                                     <tr key={`empty-${i}`}>
-                                                        <td className="cell-date text-gray-200">-</td>
-                                                        <td></td>
-                                                        <td className="cell-check"><div className="design-checkbox opacity-20"></div></td>
-                                                        <td></td>
-                                                        <td className="cell-check"><div className="design-checkbox opacity-20"></div></td>
+                                                        <td className="cell-date text-gray-200">-</td><td></td><td className="cell-check"><div className="design-checkbox opacity-20"></div></td><td></td><td className="cell-check"><div className="design-checkbox opacity-20"></div></td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
                                     </div>
-                                    
-                                    {/* 頁尾 */}
                                     <div className="print-footer">
                                          <div>PJBC Bible Reading Schedule</div>
-                                         <div className="flex items-center gap-1">
-                                            <Fish size={12} />
-                                            <span>水深之處，下網打魚</span>
-                                         </div>
+                                         <div className="flex items-center gap-1"><Fish size={12} /><span>水深之處，下網打魚</span></div>
                                     </div>
                                 </div>
                             )})}
@@ -1352,21 +1204,14 @@
             );
         };
 
-        // --- 列印設定彈窗 (支援複選月份) ---
         const PrintModal = ({ isOpen, onClose, onConfirm, availableYears, lang }) => {
             const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-            // 修改：預設月份為空陣列，不勾選任何月份
             const [selectedMonths, setSelectedMonths] = useState([]);
             const t = TRANSLATIONS[lang];
 
             if (!isOpen) return null;
 
-            const toggleMonth = (m) => {
-                setSelectedMonths(prev => 
-                    prev.includes(m) ? prev.filter(x => x !== m) : [...prev, m]
-                );
-            };
-            
+            const toggleMonth = (m) => setSelectedMonths(prev => prev.includes(m) ? prev.filter(x => x !== m) : [...prev, m]);
             const selectAll = () => setSelectedMonths(Array.from({length:12}, (_,i)=>i+1));
             const deselectAll = () => setSelectedMonths([]);
 
@@ -1374,77 +1219,216 @@
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in no-print">
                     <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col animate-in zoom-in-95 border border-gray-100">
                         <div className="p-5 pb-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                            <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2">
-                                <Printer size={20} className="text-[#1E3A8A]" />
-                                {t.print_modal_title}
-                            </h3>
+                            <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2"><Printer size={20} className="text-[#1E3A8A]" />{t.print_modal_title}</h3>
                             <button onClick={onClose} className="p-1 hover:bg-gray-200 rounded-full text-gray-500 transition-colors"><X size={20}/></button>
                         </div>
-                        
                         <div className="p-6 space-y-6">
-                            <p className="text-sm text-gray-600 leading-relaxed bg-blue-50 p-3 rounded-lg border border-blue-100">
-                                {t.print_desc}
-                            </p>
-                            
-                            {/* 年份選擇 */}
+                            <p className="text-sm text-gray-600 leading-relaxed bg-blue-50 p-3 rounded-lg border border-blue-100">{t.print_desc}</p>
                             <div>
                                 <label className="block text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">{t.year}</label>
                                 <div className="flex gap-2">
                                     {availableYears.map(y => (
-                                        <button 
-                                            key={y}
-                                            onClick={() => setSelectedYear(y)}
-                                            className={`flex-1 py-2 rounded-lg font-bold border transition-all ${selectedYear === y ? 'bg-[#1E3A8A] text-white border-[#1E3A8A] shadow-md' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}
-                                        >
-                                            {y}
-                                        </button>
+                                        <button key={y} onClick={() => setSelectedYear(y)} className={`flex-1 py-2 rounded-lg font-bold border transition-all ${selectedYear === y ? 'bg-[#1E3A8A] text-white border-[#1E3A8A] shadow-md' : 'bg-white text-gray-600 border-gray-200 hover:bg-gray-50'}`}>{y}</button>
                                     ))}
                                 </div>
                             </div>
-
-                            {/* 月份選擇 (Grid) */}
                             <div>
                                 <div className="flex justify-between items-center mb-2">
                                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider">{t.month}</label>
-                                    <div className="flex gap-2">
-                                        <button onClick={selectAll} className="text-[10px] text-blue-600 hover:underline">{t.select_all}</button>
-                                        <button onClick={deselectAll} className="text-[10px] text-gray-400 hover:underline">{t.deselect_all}</button>
-                                    </div>
+                                    <div className="flex gap-2"><button onClick={selectAll} className="text-[10px] text-blue-600 hover:underline">{t.select_all}</button><button onClick={deselectAll} className="text-[10px] text-gray-400 hover:underline">{t.deselect_all}</button></div>
                                 </div>
                                 <div className="grid grid-cols-4 gap-2">
                                     {Array.from({length: 12}, (_, i) => i + 1).map(m => {
                                         const isSelected = selectedMonths.includes(m);
                                         return (
-                                            <button 
-                                                key={m} 
-                                                onClick={() => toggleMonth(m)}
-                                                className={`py-2 rounded-md text-sm font-medium transition-all flex flex-col items-center justify-center border ${
-                                                    isSelected 
-                                                    ? 'bg-blue-100 text-blue-800 border-blue-300 ring-1 ring-blue-300' 
-                                                    : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                                                }`}
-                                            >
-                                                {m} <span className="text-[10px] opacity-70">{lang === 'zh' ? '月' : ''}</span>
-                                            </button>
+                                            <button key={m} onClick={() => toggleMonth(m)} className={`py-2 rounded-md text-sm font-medium transition-all flex flex-col items-center justify-center border ${isSelected ? 'bg-blue-100 text-blue-800 border-blue-300 ring-1 ring-blue-300' : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}>{m} <span className="text-[10px] opacity-70">{lang === 'zh' ? '月' : ''}</span></button>
                                         );
                                     })}
                                 </div>
                             </div>
                         </div>
-
                         <div className="p-4 bg-gray-50 flex gap-3 border-t border-gray-100">
-                            <button onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-gray-300 text-gray-600 font-medium hover:bg-white hover:shadow-sm transition-all">
-                                {t.cancel}
-                            </button>
-                            <button 
-                                onClick={() => onConfirm(selectedYear, selectedMonths)} 
-                                disabled={selectedMonths.length === 0}
-                                className="flex-1 py-2.5 rounded-lg bg-[#1E3A8A] text-white font-bold shadow-md hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
-                            >
-                                <Eye size={18} />
-                                {t.print_preview_btn}
-                            </button>
+                            <button onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-gray-300 text-gray-600 font-medium hover:bg-white hover:shadow-sm transition-all">{t.cancel}</button>
+                            <button onClick={() => onConfirm(selectedYear, selectedMonths)} disabled={selectedMonths.length === 0} className="flex-1 py-2.5 rounded-lg bg-[#1E3A8A] text-white font-bold shadow-md hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"><Eye size={18} />{t.print_preview_btn}</button>
                         </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const JourneyView = ({ starCount, lang }) => {
+            const t = TRANSLATIONS[lang];
+            
+            const unlockedChars = JOURNEY_DATA.characters.filter(c => starCount >= c.stars);
+            const lockedChars = JOURNEY_DATA.characters.filter(c => starCount < c.stars);
+            
+            const unlockedLocs = JOURNEY_DATA.locations.filter(l => starCount >= l.stars);
+            const nextLockedLoc = JOURNEY_DATA.locations.find(l => starCount < l.stars);
+            
+            return (
+                <div className="max-w-4xl mx-auto space-y-8 pb-24 animate-in slide-in-from-bottom-4 duration-500">
+                    
+                    <div className="bg-gradient-to-br from-[#1E3A8A] to-[#2563EB] text-white p-6 md:p-8 rounded-2xl shadow-lg relative overflow-hidden">
+                        <div className="relative z-10">
+                            <div className="flex items-center gap-2 text-blue-200 mb-1 font-medium">
+                                <Milestone size={18} />
+                                {t.journey_subtitle}
+                            </div>
+                            <h2 className="text-3xl font-bold mb-4">{t.journey_title}</h2>
+                            <div className="flex items-end gap-3">
+                                <div className="text-6xl font-black leading-none">{starCount}</div>
+                                <div className="text-xl mb-1 opacity-90">{t.days_unit}</div>
+                            </div>
+                        </div>
+                        <div className="absolute right-0 bottom-0 opacity-10">
+                            <Map size={180} />
+                        </div>
+                    </div>
+
+                    {/* 1. 雲彩見證人 (順序移到上方) */}
+                    <div>
+                        <div className="flex items-center gap-2 mb-4 px-1">
+                            <Award className="text-amber-500" size={24} />
+                            <h3 className="font-bold text-gray-800 text-xl">{t.character_unlock}</h3>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {unlockedChars.length === 0 && (
+                                <div className="col-span-full py-12 text-center bg-white rounded-2xl border border-dashed border-gray-300 text-gray-400">
+                                    <Sparkles size={32} className="mx-auto mb-2 opacity-50" />
+                                    <p>持續讀經，每收集 3 顆星星解鎖一位聖經人物...</p>
+                                </div>
+                            )}
+
+                            {unlockedChars.map(char => (
+                                <div key={char.id} className="bg-white p-5 rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
+                                        <Award size={60} className="text-amber-500" />
+                                    </div>
+                                    <div className="flex items-start justify-between mb-3 relative z-10">
+                                        <div>
+                                            <div className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-1">{char.theme}</div>
+                                            <div className="text-2xl font-bold text-gray-800">{char.name}</div>
+                                        </div>
+                                        <div className="w-8 h-8 rounded-full bg-amber-50 flex items-center justify-center text-amber-600 font-bold text-xs">
+                                            {char.stars}
+                                        </div>
+                                    </div>
+                                    <div className="relative z-10 bg-amber-50/50 p-3 rounded-lg border border-amber-100/50">
+                                        <p className="text-gray-700 leading-relaxed font-serif-tc text-sm">
+                                            「{char.blessing}」
+                                        </p>
+                                    </div>
+                                </div>
+                            ))}
+
+                            {lockedChars.length > 0 && (
+                                <div className="bg-gray-50 p-5 rounded-xl border border-gray-200 border-dashed flex items-center justify-center text-center opacity-70">
+                                    <div>
+                                        <Lock size={24} className="mx-auto text-gray-400 mb-2" />
+                                        <div className="font-bold text-gray-500">下一位見證人</div>
+                                        <div className="text-xs text-gray-400 mt-1">需累積 {lockedChars[0].stars} 顆星星</div>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* 2. 聖經地圖 (順序移到下方) */}
+                    <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div className="p-5 border-b border-gray-100 flex items-center gap-2 bg-gray-50/50">
+                            <Map className="text-blue-600" size={20} />
+                            <h3 className="font-bold text-gray-800 text-lg">{t.location_map}</h3>
+                        </div>
+                        <div className="p-6">
+                            <div className="space-y-0 relative">
+                                <div className="absolute left-[19px] top-4 bottom-4 w-0.5 bg-gray-200 z-0"></div>
+
+                                {unlockedLocs.length === 0 && (
+                                    <div className="relative z-10 flex gap-4 pb-8">
+                                        <div className="w-10 h-10 rounded-full bg-blue-100 border-4 border-white shadow-sm flex items-center justify-center shrink-0">
+                                            <Anchor size={18} className="text-blue-600" />
+                                        </div>
+                                        <div className="pt-2">
+                                            <div className="font-bold text-gray-800 text-lg">旅程起點</div>
+                                            <div className="text-sm text-gray-500 mt-1">累積 7 顆星解鎖第一個地點...</div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {unlockedLocs.map((loc, idx) => {
+                                    const isCurrent = idx === unlockedLocs.length - 1;
+                                    return (
+                                        <div key={loc.id} className="relative z-10 flex gap-4 pb-8 last:pb-0 group">
+                                            <div className={`w-10 h-10 rounded-full border-4 border-white shadow-sm flex items-center justify-center shrink-0 transition-colors ${isCurrent ? 'bg-blue-600 text-white ring-2 ring-blue-200' : 'bg-blue-100 text-blue-600'}`}>
+                                                {isCurrent ? <Map size={18} /> : <CheckCircle size={18} />}
+                                            </div>
+                                            <div className="pt-1 flex-1">
+                                                <div className="flex items-center gap-3 mb-1">
+                                                    <div className={`font-bold text-lg ${isCurrent ? 'text-blue-700' : 'text-gray-800'}`}>
+                                                        {loc.name}
+                                                    </div>
+                                                    {isCurrent && <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">{t.current_pos}</span>}
+                                                </div>
+                                                <div className="text-sm text-gray-500 font-medium mb-2">{loc.theme}</div>
+                                                <div className="text-sm text-gray-600 leading-relaxed font-serif-tc italic bg-gray-50 p-3 rounded-lg border border-gray-100 group-hover:bg-blue-50/30 transition-colors">
+                                                    {loc.meditation}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+
+                                {nextLockedLoc && (
+                                    <div className="relative z-10 flex gap-4 pt-8">
+                                        <div className="w-10 h-10 rounded-full bg-gray-100 border-4 border-white flex items-center justify-center shrink-0 grayscale opacity-70">
+                                            <Lock size={16} className="text-gray-400" />
+                                        </div>
+                                        <div className="pt-2 opacity-60">
+                                            <div className="font-bold text-gray-500 text-lg flex items-center gap-2">
+                                                {nextLockedLoc.name}
+                                                <span className="text-xs font-normal border border-gray-300 rounded px-1.5 py-0.5">{nextLockedLoc.stars} {t.days_unit}</span>
+                                            </div>
+                                            <div className="text-sm text-gray-400 mt-1">{t.locked}</div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+        
+        // --- 輕量級 Toast 元件 ---
+        const Toast = ({ message, subMessage, onClose, type = 'star' }) => {
+            useEffect(() => {
+                // 如果有副標題文字，延長顯示時間以便閱讀
+                const duration = subMessage ? 6000 : 4000;
+                const timer = setTimeout(onClose, duration);
+                return () => clearTimeout(timer);
+            }, [onClose, subMessage]);
+
+            const isUnlock = type === 'unlock';
+            return (
+                <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] w-max max-w-[90%] animate-fade-in-up px-6 py-4 rounded-xl shadow-2xl flex items-start gap-4 text-sm md:text-base border transition-colors ${
+                    isUnlock 
+                    ? "bg-gradient-to-r from-blue-900 to-indigo-900 text-white border-blue-400/30" 
+                    : "bg-gray-800/95 backdrop-blur text-white border-white/10 items-center"
+                }`}>
+                    {isUnlock ? (
+                        <div className="p-2 bg-amber-400 rounded-full text-blue-900 animate-bounce-short mt-1"><Gift size={20} /></div>
+                    ) : (
+                        <Star className="text-yellow-400 fill-yellow-400 shrink-0" size={20} />
+                    )}
+                    <div className="flex flex-col text-left">
+                        <span className={isUnlock ? "font-bold text-amber-300 text-xs mb-0.5" : "hidden"}>{isUnlock ? "獎勵通知" : ""}</span>
+                        <span className={isUnlock ? "font-bold text-lg leading-tight" : ""}>{message}</span>
+                        {subMessage && (
+                            <span className="text-sm font-bold mt-2 font-serif-tc border-t border-white/20 pt-2 block leading-relaxed text-white">
+                                「{subMessage}」
+                            </span>
+                        )}
                     </div>
                 </div>
             );
@@ -1465,6 +1449,9 @@
             // Print State
             const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
             const [printPreviewData, setPrintPreviewData] = useState(null);
+            
+            // Toast State
+            const [toast, setToast] = useState(null); // { msg, type, subMsg }
 
             const t = TRANSLATIONS[lang];
 
@@ -1483,28 +1470,54 @@
                 if (!loading) localStorage.setItem('pjbc_user', JSON.stringify(userState));
             }, [userState, loading]);
 
-            const toggleRead = (date) => setUserState(prev => ({ ...prev, readStatus: { ...prev.readStatus, [date]: !prev.readStatus[date] } }));
-            const updateNote = (date, text) => setUserState(prev => ({ ...prev, notes: { ...prev.notes, [date]: text } }));
+            // 計算星星總數
+            const starCount = Object.values(userState.readStatus).filter(Boolean).length;
+
+            const toggleRead = (date) => {
+                const isCurrentlyRead = !!userState.readStatus[date];
+                
+                // 如果是標記為已讀（增加星星）
+                if (!isCurrentlyRead) {
+                    const newCount = starCount + 1;
+                    
+                    // 檢查是否解鎖新成就
+                    // 人物：3, 6, 9...
+                    const unlockedChar = JOURNEY_DATA.characters.find(c => c.stars === newCount);
+                    // 地點：7, 14, 21...
+                    const unlockedLoc = JOURNEY_DATA.locations.find(l => l.stars === newCount);
+
+                    if (unlockedChar) {
+                        setToast({ 
+                            msg: `${t.unlock_toast}見證人「${unlockedChar.name}」`, 
+                            subMsg: unlockedChar.blessing,
+                            type: 'unlock' 
+                        });
+                    } else if (unlockedLoc) {
+                        setToast({ 
+                            msg: `${t.unlock_toast}地點「${unlockedLoc.name}」`, 
+                            subMsg: unlockedLoc.meditation,
+                            type: 'unlock' 
+                        });
+                    } else {
+                        setToast({ msg: t.star_toast, type: 'star' });
+                    }
+                }
+                
+                setUserState(prev => ({ ...prev, readStatus: { ...prev.readStatus, [date]: !isCurrentlyRead } }));
+            };
             
-            // --- Handlers ---
             const handlePrintClick = () => setIsPrintModalOpen(true);
-            
             const handlePreviewConfirm = (year, months) => {
                 setIsPrintModalOpen(false);
                 setPrintPreviewData({ year, selectedMonths: months });
             };
-
             const closePreview = () => setPrintPreviewData(null);
 
-            // --- Sub-Components inside App context ---
             const DetailCard = ({ date, onNavigate }) => {
                 const plan = plans.find(p => p.date === date);
                 const [readingQuery, setReadingQuery] = useState(null);
                 
-                // --- Reset reading query when date changes ---
-                useEffect(() => {
-                    setReadingQuery(null);
-                }, [date]);
+                useEffect(() => { setReadingQuery(null); }, [date]);
 
                 if (!plan) return <div className="p-10 text-center text-gray-500">{t.no_data}</div>;
                 const isRead = userState.readStatus[date];
@@ -1512,17 +1525,12 @@
                 const dailyTenReadings = parseScriptureString(plan.dailyTen);
                 
                 const handlePrev = () => {
-                    const d = new Date(date);
-                    d.setDate(d.getDate() - 1);
-                    const newDate = d.toISOString().split('T')[0];
-                    if (onNavigate) onNavigate(newDate);
+                    const d = new Date(date); d.setDate(d.getDate() - 1);
+                    onNavigate(d.toISOString().split('T')[0]);
                 };
-
                 const handleNext = () => {
-                    const d = new Date(date);
-                    d.setDate(d.getDate() + 1);
-                    const newDate = d.toISOString().split('T')[0];
-                    if (onNavigate) onNavigate(newDate);
+                    const d = new Date(date); d.setDate(d.getDate() + 1);
+                    onNavigate(d.toISOString().split('T')[0]);
                 };
 
                 const renderButtons = (readings, source) => (
@@ -1531,12 +1539,8 @@
                             const isSelected = readingQuery && readingQuery.bookId === r.bookId && readingQuery.chapter === r.chapter && readingQuery.source === source;
                             const label = getButtonLabel(r, lang);
                             return (
-                                <button key={idx} onClick={() => setReadingQuery(isSelected ? null : { ...r, source, label })}
-                                    className={`text-xs px-3 py-1.5 rounded-full border flex items-center gap-1 transition-colors ${
-                                        isSelected ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-white text-blue-600 border-blue-200 hover:bg-blue-50"
-                                    }`}>
-                                    {isSelected ? <X size={12}/> : <Book size={12}/>}
-                                    {label}
+                                <button key={idx} onClick={() => setReadingQuery(isSelected ? null : { ...r, source, label })} className={`text-xs px-3 py-1.5 rounded-full border flex items-center gap-1 transition-colors ${isSelected ? "bg-blue-600 text-white border-blue-600 shadow-md" : "bg-white text-blue-600 border-blue-200 hover:bg-blue-50"}`}>
+                                    {isSelected ? <X size={12}/> : <Book size={12}/>} {label}
                                 </button>
                             );
                         })}
@@ -1545,52 +1549,34 @@
                 return (
                     <div className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <button onClick={handlePrev} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-blue-600 transition-colors">
-                                <ChevronLeft size={28} />
-                            </button>
+                            <button onClick={handlePrev} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-blue-600 transition-colors"><ChevronLeft size={28} /></button>
                             <div className="text-center">
-                                <h2 className="text-3xl font-bold text-[#1E3A8A] mb-1">
-                                    {parseInt(date.split('-')[1])} / {parseInt(date.split('-')[2])}
-                                    <span className="text-lg ml-2 font-medium text-gray-500">
-                                        ({lang === 'en' ? WEEKDAY_MAP[plan.weekday] : plan.weekday})
-                                    </span>
-                                </h2>
+                                <h2 className="text-3xl font-bold text-[#1E3A8A] mb-1">{parseInt(date.split('-')[1])} / {parseInt(date.split('-')[2])} <span className="text-lg ml-2 font-medium text-gray-500">({lang === 'en' ? WEEKDAY_MAP[plan.weekday] : plan.weekday})</span></h2>
                                 <div className="text-gray-400 font-medium">{date.split('-')[0]}</div>
                             </div>
-                            <button onClick={handleNext} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-blue-600 transition-colors">
-                                <ChevronRight size={28} />
-                            </button>
+                            <button onClick={handleNext} className="p-2 hover:bg-gray-100 rounded-full text-gray-400 hover:text-blue-600 transition-colors"><ChevronRight size={28} /></button>
                         </div>
-
-                        {/* Moved Mark Read Button Here */}
                         <div className="flex justify-center">
                              <button onClick={() => toggleRead(date)} className={`w-full max-w-xs py-3 rounded-full flex items-center justify-center gap-2 font-bold transition-all shadow-md transform hover:scale-[1.02] active:scale-95 ${isRead ? "bg-green-500 text-white shadow-green-200 ring-2 ring-green-100" : "bg-white border-2 border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-600"}`}>
                                 {isRead ? <CheckCircle size={22} /> : <Circle size={22} />}{isRead ? t.marked : t.mark_read}
                              </button>
                         </div>
-
                         <div className="flex flex-col gap-4">
                              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 relative group hover:border-blue-200 transition-all">
                                 <div className="absolute right-0 top-0 p-2 opacity-10"><BookOpen size={40} className="text-[#1E3A8A]" /></div>
                                 <div className="text-xs text-blue-600 font-bold mb-1">{t.daily_one}</div>
                                 <div className="text-lg font-bold text-gray-800">{formatScriptureDisplay(plan.dailyOne, lang)}</div>
                                 {renderButtons(dailyOneReadings, 'one')}
-                                {readingQuery && readingQuery.source === 'one' && (
-                                   <BibleReader bookId={readingQuery.bookId} chapter={readingQuery.chapter} label={readingQuery.label} lang={lang} />
-                                )}
+                                {readingQuery && readingQuery.source === 'one' && (<BibleReader bookId={readingQuery.bookId} chapter={readingQuery.chapter} label={readingQuery.label} lang={lang} />)}
                              </div>
                              <div className="bg-orange-50/50 p-4 rounded-xl border border-orange-100 relative group hover:border-orange-200 transition-all">
                                 <div className="absolute right-0 top-0 p-2 opacity-10"><Sparkles size={40} className="text-[#D97706]" /></div>
                                 <div className="text-xs text-orange-600 font-bold mb-1">{t.daily_ten}</div>
                                 <div className="text-lg font-bold text-gray-800 leading-snug">{formatScriptureDisplay(plan.dailyTen, lang)}</div>
                                 {renderButtons(dailyTenReadings, 'ten')}
-                                {readingQuery && readingQuery.source === 'ten' && (
-                                   <BibleReader bookId={readingQuery.bookId} chapter={readingQuery.chapter} label={readingQuery.label} lang={lang} />
-                                )}
+                                {readingQuery && readingQuery.source === 'ten' && (<BibleReader bookId={readingQuery.bookId} chapter={readingQuery.chapter} label={readingQuery.label} lang={lang} />)}
                              </div>
                         </div>
-                        
-                        {/* 移除了筆記欄位 */}
                     </div>
                 );
             };
@@ -1600,11 +1586,7 @@
                 const month = currentDate.getMonth() + 1;
                 const daysInMonth = new Date(year, month, 0).getDate();
                 const firstDay = new Date(year, month - 1, 1).getDay();
-                
-                const weekdays = lang === 'zh' 
-                    ? ["日", "一", "二", "三", "四", "五", "六"] 
-                    : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
+                const weekdays = lang === 'zh' ? ["日", "一", "二", "三", "四", "五", "六"] : ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
                 return (
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden h-full flex flex-col">
                         <div className="p-4 flex items-center justify-between border-b border-gray-100 bg-gray-50/50">
@@ -1633,12 +1615,8 @@
                                         </div>
                                         {plan ? (
                                             <div className="space-y-1 mt-2">
-                                                <div className="text-[9px] text-[#1E3A8A] font-medium bg-blue-100/40 px-1.5 py-0.5 rounded leading-tight truncate">
-                                                    {formatCalendarDisplay(plan.dailyOne, lang)}
-                                                </div>
-                                                <div className="hidden md:block text-[9px] text-gray-500 px-1 mt-0.5 leading-tight truncate">
-                                                    {formatCalendarDisplay(plan.dailyTen, lang)}
-                                                </div>
+                                                <div className="text-[9px] text-[#1E3A8A] font-medium bg-blue-100/40 px-1.5 py-0.5 rounded leading-tight truncate">{formatCalendarDisplay(plan.dailyOne, lang)}</div>
+                                                <div className="hidden md:block text-[9px] text-gray-500 px-1 mt-0.5 leading-tight truncate">{formatCalendarDisplay(plan.dailyTen, lang)}</div>
                                             </div>
                                         ) : <span className="text-[10px] text-gray-300"></span>}
                                     </div>
@@ -1653,25 +1631,8 @@
                 const [search, setSearch] = useState("");
                 const [filterYear, setFilterYear] = useState(currentCalendarDate.getFullYear());
                 const [filterMonth, setFilterMonth] = useState(currentCalendarDate.getMonth() + 1);
-
-                const handlePrevMonth = () => {
-                    if (filterMonth === 1) {
-                        setFilterMonth(12);
-                        setFilterYear(prev => prev - 1);
-                    } else {
-                        setFilterMonth(prev => prev - 1);
-                    }
-                };
-
-                const handleNextMonth = () => {
-                    if (filterMonth === 12) {
-                        setFilterMonth(1);
-                        setFilterYear(prev => prev + 1);
-                    } else {
-                        setFilterMonth(prev => prev + 1);
-                    }
-                };
-
+                const handlePrevMonth = () => { if (filterMonth === 1) { setFilterMonth(12); setFilterYear(prev => prev - 1); } else { setFilterMonth(prev => prev - 1); } };
+                const handleNextMonth = () => { if (filterMonth === 12) { setFilterMonth(1); setFilterYear(prev => prev + 1); } else { setFilterMonth(prev => prev + 1); } };
                 const filtered = useMemo(() => {
                     const prefix = `${filterYear}-${String(filterMonth).padStart(2,'0')}`;
                     return plans.filter(p => p.date.startsWith(prefix) && (p.dailyOne.includes(search) || p.dailyTen.includes(search)));
@@ -1680,16 +1641,12 @@
                     <div className="space-y-4 max-w-4xl mx-auto pb-24">
                         <div className="bg-white p-4 rounded-xl border border-gray-200 sticky top-0 z-20 shadow-sm flex flex-col md:flex-row gap-4 no-print">
                             <div className="flex items-center gap-2 justify-between md:justify-start">
-                                <button onClick={handlePrevMonth} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors border border-transparent hover:border-gray-200">
-                                    <ChevronLeft size={20} />
-                                </button>
+                                <button onClick={handlePrevMonth} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors border border-transparent hover:border-gray-200"><ChevronLeft size={20} /></button>
                                 <div className="flex gap-2">
                                     <select value={filterYear} onChange={e => setFilterYear(Number(e.target.value))} className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100">{[2025, 2026, 2027].map(y => <option key={y} value={y}>{y}</option>)}</select>
                                     <select value={filterMonth} onChange={e => setFilterMonth(Number(e.target.value))} className="bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-100">{Array.from({length:12}).map((_,i) => <option key={i+1} value={i+1}>{i+1}月</option>)}</select>
                                 </div>
-                                <button onClick={handleNextMonth} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors border border-transparent hover:border-gray-200">
-                                    <ChevronRight size={20} />
-                                </button>
+                                <button onClick={handleNextMonth} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors border border-transparent hover:border-gray-200"><ChevronRight size={20} /></button>
                             </div>
                             <div className="relative flex-1">
                                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16}/><input type="text" placeholder="Search..." className="w-full pl-9 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-100" value={search} onChange={e => setSearch(e.target.value)} />
@@ -1701,14 +1658,8 @@
                                 <div key={p.date} onClick={() => setSelectedDate(p.date)} className="bg-white p-4 rounded-xl border border-gray-200 flex items-center gap-4 hover:border-blue-300 cursor-pointer group transition-all hover:shadow-sm">
                                     <div className="w-14 text-center shrink-0"><div className="text-xl font-bold text-gray-700">{p.date.split('-')[2]}</div><div className="text-xs text-gray-400">({lang === 'en' ? WEEKDAY_MAP[p.weekday] : p.weekday})</div></div>
                                     <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-1 md:gap-4">
-                                        <div>
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase">{t.daily_one}</span>
-                                            <div className="text-[#1E3A8A] font-medium text-sm group-hover:text-blue-700">{formatScriptureDisplay(p.dailyOne, lang)}</div>
-                                        </div>
-                                        <div>
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase">{t.daily_ten}</span>
-                                            <div className="text-gray-600 text-sm group-hover:text-gray-800">{formatScriptureDisplay(p.dailyTen, lang)}</div>
-                                        </div>
+                                        <div><span className="text-[10px] text-gray-400 font-bold uppercase">{t.daily_one}</span><div className="text-[#1E3A8A] font-medium text-sm group-hover:text-blue-700">{formatScriptureDisplay(p.dailyOne, lang)}</div></div>
+                                        <div><span className="text-[10px] text-gray-400 font-bold uppercase">{t.daily_ten}</span><div className="text-gray-600 text-sm group-hover:text-gray-800">{formatScriptureDisplay(p.dailyTen, lang)}</div></div>
                                     </div>
                                     <div className="shrink-0 text-gray-300">{userState.readStatus[p.date] ? <CheckCircle size={20} className="text-green-500" /> : <ChevronRight size={20} />}</div>
                                 </div>
@@ -1718,54 +1669,39 @@
                 );
             };
 
-            // 使用 Portal 將預覽畫面渲染到獨立節點
             const PreviewPortal = ({ children }) => {
                 const mountNode = document.getElementById('print-preview-root');
                 return createRoot(mountNode).render(children);
             };
 
-            // Effect: 處理 Preview 資料改變時的渲染
             useEffect(() => {
                 const mountNode = document.getElementById('print-preview-root');
-                if (printPreviewData) {
-                    if (mountNode) {
-                        const root = createRoot(mountNode);
-                        root.render(
-                            <PrintPreviewOverlay 
-                                year={printPreviewData.year} 
-                                selectedMonths={printPreviewData.selectedMonths} 
-                                plans={plans} 
-                                lang={lang} 
-                                onClose={closePreview} 
-                            />
-                        );
-                        return () => setTimeout(() => root.unmount(), 0);
-                    }
+                if (printPreviewData && mountNode) {
+                    const root = createRoot(mountNode);
+                    root.render(<PrintPreviewOverlay year={printPreviewData.year} selectedMonths={printPreviewData.selectedMonths} plans={plans} lang={lang} onClose={closePreview} />);
+                    return () => setTimeout(() => root.unmount(), 0);
                 }
             }, [printPreviewData, plans, lang]);
             
-
             if (loading) return <div className="h-screen flex items-center justify-center text-[#1E3A8A] font-bold">Loading...</div>;
 
             return (
                 <div className="min-h-screen bg-[#F9F9F7] text-[#374151] pb-20 md:pb-0 md:pt-20">
-                    
-                    {/* 列印預覽 Overlay (當 printPreviewData 存在時渲染) */}
-                    {printPreviewData && (
-                        <PrintPreviewOverlay 
-                            year={printPreviewData.year} 
-                            selectedMonths={printPreviewData.selectedMonths} 
-                            plans={plans} 
-                            lang={lang} 
-                            onClose={closePreview} 
-                        />
-                    )}
+                    {/* Toast 提示 */}
+                    {toast && <Toast message={toast.msg} subMessage={toast.subMsg} type={toast.type} onClose={() => setToast(null)} />}
+
+                    {printPreviewData && <PrintPreviewOverlay year={printPreviewData.year} selectedMonths={printPreviewData.selectedMonths} plans={plans} lang={lang} onClose={closePreview} />}
 
                     <nav className="fixed bottom-0 md:top-0 md:bottom-auto left-0 w-full bg-white/90 backdrop-blur-md border-t md:border-b border-gray-200 z-40 px-6 py-2 md:py-3 shadow-lg md:shadow-sm no-print">
                         <div className="max-w-5xl mx-auto flex justify-between items-center">
                             <div className="hidden md:flex items-center gap-3"><div className="w-9 h-9 rounded-lg bg-[#1E3A8A] flex items-center justify-center text-white font-bold text-lg shadow-sm">P</div><span className="text-xl font-bold tracking-tight text-[#1E3A8A]">PJBC</span></div>
                             <div className="flex w-full md:w-auto justify-around md:gap-8">
-                                {[{id:'home',icon:Home,label:t.nav.home},{id:'calendar',icon:CalendarIcon,label:t.nav.calendar},{id:'table',icon:List,label:t.nav.table},{id:'admin',icon:Settings,label:t.nav.admin}].map(i => (
+                                {[
+                                    {id:'home',icon:Home,label:t.nav.home},
+                                    {id:'calendar',icon:CalendarIcon,label:t.nav.calendar},
+                                    {id:'table',icon:List,label:t.nav.table},
+                                    {id:'journey',icon:Map,label:t.nav.journey}
+                                ].map(i => (
                                     <button key={i.id} onClick={() => setActiveTab(i.id)} className={`flex flex-col md:flex-row items-center gap-1 md:gap-2 p-2 rounded-xl transition-all ${activeTab === i.id ? "text-[#1E3A8A] bg-blue-50 font-semibold" : "text-gray-400 hover:text-[#1E3A8A] hover:bg-gray-50"}`}>
                                         <i.icon size={22} strokeWidth={activeTab === i.id ? 2.5 : 2} /><span className="text-[10px] md:text-sm">{i.label}</span>
                                     </button>
@@ -1793,33 +1729,24 @@
                                                 <button onClick={handlePrintClick} className="flex items-center gap-1 text-xs font-bold border border-gray-300 bg-white rounded-full px-3 py-1 shadow-sm hover:bg-gray-50 transition-all text-gray-800">
                                                     <Printer size={14} /> {t.print_btn}
                                                 </button>
-                                                <button 
-                                                    onClick={() => setLang(l => l === 'zh' ? 'en' : 'zh')} 
-                                                    className="flex items-center gap-1 text-xs font-bold border border-gray-300 bg-white rounded-full px-3 py-1 shadow-sm hover:bg-gray-50 transition-all text-gray-600"
-                                                >
-                                                    <Globe size={14} /> {lang === 'zh' ? 'EN' : '中'}
-                                                </button>
+                                                <button onClick={() => setLang(l => l === 'zh' ? 'en' : 'zh')} className="flex items-center gap-1 text-xs font-bold border border-gray-300 bg-white rounded-full px-3 py-1 shadow-sm hover:bg-gray-50 transition-all text-gray-600"><Globe size={14} /> {lang === 'zh' ? 'EN' : '中'}</button>
                                             </div>
-                                            <button 
-                                                onClick={() => {
-                                                    const now = new Date();
-                                                    setSelectedDate(now.toISOString().split('T')[0]);
-                                                    setCurrentCalendarDate(now);
-                                                }} 
-                                                className="bg-[#1E3A8A] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:bg-blue-900 hover:scale-105 transition-all flex items-center gap-2 text-base whitespace-nowrap"
-                                            >
-                                                <BookOpen size={20} /> {t.today_btn}
-                                            </button>
+                                            <button onClick={() => { const now = new Date(); setSelectedDate(now.toISOString().split('T')[0]); setCurrentCalendarDate(now); }} className="bg-[#1E3A8A] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:bg-blue-900 hover:scale-105 transition-all flex items-center gap-2 text-base whitespace-nowrap"><BookOpen size={20} /> {t.today_btn}</button>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-3 md:flex md:gap-4">
-                                        <div className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3 flex-1">
-                                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center"><TrendingUp size={20} className="text-[#1E3A8A]" /></div>
-                                            <div><div className="text-xs text-gray-500">{t.days_read}</div><div className="font-bold text-[#1E3A8A] flex items-baseline gap-1">{Object.values(userState.readStatus).filter(Boolean).length} <span className="text-xs font-normal text-gray-400">{t.days_unit}</span></div></div>
+                                        <div className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3 flex-1 cursor-default transition-all group">
+                                            <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100"><Star size={20} className="text-[#1E3A8A] fill-[#1E3A8A]" /></div>
+                                            <div>
+                                                <div className="text-xs text-gray-500">{t.days_read}</div>
+                                                <div className="font-bold text-[#1E3A8A] flex items-baseline gap-1 leading-tight">{starCount} <span className="text-xs font-normal text-gray-400">{t.days_unit}</span></div>
+                                                <div className="text-[11px] text-gray-400 font-medium mt-0.5">{lang === 'zh' ? `已讀 ${starCount} 天` : `${starCount} days read`}</div>
+                                            </div>
                                         </div>
-                                        <div className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3 flex-1 cursor-pointer hover:border-blue-300 transition-all group" onClick={() => setActiveTab('table')}>
-                                            <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center group-hover:bg-orange-100 transition-colors"><LayoutGrid size={20} className="text-[#D97706]" /></div>
-                                            <div><div className="text-xs text-gray-500">{t.full_schedule}</div><div className="font-bold text-gray-700 group-hover:text-[#D97706] text-sm">{t.view_list}</div></div>
+                                        {/* 修改：將「完整進度表」按鈕替換為「我的旅程」按鈕 */}
+                                        <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-3 rounded-xl border border-orange-200 shadow-sm flex items-center gap-3 flex-1 cursor-pointer hover:shadow-md transition-all group" onClick={() => setActiveTab('journey')}>
+                                            <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-amber-600 shadow-sm group-hover:scale-110 transition-transform"><Award size={20} /></div>
+                                            <div><div className="text-xs text-amber-600 font-bold uppercase tracking-wide">{t.journey_title}</div><div className="font-bold text-gray-800 text-sm group-hover:text-amber-800">{t.view_journey} <span className="inline-block transition-transform group-hover:translate-x-1">→</span></div></div>
                                         </div>
                                     </div>
                                 </div>
@@ -1828,13 +1755,9 @@
                                 </div>
                             </div>
                         )}
-                        {activeTab === 'calendar' && (
-                             <div className="max-w-5xl mx-auto animate-in fade-in h-[calc(100vh-140px)]">
-                                <CalendarView currentDate={currentCalendarDate} setCurrentDate={setCurrentCalendarDate} />
-                             </div>
-                        )}
+                        {activeTab === 'calendar' && <div className="max-w-5xl mx-auto animate-in fade-in h-[calc(100vh-140px)]"><CalendarView currentDate={currentCalendarDate} setCurrentDate={setCurrentCalendarDate} /></div>}
                         {activeTab === 'table' && <div className="animate-in fade-in"><TableView /></div>}
-                        {activeTab === 'admin' && <div className="animate-in fade-in text-center p-10 text-gray-500">Settings (Demo)</div>}
+                        {activeTab === 'journey' && <div className="animate-in fade-in"><JourneyView starCount={starCount} lang={lang} /></div>}
                     </main>
 
                     {selectedDate && (
@@ -1846,13 +1769,7 @@
                         </div>
                     )}
                     
-                    <PrintModal 
-                        isOpen={isPrintModalOpen} 
-                        onClose={() => setIsPrintModalOpen(false)} 
-                        onConfirm={handlePreviewConfirm}
-                        availableYears={[2025, 2026]}
-                        lang={lang}
-                    />
+                    <PrintModal isOpen={isPrintModalOpen} onClose={() => setIsPrintModalOpen(false)} onConfirm={handlePreviewConfirm} availableYears={[2025, 2026]} lang={lang} />
                 </div>
             );
         }
