@@ -243,7 +243,7 @@
           Map, Award, Anchor, Milestone, Lock, Gift, Bell, User
         } from 'lucide-react';
 
-        // --- 旅程資料庫 (更新：加入英文翻譯) ---
+        // --- 旅程資料庫 (更新：地點加入 book 標記) ---
         const JOURNEY_DATA = {
             characters: [
                 { id: 1, stars: 3, name: "亞伯拉罕", name_en: "Abraham", gender: 'm', theme: "信心之父", theme_en: "Father of Faith", blessing: "願你在未知的旅途中，依然信靠神的應許，因為祂是信實的。", blessing_en: "May you trust God's promises in the unknown journey, for He is faithful." },
@@ -258,16 +258,16 @@
                 { id: 10, stars: 30, name: "馬利亞", name_en: "Mary", gender: 'f', theme: "尊主為大", theme_en: "Magnifying the Lord", blessing: "願你的心尊主為大，靈以神為樂，順服神話語的成就。", blessing_en: "May your soul magnify the Lord and your spirit rejoice in God, submitting to the fulfillment of His word." }
             ],
             locations: [
-                { id: 1, stars: 7, name: "伊甸園", name_en: "Eden", theme: "起初的愛", theme_en: "First Love", meditation: "回到起初，神看一切都甚好。願你在忙碌中，找回與神同行的單純快樂。", meditation_en: "Back to the beginning, God saw it was good. May you find the pure joy of walking with God amidst busyness." },
-                { id: 2, stars: 14, name: "亞拉臘山", name_en: "Ararat", theme: "新的開始", theme_en: "New Beginning", meditation: "洪水退去，彩虹立約。願舊事已過，你的生命在基督裡成為新造的人。", meditation_en: "The flood receded, the rainbow covenant stands. May old things pass away, and you become a new creation in Christ." },
-                { id: 3, stars: 21, name: "吾珥", name_en: "Ur", theme: "呼召之地", theme_en: "Land of Calling", meditation: "離開本地本族，不是流浪，而是跟隨。願你聽見那溫柔的呼喚，勇敢起行。", meditation_en: "Leaving home is not wandering but following. May you hear that gentle call and set out courageously." },
-                { id: 4, stars: 28, name: "紅海", name_en: "Red Sea", theme: "神蹟與拯救", theme_en: "Miracles and Salvation", meditation: "前有紅海，後有追兵，正是神顯榮耀的時刻。只管站住，看耶和華為你施行救恩。", meditation_en: "Red Sea ahead, soldiers behind—time for God's glory. Stand firm and see the salvation of the Lord." },
-                { id: 5, stars: 35, name: "西奈山", name_en: "Sinai", theme: "聖潔之約", theme_en: "Covenant of Holiness", meditation: "神的話語是腳前的燈。願你在山上領受的亮光，成為山下行走的準則。", meditation_en: "God's word is a lamp to your feet. May the light received on the mountain become the rule for walking below." },
-                { id: 6, stars: 42, name: "迦南地", name_en: "Canaan", theme: "應許之地", theme_en: "Promised Land", meditation: "流奶與蜜之地需要爭戰得地為業。願你剛強壯膽，不看巨人的高大，只看神的應許。", meditation_en: "Land of milk and honey requires fighting to possess. Be strong, look not at giants, but at God's promises." },
-                { id: 7, stars: 49, name: "伯利恆", name_en: "Bethlehem", theme: "謙卑的降生", theme_en: "Humble Birth", meditation: "最偉大的王，降生在最卑微的馬槽。願你的心也成為虛己的器皿，迎接主的同在。", meditation_en: "The greatest King born in a humble manger. May your heart be an empty vessel to welcome the Lord's presence." },
-                { id: 8, stars: 56, name: "加利利湖", name_en: "Galilee", theme: "平靜風浪", theme_en: "Calming the Storm", meditation: "人生的風浪再大，主都在船上。願你聽見那聲「住了吧！靜了吧！」，得享屬天的安息。", meditation_en: "No matter the storm, the Lord is in the boat. May you hear \"Peace! Be still!\" and enjoy heavenly rest." },
-                { id: 9, stars: 63, name: "各各他", name_en: "Golgotha", theme: "捨己的愛", theme_en: "Sacrificial Love", meditation: "十字架是愛的記號。願你常常思念那為你捨命的主，生命再次被更新。", meditation_en: "The cross is the mark of love. May you often remember the Lord who gave His life for you, renewing your life." },
-                { id: 10, stars: 70, name: "新耶路撒冷", name_en: "New Jerusalem", theme: "永恆的盼望", theme_en: "Eternal Hope", meditation: "眼淚必被擦去，不再有死亡與悲哀。願這永恆的家鄉，成為你今日奔跑的力量。", meditation_en: "Tears wiped away, no more death or sorrow. May this eternal home be your strength for running today." }
+                { id: 1, stars: 7, name: "伊甸園", name_en: "Eden", book: "創世記", book_en: "Genesis", theme: "起初的愛", theme_en: "First Love", meditation: "回到起初，神看一切都甚好。願你在忙碌中，找回與神同行的單純快樂。", meditation_en: "Back to the beginning, God saw it was good. May you find the pure joy of walking with God amidst busyness." },
+                { id: 2, stars: 14, name: "亞拉臘山", name_en: "Ararat", book: "創世記", book_en: "Genesis", theme: "新的開始", theme_en: "New Beginning", meditation: "洪水退去，彩虹立約。願舊事已過，你的生命在基督裡成為新造的人。", meditation_en: "The flood receded, the rainbow covenant stands. May old things pass away, and you become a new creation in Christ." },
+                { id: 3, stars: 21, name: "吾珥", name_en: "Ur", book: "創世記", book_en: "Genesis", theme: "呼召之地", theme_en: "Land of Calling", meditation: "離開本地本族，不是流浪，而是跟隨。願你聽見那溫柔的呼喚，勇敢起行。", meditation_en: "Leaving home is not wandering but following. May you hear that gentle call and set out courageously." },
+                { id: 4, stars: 28, name: "紅海", name_en: "Red Sea", book: "出埃及記", book_en: "Exodus", theme: "神蹟與拯救", theme_en: "Miracles and Salvation", meditation: "前有紅海，後有追兵，正是神顯榮耀的時刻。只管站住，看耶和華為你施行救恩。", meditation_en: "Red Sea ahead, soldiers behind—time for God's glory. Stand firm and see the salvation of the Lord." },
+                { id: 5, stars: 35, name: "西奈山", name_en: "Sinai", book: "出埃及記", book_en: "Exodus", theme: "聖潔之約", theme_en: "Covenant of Holiness", meditation: "神的話語是腳前的燈。願你在山上領受的亮光，成為山下行走的準則。", meditation_en: "God's word is a lamp to your feet. May the light received on the mountain become the rule for walking below." },
+                { id: 6, stars: 42, name: "迦南地", name_en: "Canaan", book: "約書亞記", book_en: "Joshua", theme: "應許之地", theme_en: "Promised Land", meditation: "流奶與蜜之地需要爭戰得地為業。願你剛強壯膽，不看巨人的高大，只看神的應許。", meditation_en: "Land of milk and honey requires fighting to possess. Be strong, look not at giants, but at God's promises." },
+                { id: 7, stars: 49, name: "伯利恆", name_en: "Bethlehem", book: "路加福音", book_en: "Luke", theme: "謙卑的降生", theme_en: "Humble Birth", meditation: "最偉大的王，降生在最卑微的馬槽。願你的心也成為虛己的器皿，迎接主的同在。", meditation_en: "The greatest King born in a humble manger. May your heart be an empty vessel to welcome the Lord's presence." },
+                { id: 8, stars: 56, name: "加利利湖", name_en: "Galilee", book: "馬可福音", book_en: "Mark", theme: "平靜風浪", theme_en: "Calming the Storm", meditation: "人生的風浪再大，主都在船上。願你聽見那聲「住了吧！靜了吧！」，得享屬天的安息。", meditation_en: "No matter the storm, the Lord is in the boat. May you hear \"Peace! Be still!\" and enjoy heavenly rest." },
+                { id: 9, stars: 63, name: "各各他", name_en: "Golgotha", book: "馬太福音", book_en: "Matthew", theme: "捨己的愛", theme_en: "Sacrificial Love", meditation: "十字架是愛的記號。願你常常思念那為你捨命的主，生命再次被更新。", meditation_en: "The cross is the mark of love. May you often remember the Lord who gave His life for you, renewing your life." },
+                { id: 10, stars: 70, name: "新耶路撒冷", name_en: "New Jerusalem", book: "啟示錄", book_en: "Revelation", theme: "永恆的盼望", theme_en: "Eternal Hope", meditation: "眼淚必被擦去，不再有死亡與悲哀。願這永恆的家鄉，成為你今日奔跑的力量。", meditation_en: "Tears wiped away, no more death or sorrow. May this eternal home be your strength for running today." }
             ]
         };
 
@@ -1484,10 +1484,14 @@
                                                 </div>
                                                 <div className="pt-1 flex-1">
                                                     <div className="flex items-center gap-3 mb-1">
-                                                        <div className={`font-bold text-lg ${isCurrent ? 'text-blue-700' : 'text-gray-800'}`}>
+                                                        <div className={`font-bold text-lg ${isCurrent ? 'text-blue-700' : 'text-gray-800'} flex items-center gap-2`}>
                                                             {getText(loc, 'name')}
+                                                            {/* 新增書卷標記 */}
+                                                            <span className="text-[10px] px-1.5 py-0.5 rounded border border-gray-200 text-gray-500 font-normal bg-white whitespace-nowrap">
+                                                                {getText(loc, 'book')}
+                                                            </span>
                                                         </div>
-                                                        {isCurrent && <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">{t.current_pos}</span>}
+                                                        {isCurrent && <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold whitespace-nowrap">{t.current_pos}</span>}
                                                     </div>
                                                     <div className="text-sm text-gray-500 font-medium mb-2">{getText(loc, 'theme')}</div>
                                                     <div className="text-base text-gray-900 leading-relaxed font-bold bg-gray-50 p-3 rounded-lg border border-gray-100 group-hover:bg-blue-50/30 transition-colors">
@@ -1507,6 +1511,8 @@
                                                 <div className="font-bold text-gray-500 text-lg flex items-center gap-2">
                                                     {getText(nextLockedLoc, 'name')}
                                                     <span className="text-xs font-normal border border-gray-300 rounded px-1.5 py-0.5">{nextLockedLoc.stars} {t.days_unit}</span>
+                                                    {/* 鎖定狀態也顯示書卷標記，激勵使用者 */}
+                                                    <span className="text-xs font-normal border border-dashed border-gray-300 rounded px-1.5 py-0.5 bg-white/50">{getText(nextLockedLoc, 'book')}</span>
                                                 </div>
                                                 <div className="text-sm text-gray-400 mt-1">{t.locked}</div>
                                             </div>
