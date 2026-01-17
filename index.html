@@ -366,6 +366,9 @@
                 start_point: "旅程起點",
                 start_desc: "累積 7 顆星解鎖第一個地點...",
                 char_locked_desc: "持續讀經，每收集 3 顆星星解鎖一位聖經人物...",
+                rules_title: "解鎖規則",
+                rules_char: "每累積 3 顆星解鎖一位人物",
+                rules_loc: "每累積 7 顆星解鎖一個地點",
                 nav: { home: "首頁", calendar: "月曆", table: "列表", journey: "旅程" }
             },
             en: {
@@ -418,6 +421,9 @@
                 start_point: "Journey Start",
                 start_desc: "Collect 7 stars to unlock the first location...",
                 char_locked_desc: "Read daily, unlock a Bible character every 3 stars...",
+                rules_title: "Unlock Rules",
+                rules_char: "Unlock a character every 3 stars",
+                rules_loc: "Unlock a location every 7 stars",
                 nav: { home: "Home", calendar: "Calendar", table: "List", journey: "Journey" }
             }
         };
@@ -1342,6 +1348,24 @@
                         </div>
                         <div className="absolute right-0 bottom-0 opacity-10">
                             <Map size={180} />
+                        </div>
+                    </div>
+
+                    {/* Rules Banner (新增的規則區塊) */}
+                    <div className="bg-white/80 backdrop-blur border border-blue-100 rounded-xl p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-sm">
+                        <div className="flex items-center gap-2 text-[#1E3A8A] font-bold text-sm shrink-0">
+                            <Sparkles size={16} className="text-amber-500 fill-amber-500" />
+                            {t.rules_title}
+                        </div>
+                        <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 text-xs md:text-sm text-gray-600 w-full md:w-auto">
+                            <div className="flex items-center gap-2 bg-indigo-50/50 px-3 py-1.5 rounded-lg border border-indigo-100/50">
+                                <div className="w-1.5 h-1.5 rounded-full bg-indigo-400"></div>
+                                {t.rules_char}
+                            </div>
+                            <div className="flex items-center gap-2 bg-blue-50/50 px-3 py-1.5 rounded-lg border border-blue-100/50">
+                                <div className="w-1.5 h-1.5 rounded-full bg-blue-400"></div>
+                                {t.rules_loc}
+                            </div>
                         </div>
                     </div>
 
