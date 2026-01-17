@@ -1507,8 +1507,8 @@
         // --- 輕量級 Toast 元件 ---
         const Toast = ({ message, subMessage, onClose, type = 'star' }) => {
             useEffect(() => {
-                // 修改：通知顯示時間設為 1.5 秒
-                const duration = 1500;
+                // 修改：通知顯示時間設為 2.5 秒
+                const duration = 2500;
                 const timer = setTimeout(onClose, duration);
                 return () => clearTimeout(timer);
             }, [onClose]);
