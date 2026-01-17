@@ -1507,21 +1507,21 @@
         // --- 輕量級 Toast 元件 ---
         const Toast = ({ message, subMessage, onClose, type = 'star' }) => {
             useEffect(() => {
-                // 修改：通知顯示時間設為 2.5 秒
-                const duration = 2500;
+                // 根據類型設定顯示時間：星星 1.5 秒，解鎖 6 秒 (預留時間閱讀，也可手動關閉)
+                const duration = type === 'unlock' ? 6000 : 1500;
                 const timer = setTimeout(onClose, duration);
                 return () => clearTimeout(timer);
-            }, [onClose]);
+            }, [onClose, type]);
 
             const isUnlock = type === 'unlock';
             return (
-                <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] w-max max-w-[90%] animate-fade-in-up px-6 py-4 rounded-xl shadow-2xl flex items-start gap-4 text-sm md:text-base border transition-colors ${
+                <div className={`fixed top-24 left-1/2 -translate-x-1/2 z-[100] w-max max-w-[90%] animate-fade-in-up pl-5 pr-12 py-4 rounded-xl shadow-2xl flex items-start gap-4 text-sm md:text-base border transition-colors ${
                     isUnlock 
                     ? "bg-gradient-to-r from-blue-900 to-indigo-900 text-white border-blue-400/30" 
-                    : "bg-gray-800/95 backdrop-blur text-white border-white/10 items-center"
+                    : "bg-gray-800/95 backdrop-blur text-white border-white/10 items-center pr-10"
                 }`}>
                     {isUnlock ? (
-                        <div className="p-2 bg-amber-400 rounded-full text-blue-900 animate-bounce-short mt-1"><Gift size={20} /></div>
+                        <div className="p-2 bg-amber-400 rounded-full text-blue-900 animate-bounce-short mt-1 shrink-0"><Gift size={20} /></div>
                     ) : (
                         <Star className="text-yellow-400 fill-yellow-400 shrink-0" size={20} />
                     )}
@@ -1534,6 +1534,15 @@
                             </span>
                         )}
                     </div>
+                    
+                    {/* 手動關閉按鈕 */}
+                    <button 
+                        onClick={(e) => { e.stopPropagation(); onClose(); }}
+                        className="absolute top-2 right-2 p-1.5 rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-colors"
+                        aria-label="Close notification"
+                    >
+                        <X size={16} />
+                    </button>
                 </div>
             );
         };
