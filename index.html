@@ -1061,10 +1061,12 @@
                         <span className="text-xs font-normal text-gray-400">({t.version})</span>
                     </div>
                     <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                        <div className="text-lg leading-relaxed text-gray-700 space-y-2 font-serif">
+                        {/* 修改：加大字體 (text-xl md:text-2xl)，加深顏色 (text-gray-800)，加大行距 (leading-loose) */}
+                        <div className="text-xl md:text-2xl leading-loose text-gray-800 space-y-3 font-serif">
                             {content.map((v) => (
-                                <div key={v.pk} className="flex gap-2 hover:bg-yellow-50/50 p-0.5 rounded transition-colors">
-                                    <span className="text-xs text-gray-400 font-sans mt-1.5 w-6 text-right shrink-0 select-none">{v.verse}</span>
+                                <div key={v.pk} className="flex gap-3 hover:bg-yellow-50/50 p-1 rounded transition-colors">
+                                    {/* 修改：加大節數標示字體與寬度 */}
+                                    <span className="text-sm text-gray-400 font-sans mt-2 w-8 text-right shrink-0 select-none opacity-70">{v.verse}</span>
                                     <p className="flex-1">{v.text}</p>
                                 </div>
                             ))}
