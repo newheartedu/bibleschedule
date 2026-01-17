@@ -274,21 +274,43 @@
         // --- 專業版頭像組件 ---
         const AvatarMale = () => (
             <div className="w-12 h-12 rounded-full overflow-hidden bg-blue-50 border-2 border-white shadow-sm shrink-0 ring-1 ring-blue-100/50">
-                <img 
-                    src="https://image2url.com/r2/default/images/1768642809035-a8f1968b-608c-40f4-a3dd-d76bb2c05b52.png" 
-                    alt="Male Character" 
-                    className="w-full h-full object-cover"
-                />
+                <svg viewBox="0 0 100 100" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
+                    {/* 背景 */}
+                    <rect width="100" height="100" fill="#EFF6FF" />
+                    {/* 身體 */}
+                    <path d="M15 100 C 15 75, 85 75, 85 100 Z" fill="#1E3A8A" />
+                    {/* 脖子 */}
+                    <rect x="42" y="55" width="16" height="15" fill="#EAC0A6" />
+                    {/* 臉部陰影 */}
+                    <ellipse cx="50" cy="46" rx="18" ry="21" fill="#D4A48E" /> 
+                    {/* 臉 */}
+                    <ellipse cx="50" cy="45" rx="18" ry="21" fill="#EAC0A6" />
+                    {/* 頭髮後部 */}
+                    <path d="M30 40 C 30 20, 70 20, 70 40 L 70 45 C 70 35, 60 30, 50 30 C 40 30, 32 35, 32 45 Z" fill="#2C3E50" />
+                    {/* 頭髮前部 */}
+                    <path d="M28 38 C 28 25, 72 25, 72 38 C 72 45, 68 35, 50 35 C 32 35, 28 45, 28 38 Z" fill="#2C3E50" />
+                </svg>
             </div>
         );
 
         const AvatarFemale = () => (
             <div className="w-12 h-12 rounded-full overflow-hidden bg-pink-50 border-2 border-white shadow-sm shrink-0 ring-1 ring-pink-100/50">
-                <img 
-                    src="https://image2url.com/r2/default/images/1768642850835-cb85a698-edcd-4676-b926-51edc4d5a4a8.png" 
-                    alt="Female Character" 
-                    className="w-full h-full object-cover"
-                />
+                <svg viewBox="0 0 100 100" className="w-full h-full" preserveAspectRatio="xMidYMid slice">
+                    {/* 背景 */}
+                    <rect width="100" height="100" fill="#FDF2F8" />
+                    {/* 頭髮後部 */}
+                    <circle cx="50" cy="48" r="24" fill="#5D4037" />
+                    {/* 身體 */}
+                    <path d="M15 100 C 15 80, 85 80, 85 100 Z" fill="#BE185D" />
+                    {/* 脖子 */}
+                    <rect x="44" y="60" width="12" height="10" fill="#EAC0A6" />
+                    {/* 臉部陰影 */}
+                    <ellipse cx="50" cy="51" rx="17" ry="19" fill="#D4A48E" />
+                    {/* 臉 */}
+                    <ellipse cx="50" cy="50" rx="17" ry="19" fill="#EAC0A6" />
+                    {/* 劉海 */}
+                    <path d="M33 50 C 33 30, 67 30, 67 50 C 67 40, 50 38, 50 38 C 50 38, 33 40, 33 50 Z" fill="#5D4037" />
+                </svg>
             </div>
         );
 
