@@ -495,8 +495,9 @@
                                 
                                 {/* Header */}
                                 <div className="text-center mb-6 relative z-10">
-                                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-[#1E3A8A] font-bold text-[10px] tracking-widest uppercase mb-3 border border-blue-100">
-                                        <Sparkles size={12} />
+                                    {/* 修改：加大日期與分類的字體 (text-sm)，調整 padding 與 icon 大小 */}
+                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-[#1E3A8A] font-bold text-sm tracking-wide uppercase mb-4 border border-blue-100">
+                                        <Sparkles size={14} />
                                         <span>{date}</span>
                                         <span className="opacity-30">|</span>
                                         <span>{card.category}</span>
@@ -531,10 +532,10 @@
 
                         {/* Footer */}
                         <div className="px-6 pb-6 pt-2 z-10 bg-white relative">
-                            {/* Tags */}
-                             <div className="flex flex-wrap gap-1.5 justify-center mb-4 opacity-60">
+                            {/* Tags - 修改：字體改小 (text-[10px])，調整 padding */}
+                             <div className="flex flex-wrap gap-2 justify-center mb-5">
                                 {card.tags.map(tag => (
-                                    <span key={tag} className="text-[10px] text-slate-500 px-1.5 py-0.5 rounded-full bg-slate-100">#{tag}</span>
+                                    <span key={tag} className="text-[10px] font-bold text-[#1E3A8A] px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100 tracking-wide">#{tag}</span>
                                 ))}
                             </div>
                             <button 
