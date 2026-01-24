@@ -16,7 +16,8 @@
                     },
                     animation: {
                         'fade-in-up': 'fadeInUp 0.3s ease-out forwards', /* 加快動畫速度 */
-                        'bounce-short': 'bounceShort 1s ease-in-out 1'
+                        'bounce-short': 'bounceShort 1s ease-in-out 1',
+                        'card-flip': 'cardFlip 0.6s ease-out forwards'
                     },
                     keyframes: {
                         fadeInUp: {
@@ -26,6 +27,10 @@
                         bounceShort: {
                             '0%, 100%': { transform: 'translateY(0)' },
                             '50%': { transform: 'translateY(-10px)' }
+                        },
+                        cardFlip: {
+                            '0%': { transform: 'scale(0.9) rotateY(90deg)', opacity: '0' },
+                            '100%': { transform: 'scale(1) rotateY(0)', opacity: '1' }
                         }
                     }
                 }
@@ -71,6 +76,11 @@
         /* 祝福卡片專用字體 */
         .font-serif-tc {
             font-family: 'Noto Serif TC', serif;
+        }
+        
+        /* 微軟正黑體專用類別 */
+        .font-jhenghei {
+            font-family: "Microsoft JhengHei", "Microsoft JhengHei UI", "Noto Sans TC", sans-serif;
         }
 
         /* --- 列印與預覽專用樣式 (Print Styles) --- */
@@ -240,10 +250,49 @@
           Calendar as CalendarIcon, List, Home, Settings, ChevronLeft, ChevronRight, CheckCircle, Circle, 
           Star, BookOpen, Edit3, X, Search, Download, RefreshCw, Sparkles, Bookmark, Book, ArrowRight, 
           TrendingUp, LayoutGrid, Sun, Globe, Printer, Eye, FileDown, Image as ImageIcon, FileText, Fish,
-          Map, Award, Anchor, Milestone, Lock, Gift, Bell, User
+          Map, Award, Anchor, Milestone, Lock, Gift, Bell, User, Heart, Quote, History
         } from 'lucide-react';
 
-        // --- 旅程資料庫 (更新：地點加入 book 標記) ---
+        // --- 恩典籤資料庫 ---
+        const GRACE_CARDS_DATA = {
+          "version": "1.0",
+          "language": "zh-Hant",
+          "total": 30,
+          "fortunes": [
+            { "id": "G001", "category": "平安與安息", "title": "來我這裡得安息", "message": "孩子，我看見你努力卻感到疲憊的心。你背負的，比別人知道的還要多。把重擔交給我吧，你不需要一個人撐下去。", "verse": "凡勞苦擔重擔的人，可以到我這裡來，我就使你們得安息。", "reference": "馬太福音 11:28", "tags": ["安息", "壓力", "疲憊", "醫治"] },
+            { "id": "G002", "category": "方向、選擇、前路", "title": "一步一步跟隨我", "message": "不要因現在的混亂否定我的帶領。即使你暫時看不清方向，我仍然掌權。一步一步跟隨我，我會在合適的時候指明道路。", "verse": "你要專心仰賴耶和華，不可倚靠自己的聰明。", "reference": "箴言 3:5", "tags": ["方向", "選擇", "帶領", "信靠"] },
+            { "id": "G003", "category": "愛與身分認同", "title": "我不忘記你", "message": "孩子，你不是被遺忘的。當你覺得被忽略、被放在角落時，我仍然記得你。我的愛沒有中斷，也不會因時間而減少。", "verse": "我卻不忘記你。", "reference": "以賽亞書 49:15", "tags": ["被愛", "身分", "孤單", "記念"] },
+            { "id": "G004", "category": "失敗、跌倒、重新開始", "title": "我的恩典夠你用", "message": "即使你覺得自己軟弱，我仍然揀選你。你眼中的不足，並沒有阻止我使用你。讓我在你的軟弱中，顯出屬天的能力。", "verse": "我的恩典夠你用的。", "reference": "哥林多後書 12:9", "tags": ["恩典", "軟弱", "更新", "能力"] },
+            { "id": "G005", "category": "方向、選擇、前路", "title": "我走在你前面", "message": "孩子，不要害怕前面的未知。你還沒看見的明天，我已經走過。放心把未來交給我，我會親自引導你的腳步。", "verse": "耶和華必在你前面行。", "reference": "以賽亞書 52:12", "tags": ["未來", "保護", "帶領", "勇敢"] },
+            { "id": "G006", "category": "等候、忍耐、信心", "title": "等待不是浪費", "message": "你以為自己只是忍耐，其實你正在被塑造。我沒有浪費你任何一段等待的時間。在安靜中信靠，我正在你裡面動工。", "verse": "忍耐生老練，老練生盼望。", "reference": "羅馬書 5:4", "tags": ["等候", "忍耐", "盼望", "塑造"] },
+            { "id": "G007", "category": "愛與身分認同", "title": "你是被揀選的", "message": "不要用世界的聲音定義你是誰。那些否定你的話，並不能改變我的心意。在我眼中，你是被愛、被揀選、被珍惜的孩子。", "verse": "你們是被揀選的族類。", "reference": "彼得前書 2:9", "tags": ["身分", "揀選", "價值", "肯定"] },
+            { "id": "G008", "category": "禱告與親近神", "title": "你的禱告我聽見了", "message": "孩子，你的禱告我都聽見了。即使你覺得天好像沉默，我仍在回應。相信我，答案正在成形，只是時候尚未到。", "verse": "耶和華聽了我的懇求。", "reference": "詩篇 6:9", "tags": ["禱告", "回應", "信心", "等候"] },
+            { "id": "G009", "category": "懼怕、焦慮、憂傷", "title": "你不是一個人", "message": "當你覺得孤單時，請記得我與你同在。你走過的每一段路，我都沒有缺席。抬頭仰望我，你並不是獨自前行。", "verse": "我就常與你們同在，直到世界的末了。", "reference": "馬太福音 28:20", "tags": ["同在", "孤單", "安慰", "陪伴"] },
+            { "id": "G010", "category": "失敗、跌倒、重新開始", "title": "起來，再走", "message": "不要因一次跌倒，就否定整個旅程。我沒有因你的失敗而離開你。起來吧，我仍然願意牽著你的手往前走。", "verse": "義人雖七次跌倒，仍必興起。", "reference": "箴言 24:16", "tags": ["跌倒", "重新開始", "扶持", "盼望"] },
+            { "id": "G011", "category": "懼怕、焦慮、憂傷", "title": "我靠近傷心的人", "message": "孩子，你的眼淚我都數過。那些你沒說出口的委屈，我完全明白。讓我成為你的安慰，你可以放心哭在我面前。", "verse": "耶和華靠近傷心的人。", "reference": "詩篇 34:18", "tags": ["傷心", "安慰", "眼淚", "醫治"] },
+            { "id": "G012", "category": "平安與安息", "title": "你不必討好世界", "message": "不要急著證明自己。你在我裡面的價值，早已被確立。安息在我的愛中，你不需要討好世界。", "verse": "你們得救在乎歸回安息。", "reference": "以賽亞書 30:15", "tags": ["自我價值", "安息", "自由", "被愛"] },
+            { "id": "G013", "category": "等候、忍耐、信心", "title": "必重新得力", "message": "孩子，我知道你正在等一個改變。等待並不是白白浪費時間。在等候中信靠我，我必不誤事。", "verse": "等候耶和華的必重新得力。", "reference": "以賽亞書 40:31", "tags": ["得力", "等候", "更新", "信心"] },
+            { "id": "G014", "category": "平安與安息", "title": "不看速度，看同行", "message": "當你覺得自己走得很慢，不要責備自己。我看重的不是速度，而是你是否與我同行。只要不離開我，你就在正確的路上。", "verse": "耶和華是我的牧者，我必不致缺乏。", "reference": "詩篇 23:1", "tags": ["步伐", "牧者", "同在", "引導"] },
+            { "id": "G015", "category": "使命、呼召、勇敢前行", "title": "你不是偶然", "message": "孩子，你的生命不是偶然。你存在，是因為我有計畫、有心意。勇敢活出我放在你裡面的呼召吧。", "verse": "我知道我向你們所懷的意念。", "reference": "耶利米書 29:11", "tags": ["呼召", "計畫", "使命", "勇敢"] },
+            { "id": "G016", "category": "懼怕、焦慮、憂傷", "title": "不要怕，因我與你同在", "message": "孩子，恐懼想要奪走你的平安，但我把平安賜給你。你不用被情緒牽著走，因為我在你旁邊。深呼吸，把心轉向我，我必堅固你。", "verse": "不要害怕，因為我與你同在。", "reference": "以賽亞書 41:10", "tags": ["害怕", "平安", "同在", "堅固"] },
+            { "id": "G017", "category": "禱告與親近神", "title": "把憂慮交給我", "message": "孩子，你的心裡裝了太多擔心。你不需要把每件事都自己扛著，交給我就好。用禱告把重量放下，我會用平安托住你。", "verse": "應當一無掛慮…神所賜出人意外的平安必在基督耶穌裡保守你們的心懷意念。", "reference": "腓立比書 4:6-7", "tags": ["憂慮", "禱告", "平安", "保守"] },
+            { "id": "G018", "category": "方向、選擇、前路", "title": "我必指教你走的路", "message": "孩子，你正在作選擇，心裡難免猶豫。不要只看眼前利害，先來問我。當你願意順服，我必指引你走該走的路。", "verse": "我要教導你，指示你當行的路。", "reference": "詩篇 32:8", "tags": ["決定", "指引", "道路", "順服"] },
+            { "id": "G019", "category": "失敗、跌倒、重新開始", "title": "我使你重新站立", "message": "孩子，你覺得自己做錯了，心裡很懊悔。悔改不是結束，而是回到我面前的開始。不要停在自責裡，我要扶你起來，繼續往前。", "verse": "我們若認自己的罪，神是信實的，是公義的，必要赦免我們的罪。", "reference": "約翰一書 1:9", "tags": ["悔改", "赦免", "更新", "重新開始"] },
+            { "id": "G020", "category": "愛與身分認同", "title": "你是我的孩子", "message": "孩子，你不是靠表現才配得愛。就算你覺得自己不夠好，我仍然稱你為我的孩子。回到我裡面，你會重新知道自己是誰。", "verse": "凡接待他的，就是信他名的人，他就賜他們權柄作神的兒女。", "reference": "約翰福音 1:12", "tags": ["兒女", "身份", "被接納", "恩典"] },
+            { "id": "G021", "category": "等候、忍耐、信心", "title": "我不誤事", "message": "孩子，你擔心時間不夠、機會會錯過。放心，我掌管季節與時刻。你只要忠心走今天的路，我必按時成就美事。", "verse": "凡事都有定期，天下萬務都有定時。", "reference": "傳道書 3:1", "tags": ["時機", "等候", "定時", "信靠"] },
+            { "id": "G022", "category": "使命、呼召、勇敢前行", "title": "剛強壯膽", "message": "孩子，你正在面對一件需要勇氣的事。不要只看自己的能力，因為我會把力量加給你。你往前踏一步，我就與你同行到底。", "verse": "你當剛強壯膽，不要懼怕，也不要驚惶。", "reference": "約書亞記 1:9", "tags": ["勇敢", "力量", "前行", "同工"] },
+            { "id": "G023", "category": "禱告與親近神", "title": "親近我", "message": "孩子，你的心有點乾、有點累。不是你不愛我，而是你需要重新回到源頭。親近我吧，我會讓你的裡面再次得著活水。", "verse": "你們親近神，神就必親近你們。", "reference": "雅各書 4:8", "tags": ["親近神", "更新", "活水", "靈裡得力"] },
+            { "id": "G024", "category": "平安與安息", "title": "我賜給你平安", "message": "孩子，世界的聲音很吵，但我的平安是真實的。你不需要被環境牽動，因為我在你心裡掌權。把目光轉向我，你會再次安穩。", "verse": "我留下平安給你們，我將我的平安賜給你們。", "reference": "約翰福音 14:27", "tags": ["平安", "安穩", "環境", "信靠"] },
+            { "id": "G025", "category": "懼怕、焦慮、憂傷", "title": "我的喜樂成為力量", "message": "孩子，你覺得心裡的喜樂被偷走了。來到我面前，不必假裝堅強。我的喜樂不是短暫情緒，而是能支撐你重新站起來的力量。", "verse": "靠耶和華而得的喜樂是你們的力量。", "reference": "尼希米記 8:10", "tags": ["喜樂", "力量", "憂傷", "扶持"] },
+            { "id": "G026", "category": "方向、選擇、前路", "title": "你腳前的燈", "message": "孩子，你不需要一次看見整條路。只要讓我的話照亮你今天的一步就好。當你照著真理走，我會一步一步帶你到目的地。", "verse": "你的話是我腳前的燈，是我路上的光。", "reference": "詩篇 119:105", "tags": ["神的話", "指引", "道路", "亮光"] },
+            { "id": "G027", "category": "失敗、跌倒、重新開始", "title": "有新的一天", "message": "孩子，你以為昨天的失敗會定義你。不要害怕，我的憐憫每天都是新的。把今天交給我，你會看見新的開始。", "verse": "我們不至消滅，是出於耶和華諸般的慈愛…每早晨這都是新的。", "reference": "耶利米哀歌 3:22-23", "tags": ["新開始", "憐憫", "更新", "盼望"] },
+            { "id": "G028", "category": "愛與身分認同", "title": "我看你為寶為尊", "message": "孩子，你可能覺得自己不夠好。可是我看你為寶為尊，我喜悅你。不要用別人的態度衡量你自己的價值。", "verse": "因我看你為寶為尊，又因我愛你。", "reference": "以賽亞書 43:4", "tags": ["價值", "被愛", "尊貴", "肯定"] },
+            { "id": "G029", "category": "等候、忍耐、信心", "title": "你必得著應許", "message": "孩子，你正在持續做對的事，卻還沒看見果效。不要灰心，我記得你的忠心。持守到底，你必得著我為你預備的應許。", "verse": "行善不可喪志；若不灰心，到了時候就要收成。", "reference": "加拉太書 6:9", "tags": ["行善", "收成", "不灰心", "應許"] },
+            { "id": "G030", "category": "使命、呼召、勇敢前行", "title": "我與你同工", "message": "孩子，你以為自己只是小小的一份子，但我看見你的忠心。你所做的每一點擺上，我都使用。不要小看自己，我要與你同工成就美事。", "verse": "我們原是他的工作，在基督耶穌裡造成的，為要叫我們行善。", "reference": "以弗所書 2:10", "tags": ["同工", "擺上", "使命", "行善"] }
+          ]
+        };
+
+        // --- 旅程資料庫 ---
         const JOURNEY_DATA = {
             characters: [
                 { id: 1, stars: 3, name: "亞伯拉罕", name_en: "Abraham", gender: 'm', theme: "信心之父", theme_en: "Father of Faith", blessing: "願你在未知的旅途中，依然信靠神的應許，因為祂是信實的。", blessing_en: "May you trust God's promises in the unknown journey, for He is faithful." },
@@ -271,7 +320,6 @@
             ]
         };
 
-        // --- 專業版頭像組件 ---
         const AvatarMale = () => (
             <div className="w-12 h-12 rounded-full overflow-hidden bg-blue-50 border-2 border-white shadow-sm shrink-0 ring-1 ring-blue-100/50">
                 <img 
@@ -300,10 +348,14 @@
                 print_subtitle: "讀經進度表",
                 greeting: "平安！願神的話語成為你腳前的燈",
                 today_btn: "今日進度",
-                days_read: "星星記念",
-                days_unit: "顆星",
-                full_schedule: "完整進度表",
-                view_list: "查看列表",
+                grace_btn: "恩典籤收藏", 
+                grace_title: "恩典籤",
+                grace_draw_again: "再抽一張",
+                grace_close: "關閉",
+                grace_collect: "收藏恩典", 
+                grace_collected: "恩典籤已收藏", // 修改：已收藏 -> 恩典籤已收藏
+                grace_empty: "尚未收藏恩典籤",
+                grace_empty_desc: "每日讀經並打勾完成後，就能獲得當日的恩典籤喔！",
                 view_journey: "查看旅程",
                 daily_one: "每日一章", 
                 daily_ten: "每日十章", 
@@ -355,10 +407,14 @@
                 print_subtitle: "Bible Reading Schedule",
                 greeting: "Peace! Your word is a lamp for my feet",
                 today_btn: "Today's Plan",
-                days_read: "Stars",
-                days_unit: "stars",
-                full_schedule: "Full Schedule",
-                view_list: "View List",
+                grace_btn: "Grace Collection", 
+                grace_title: "Grace Card",
+                grace_draw_again: "Draw Again",
+                grace_close: "Close",
+                grace_collect: "Collect",
+                grace_collected: "Grace Card Collected", // 修改
+                grace_empty: "No Grace Cards Yet",
+                grace_empty_desc: "Complete your daily reading and check it off to receive a grace card!",
                 view_journey: "My Journey",
                 daily_one: "Daily One",
                 daily_ten: "Daily Ten",
@@ -601,7 +657,6 @@
             }
         };
 
-        // ... data ...
         const generateInitialData = () => {
              const plans = [];
             const addDay = (date, wd, one, ten) => plans.push({ date, weekday: wd, dailyOne: one, dailyTen: ten });
@@ -619,9 +674,9 @@
                 ["2025-12-09", "二", "以西結書 33", "加 4-6；弗 1-6；腓 1"],
                 ["2025-12-10", "三", "以西結書 34", "腓 2-4；歌 1-4；帖前 1-3"],
                 ["2025-12-11", "四", "以西結書 35", "帖前 4-5；帖後 1-3；提前 1-5"],
-                ["2025-12-12", "五", "以西結書 36", "提前 6；提後 1-4；多 1-3；門 1；來 1"], // 希 -> 來
-                ["2025-12-13", "六", "使徒行傳 5", "來 2-11"], // 希 -> 來
-                ["2025-12-14", "日", "使徒行傳 6", "來 12-13；雅 1-5；彼前 1-3"], // 希 -> 來
+                ["2025-12-12", "五", "以西結書 36", "提前 6；提後 1-4；多 1-3；門 1；來 1"],
+                ["2025-12-13", "六", "使徒行傳 5", "來 2-11"],
+                ["2025-12-14", "日", "使徒行傳 6", "來 12-13；雅 1-5；彼前 1-3"],
                 ["2025-12-15", "一", "使徒行傳 7", "彼前 4-5；彼後 1-3；約一 1-5"],
                 ["2025-12-16", "二", "以西結書 37", "約二；約三；猶；啟 1-7"],
                 ["2025-12-17", "三", "以西結書 38", "啟 8-17"],
@@ -741,9 +796,9 @@
                 ["2026-04-07", "二", "鴻 3 (卷終)", "加 5-6；弗 1-6；腓 1-2"],
                 ["2026-04-08", "三", "哈 1", "腓 3-4；歌 1-4；帖前 1-4"],
                 ["2026-04-09", "四", "哈 2", "帖前 5；帖後 1-3；提前 1-6"],
-                ["2026-04-10", "五", "哈 3 (卷終)", "提後 1-4；多 1-3；門；來 1-2"], // 希 -> 來
-                ["2026-04-11", "六", "林前 12", "來 3-12"], // 希 -> 來
-                ["2026-04-12", "日", "林前 13", "來 13；雅 1-5；彼前 1-4"], // 希 -> 來
+                ["2026-04-10", "五", "哈 3 (卷終)", "提後 1-4；多 1-3；門；來 1-2"], 
+                ["2026-04-11", "六", "林前 12", "來 3-12"], 
+                ["2026-04-12", "日", "林前 13", "來 13；雅 1-5；彼前 1-4"], 
                 ["2026-04-13", "一", "林前 14", "彼前 5；彼後 1-3；約一 1-5；約二"],
                 ["2026-04-14", "二", "番 1", "約三；猶；啟 1-8"],
                 ["2026-04-15", "三", "番 2", "啟 9-18"],
@@ -860,8 +915,8 @@
                 ["2026-08-04", "二", "創 42", "加 6；弗 1-6；腓 1-3"],
                 ["2026-08-05", "三", "創 43", "腓 4；歌 1-4；帖前 1-5"],
                 ["2026-08-06", "四", "創 44", "帖後 1-3；提前 1-6；提後 1"],
-                ["2026-08-07", "五", "創 45", "提後 2-4；多 1-3；門；來 1-3"], // 希 -> 來
-                ["2026-08-08", "六", "提前 6 (卷終)", "來 4-13"], // 希 -> 來
+                ["2026-08-07", "五", "創 45", "提後 2-4；多 1-3；門；來 1-3"],
+                ["2026-08-08", "六", "提前 6 (卷終)", "來 4-13"],
                 ["2026-08-09", "日", "提後 1", "雅 1-5；彼前 1-5"],
                 ["2026-08-10", "一", "提後 2", "彼後 1-3；約一 1-5；約二；約三"],
                 ["2026-08-11", "二", "創 46", "猶；啟 1-9"],
@@ -882,7 +937,7 @@
                 ["2026-08-26", "三", "出 5", "民 11-20"],
                 ["2026-08-27", "四", "出 6", "民 21-30"],
                 ["2026-08-28", "五", "出 7", "民 31-36；申 1-4"],
-                ["2026-08-29", "六", "希 1", "申 5-14"], // 此處維持全名或簡稱，後續 formatCalendarDisplay 會處理
+                ["2026-08-29", "六", "希 1", "申 5-14"], 
                 ["2026-08-30", "日", "希 2", "申 15-24"],
                 ["2026-08-31", "一", "希 3", "申 25-34"],
                 ["2026-09-01", "二", "出 8", "書 1-10"],
@@ -979,8 +1034,8 @@
                 ["2026-12-01", "二", "利 20", "加 6；弗 1-6；腓 1-3"],
                 ["2026-12-02", "三", "利 21", "腓 4；歌 1-4；帖前 1-5"],
                 ["2026-12-03", "四", "利 22", "帖後 1-3；提前 1-6；提後 1"],
-                ["2026-12-04", "五", "利 23", "提後 2-4；多 1-3；門；來 1-3"], // 希 -> 來
-                ["2026-12-05", "六", "啟 9", "來 4-13"], // 希 -> 來
+                ["2026-12-04", "五", "利 23", "提後 2-4；多 1-3；門；來 1-3"], 
+                ["2026-12-05", "六", "啟 9", "來 4-13"], 
                 ["2026-12-06", "日", "啟 10", "雅 1-5；彼前 1-5"],
                 ["2026-12-07", "一", "啟 11", "彼後；約一；約二；約三"],
                 ["2026-12-08", "二", "利 24", "猶；啟 1-9"],
@@ -1061,11 +1116,9 @@
                         <span className="text-xs font-normal text-gray-400">({t.version})</span>
                     </div>
                     <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
-                        {/* 修改：加大字體 (text-xl md:text-2xl)，加深顏色 (text-gray-800)，加大行距 (leading-loose) */}
                         <div className="text-xl md:text-2xl leading-loose text-gray-800 space-y-3 font-serif">
                             {content.map((v) => (
                                 <div key={v.pk} className="flex gap-3 hover:bg-yellow-50/50 p-1 rounded transition-colors">
-                                    {/* 修改：加大節數標示字體與寬度 */}
                                     <span className="text-sm text-gray-400 font-sans mt-2 w-8 text-right shrink-0 select-none opacity-70">{v.verse}</span>
                                     <p className="flex-1">{v.text}</p>
                                 </div>
@@ -1291,6 +1344,108 @@
                         <div className="p-4 bg-gray-50 flex gap-3 border-t border-gray-100">
                             <button onClick={onClose} className="flex-1 py-2.5 rounded-lg border border-gray-300 text-gray-600 font-medium hover:bg-white hover:shadow-sm transition-all">{t.cancel}</button>
                             <button onClick={() => onConfirm(selectedYear, selectedMonths)} disabled={selectedMonths.length === 0} className="flex-1 py-2.5 rounded-lg bg-[#1E3A8A] text-white font-bold shadow-md hover:bg-blue-900 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"><Eye size={18} />{t.print_preview_btn}</button>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        const GraceModal = ({ isOpen, onClose, card, date, mode, onNavigate, lang }) => {
+            if (!isOpen || !card) return null;
+            const t = TRANSLATIONS[lang];
+            const isViewMode = mode === 'view';
+
+            return (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/70 backdrop-blur-sm animate-in fade-in duration-300 no-print">
+                    <div 
+                        className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden flex flex-col relative animate-card-flip"
+                        style={{ boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
+                    >
+                        {/* 頂部裝飾條：深藍色，展現專業穩重 */}
+                        <div className="h-2 w-full bg-[#1E3A8A]"></div>
+
+                        {/* 背景紋理 (極淡，增加層次感但不干擾閱讀) */}
+                        <div className="absolute inset-0 opacity-[0.02] pointer-events-none" 
+                             style={{ backgroundImage: "radial-gradient(#1E3A8A 1px, transparent 1px)", backgroundSize: "24px 24px" }}>
+                        </div>
+
+                        {/* Header */}
+                        <div className="px-8 pt-10 pb-4 text-center relative z-10">
+                             {isViewMode && (
+                                <div className="flex items-center justify-between mb-6">
+                                    <button onClick={() => onNavigate(-1)} className="p-2 text-slate-400 hover:text-[#1E3A8A] hover:bg-slate-50 rounded-full transition-all" aria-label="Previous">
+                                        <ChevronLeft size={24} />
+                                    </button>
+                                    <div className="text-xs font-bold tracking-widest text-slate-400 uppercase bg-slate-50 px-4 py-1.5 rounded-full border border-slate-100">
+                                        {date}
+                                    </div>
+                                    <button onClick={() => onNavigate(1)} className="p-2 text-slate-400 hover:text-[#1E3A8A] hover:bg-slate-50 rounded-full transition-all" aria-label="Next">
+                                        <ChevronRight size={24} />
+                                    </button>
+                                </div>
+                            )}
+
+                            <div className="flex flex-col items-center gap-3">
+                                {/* 分類標籤：極簡金色文字，無色塊，加上底部裝飾線 */}
+                                <span className="text-xs font-bold tracking-[0.2em] text-amber-700 uppercase border-b border-amber-200/50 pb-1">
+                                    {card.category}
+                                </span>
+                                {/* 標題：襯線體，深黑色，大氣 */}
+                                <h3 className="text-3xl font-bold text-slate-900 font-serif-tc tracking-wide leading-tight mt-1">
+                                    {card.title}
+                                </h3>
+                            </div>
+                        </div>
+
+                        {/* Body */}
+                        <div className="px-8 pb-8 flex-1 overflow-y-auto custom-scrollbar relative z-10 flex flex-col items-center">
+                            
+                            {/* 經文區塊：強調閱讀性 */}
+                            <div className="w-full py-6 relative">
+                                <Quote size={24} className="absolute top-0 left-0 text-slate-200 fill-slate-100 transform -scale-x-100" />
+                                <div className="px-4">
+                                    <p className="font-serif-tc text-2xl text-slate-800 leading-relaxed text-center font-medium drop-shadow-sm">
+                                        {card.verse}
+                                    </p>
+                                </div>
+                                <Quote size={24} className="absolute bottom-0 right-0 text-slate-200 fill-slate-100" />
+                                
+                                <div className="mt-6 text-center">
+                                    <div className="flex items-center justify-center gap-4 opacity-60">
+                                        <span className="h-px w-8 bg-slate-300"></span>
+                                        <span className="text-sm font-bold text-slate-500 uppercase tracking-wider font-sans">
+                                            {card.reference}
+                                        </span>
+                                        <span className="h-px w-8 bg-slate-300"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 信息區塊：高對比度灰，易讀舒適 */}
+                            <div className="w-full mt-2 mb-6">
+                                <p className="font-sans text-slate-700 text-lg leading-8 text-justify font-normal tracking-wide">
+                                    {card.message}
+                                </p>
+                            </div>
+
+                            {/* Tags：淡化處理，不搶視覺 */}
+                            <div className="flex flex-wrap gap-2 justify-center mt-auto opacity-50 hover:opacity-100 transition-opacity">
+                                {card.tags.map((tag, idx) => (
+                                    <span key={idx} className="text-xs text-slate-400">
+                                        #{tag}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Footer Button - 使用品牌色按鈕，明確行動 */}
+                        <div className="p-6 bg-slate-50 border-t border-slate-100 relative z-10">
+                            <button 
+                                onClick={onClose} 
+                                className="w-full py-3.5 rounded-lg bg-[#1E3A8A] text-white font-bold text-sm hover:bg-[#152C6B] transition-all tracking-widest uppercase shadow-md hover:shadow-lg transform active:scale-[0.99]"
+                            >
+                                {t.grace_close}
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -1550,32 +1705,40 @@
         };
 
         function App() {
+            // ... existing state ...
             const [activeTab, setActiveTab] = useState('home');
             const [lang, setLang] = useState('zh'); 
             const [plans, setPlans] = useState([]);
             const [userState, setUserState] = useState({
                 readStatus: {},
-                notes: {}
+                notes: {},
+                collectedCards: {} 
             });
             const [selectedDate, setSelectedDate] = useState(null);
             const [loading, setLoading] = useState(true);
             const [currentCalendarDate, setCurrentCalendarDate] = useState(new Date());
             
-            // Print State
             const [isPrintModalOpen, setIsPrintModalOpen] = useState(false);
             const [printPreviewData, setPrintPreviewData] = useState(null);
             
-            // Toast State
-            const [toast, setToast] = useState(null); // { msg, type, subMsg }
+            const [isGraceModalOpen, setIsGraceModalOpen] = useState(false);
+            const [currentGraceCard, setCurrentGraceCard] = useState(null); 
+            
+            const [toast, setToast] = useState(null);
 
             const t = TRANSLATIONS[lang];
 
+            // ... existing useEffects ...
             useEffect(() => {
                 const loadData = () => {
                     const initial = generateInitialData();
                     setPlans(initial);
                     const savedUser = localStorage.getItem('pjbc_user');
-                    if (savedUser) setUserState(JSON.parse(savedUser));
+                    if (savedUser) {
+                        const parsed = JSON.parse(savedUser);
+                        if (!parsed.collectedCards) parsed.collectedCards = {};
+                        setUserState(parsed);
+                    }
                     setLoading(false);
                 };
                 loadData();
@@ -1595,38 +1758,91 @@
                 if (!isCurrentlyRead) {
                     const newCount = starCount + 1;
                     
-                    // 檢查是否解鎖新成就
-                    // 人物：3, 6, 9...
+                    // 複製當前的 collectedCards，以便更新
+                    let updatedCollectedCards = { ...userState.collectedCards };
+                    
+                    // 檢查當天是否已經有收藏的恩典籤，如果沒有，自動抽選並收藏
+                    if (!updatedCollectedCards[date]) {
+                        const cards = GRACE_CARDS_DATA.fortunes;
+                        const randomCard = cards[Math.floor(Math.random() * cards.length)];
+                        
+                        // 自動收藏
+                        updatedCollectedCards[date] = randomCard;
+                        
+                        // 設定當前顯示的恩典籤 (daily 模式)
+                        setCurrentGraceCard({
+                            card: randomCard,
+                            date: date,
+                            mode: 'daily'
+                        });
+                        setIsGraceModalOpen(true);
+                    }
+
+                    // 檢查是否解鎖新成就 (人物/地點)
                     const unlockedChar = JOURNEY_DATA.characters.find(c => c.stars === newCount);
-                    // 地點：7, 14, 21...
                     const unlockedLoc = JOURNEY_DATA.locations.find(l => l.stars === newCount);
 
                     if (unlockedChar) {
                         const name = lang === 'zh' ? unlockedChar.name : unlockedChar.name_en;
                         const blessing = lang === 'zh' ? unlockedChar.blessing : unlockedChar.blessing_en;
-                        const title = lang === 'zh' ? `聖經人物「${name}」` : `Character "${name}"`;
-                        setToast({ 
-                            msg: `${t.unlock_toast}${title}`, 
-                            subMsg: blessing,
-                            type: 'unlock' 
-                        });
+                        setToast({ msg: `${t.unlock_toast}${name}`, subMsg: blessing, type: 'unlock' });
                     } else if (unlockedLoc) {
                         const name = lang === 'zh' ? unlockedLoc.name : unlockedLoc.name_en;
                         const meditation = lang === 'zh' ? unlockedLoc.meditation : unlockedLoc.meditation_en;
-                        const title = lang === 'zh' ? `地點「${name}」` : `Location "${name}"`;
-                        setToast({ 
-                            msg: `${t.unlock_toast}${title}`, 
-                            subMsg: meditation,
-                            type: 'unlock' 
-                        });
-                    } else {
-                        setToast({ msg: t.star_toast, type: 'star' });
-                    }
+                        setToast({ msg: `${t.unlock_toast}${name}`, subMsg: meditation, type: 'unlock' });
+                    } 
+                    
+                    // 更新狀態：包含已讀狀態和可能新增的恩典籤
+                    setUserState(prev => ({ 
+                        ...prev, 
+                        readStatus: { ...prev.readStatus, [date]: !isCurrentlyRead },
+                        collectedCards: updatedCollectedCards
+                    }));
+                } else {
+                    // 取消已讀
+                    setUserState(prev => ({ ...prev, readStatus: { ...prev.readStatus, [date]: !isCurrentlyRead } }));
                 }
-                
-                setUserState(prev => ({ ...prev, readStatus: { ...prev.readStatus, [date]: !isCurrentlyRead } }));
             };
             
+            // 開啟「恩典籤收藏」回顧模式
+            const openMyGraceCards = () => {
+                const collectedDates = Object.keys(userState.collectedCards).sort();
+                
+                if (collectedDates.length === 0) {
+                    alert(t.grace_empty_desc);
+                    return;
+                }
+
+                // 預設顯示最新的
+                const lastDate = collectedDates[collectedDates.length - 1];
+                setCurrentGraceCard({
+                    card: userState.collectedCards[lastDate],
+                    date: lastDate,
+                    mode: 'view'
+                });
+                setIsGraceModalOpen(true);
+            };
+
+            // 在回顧模式中切換日期
+            const navigateGraceCard = (direction) => {
+                if (!currentGraceCard || !currentGraceCard.date) return;
+                
+                const collectedDates = Object.keys(userState.collectedCards).sort();
+                const currentIndex = collectedDates.indexOf(currentGraceCard.date);
+                if (currentIndex === -1) return;
+
+                const newIndex = currentIndex + direction;
+                if (newIndex >= 0 && newIndex < collectedDates.length) {
+                    const newDate = collectedDates[newIndex];
+                    setCurrentGraceCard({
+                        card: userState.collectedCards[newDate],
+                        date: newDate,
+                        mode: 'view'
+                    });
+                }
+            };
+
+            // ... handlePrintClick, handlePreviewConfirm, closePreview ...
             const handlePrintClick = () => setIsPrintModalOpen(true);
             const handlePreviewConfirm = (year, months) => {
                 setIsPrintModalOpen(false);
@@ -1635,6 +1851,7 @@
             const closePreview = () => setPrintPreviewData(null);
 
             const DetailCard = ({ date, onNavigate }) => {
+                // ... existing DetailCard code ...
                 const plan = plans.find(p => p.date === date);
                 const [readingQuery, setReadingQuery] = useState(null);
                 
@@ -1682,6 +1899,12 @@
                                 {isRead ? <CheckCircle size={22} /> : <Circle size={22} />}{isRead ? t.marked : t.mark_read}
                              </button>
                         </div>
+                        {userState.collectedCards[date] && (
+                            <div className="bg-amber-50 p-3 rounded-lg border border-amber-100 flex items-center justify-center gap-2 text-amber-700 text-sm font-bold">
+                                <Heart size={16} className="fill-amber-500 text-amber-500" />
+                                {t.grace_collected}
+                            </div>
+                        )}
                         <div className="flex flex-col gap-4">
                              <div className="bg-blue-50/50 p-4 rounded-xl border border-blue-100 relative group hover:border-blue-200 transition-all">
                                 <div className="absolute right-0 top-0 p-2 opacity-10"><BookOpen size={40} className="text-[#1E3A8A]" /></div>
@@ -1727,12 +1950,16 @@
                                 const dateStr = `${year}-${String(month).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                                 const plan = plans.find(p => p.date === dateStr);
                                 const isRead = userState.readStatus[dateStr];
+                                // 移除日曆愛心：不檢查 hasCollectedGrace
                                 const isToday = new Date().toISOString().split('T')[0] === dateStr;
                                 return (
                                     <div key={dateStr} onClick={() => setSelectedDate(dateStr)} className={`min-h-[80px] p-2 border-r border-b border-gray-100 cursor-pointer transition-all hover:bg-blue-50/50 relative group ${isToday ? 'bg-blue-50/20' : ''}`}>
                                         <div className="flex justify-between items-start mb-1">
                                             <span className={`text-sm w-7 h-7 flex items-center justify-center rounded-full font-bold transition-all ${isToday ? 'bg-[#1E3A8A] text-white shadow-md' : 'text-gray-600 group-hover:bg-gray-200'}`}>{d}</span>
-                                            {isRead && <CheckCircle size={16} className="text-green-500" />}
+                                            <div className="flex gap-1">
+                                                {/* 移除了 <Heart /> 圖示 */}
+                                                {isRead && <CheckCircle size={16} className="text-green-500" />}
+                                            </div>
                                         </div>
                                         {plan ? (
                                             <div className="space-y-1 mt-2">
@@ -1748,6 +1975,7 @@
                 );
             };
 
+            // ... TableView & Print Components ...
             const TableView = () => {
                 const [search, setSearch] = useState("");
                 const [filterYear, setFilterYear] = useState(currentCalendarDate.getFullYear());
@@ -1761,6 +1989,7 @@
                 return (
                     <div className="space-y-4 max-w-4xl mx-auto pb-24">
                         <div className="bg-white p-4 rounded-xl border border-gray-200 sticky top-0 z-20 shadow-sm flex flex-col md:flex-row gap-4 no-print">
+                            {/* ... existing header controls ... */}
                             <div className="flex items-center gap-2 justify-between md:justify-start">
                                 <button onClick={handlePrevMonth} className="p-2 hover:bg-gray-100 rounded-lg text-gray-500 transition-colors border border-transparent hover:border-gray-200"><ChevronLeft size={20} /></button>
                                 <div className="flex gap-2">
@@ -1782,7 +2011,10 @@
                                         <div><span className="text-[10px] text-gray-400 font-bold uppercase">{t.daily_one}</span><div className="text-[#1E3A8A] font-medium text-sm group-hover:text-blue-700">{formatScriptureDisplay(p.dailyOne, lang)}</div></div>
                                         <div><span className="text-[10px] text-gray-400 font-bold uppercase">{t.daily_ten}</span><div className="text-gray-600 text-sm group-hover:text-gray-800">{formatScriptureDisplay(p.dailyTen, lang)}</div></div>
                                     </div>
-                                    <div className="shrink-0 text-gray-300">{userState.readStatus[p.date] ? <CheckCircle size={20} className="text-green-500" /> : <ChevronRight size={20} />}</div>
+                                    <div className="shrink-0 text-gray-300 flex items-center gap-2">
+                                        {/* 列表也移除收藏愛心 */}
+                                        {userState.readStatus[p.date] ? <CheckCircle size={20} className="text-green-500" /> : <ChevronRight size={20} />}
+                                    </div>
                                 </div>
                             ))}
                         </div>
@@ -1852,9 +2084,14 @@
                                                 </button>
                                                 <button onClick={() => setLang(l => l === 'zh' ? 'en' : 'zh')} className="flex items-center gap-1 text-xs font-bold border border-gray-300 bg-white rounded-full px-3 py-1 shadow-sm hover:bg-gray-50 transition-all text-gray-600"><Globe size={14} /> {lang === 'zh' ? 'EN' : '中'}</button>
                                             </div>
-                                            <button onClick={() => { const now = new Date(); setSelectedDate(now.toISOString().split('T')[0]); setCurrentCalendarDate(now); }} className="bg-[#1E3A8A] text-white px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:bg-blue-900 hover:scale-105 transition-all flex items-center gap-2 text-base whitespace-nowrap"><BookOpen size={20} /> {t.today_btn}</button>
+                                            {/* 按鈕區域修改 */}
+                                            <div className="flex flex-col md:flex-row gap-2 md:gap-3">
+                                                <button onClick={() => { const now = new Date(); setSelectedDate(now.toISOString().split('T')[0]); setCurrentCalendarDate(now); }} className="bg-[#1E3A8A] text-white px-5 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:bg-blue-900 hover:scale-105 transition-all flex items-center justify-center gap-2 text-base whitespace-nowrap"><BookOpen size={20} /> {t.today_btn}</button>
+                                                <button onClick={openMyGraceCards} className="bg-amber-400 text-blue-900 px-5 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl hover:bg-amber-300 hover:scale-105 transition-all flex items-center justify-center gap-2 text-base whitespace-nowrap"><Sparkles size={20} /> {t.grace_btn}</button>
+                                            </div>
                                         </div>
                                     </div>
+                                    {/* ... rest of home view ... */}
                                     <div className="grid grid-cols-2 gap-3 md:flex md:gap-4">
                                         <div className="bg-white p-3 rounded-xl border border-gray-200 shadow-sm flex items-center gap-3 flex-1 cursor-default transition-all group">
                                             <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center group-hover:bg-blue-100"><Star size={20} className="text-[#1E3A8A] fill-[#1E3A8A]" /></div>
@@ -1864,7 +2101,6 @@
                                                 <div className="text-[11px] text-gray-400 font-medium mt-0.5">{lang === 'zh' ? `已讀 ${starCount} 天` : `${starCount} days read`}</div>
                                             </div>
                                         </div>
-                                        {/* 修改：將「完整進度表」按鈕替換為「我的旅程」按鈕 */}
                                         <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-3 rounded-xl border border-orange-200 shadow-sm flex items-center gap-3 flex-1 cursor-pointer hover:shadow-md transition-all group" onClick={() => setActiveTab('journey')}>
                                             <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center text-amber-600 shadow-sm group-hover:scale-110 transition-transform"><Award size={20} /></div>
                                             <div><div className="text-xs text-amber-600 font-bold uppercase tracking-wide">{t.journey_title}</div><div className="font-bold text-gray-800 text-sm group-hover:text-amber-800">{t.view_journey} <span className="inline-block transition-transform group-hover:translate-x-1">→</span></div></div>
@@ -1891,6 +2127,17 @@
                     )}
                     
                     <PrintModal isOpen={isPrintModalOpen} onClose={() => setIsPrintModalOpen(false)} onConfirm={handlePreviewConfirm} availableYears={[2025, 2026]} lang={lang} />
+                    
+                    <GraceModal 
+                        isOpen={isGraceModalOpen} 
+                        onClose={() => setIsGraceModalOpen(false)} 
+                        card={currentGraceCard?.card} 
+                        date={currentGraceCard?.date}
+                        mode={currentGraceCard?.mode}
+                        // 移除了 onCollect
+                        onNavigate={navigateGraceCard}
+                        lang={lang} 
+                    />
                 </div>
             );
         }
