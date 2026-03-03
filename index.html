@@ -1246,11 +1246,152 @@
             );
         };
 
+        // --- 刮刮卡元件 ---
+        const ScratchCard = ({ isRevealed, setIsRevealed, children, lang }) => {
+            const canvasRef = useRef(null);
+            const isDrawing = useRef(false);
+            const lastPos = useRef(null);
+
+            useEffect(() => {
+                if (isRevealed) return;
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d', { willReadFrequently: true });
+                
+                const initCanvas = () => {
+                    const rect = canvas.parentElement.getBoundingClientRect();
+                    canvas.width = rect.width;
+                    canvas.height = rect.height;
+
+                    // 繪製金色漸層膜
+                    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+                    gradient.addColorStop(0, '#fde68a'); // amber-200
+                    gradient.addColorStop(0.5, '#fef3c7'); // amber-100
+                    gradient.addColorStop(1, '#fcd34d'); // amber-300
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                    // 繪製提示文字
+                    ctx.font = 'bold 22px "Noto Sans TC", sans-serif';
+                    ctx.fillStyle = '#b45309'; // amber-700
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    const text = lang === 'zh' ? '🖐️ 手指刮開領取今日恩典' : '🖐️ Scratch to Reveal';
+                    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+                    
+                    // 加入閃爍星光點綴
+                    for(let i=0; i<50; i++) {
+                        ctx.beginPath();
+                        ctx.arc(Math.random() * canvas.width, Math.random() * canvas.height, Math.random() * 2 + 1, 0, Math.PI * 2);
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+                        ctx.fill();
+                    }
+
+                    // 設定塗抹時為擦除效果
+                    ctx.globalCompositeOperation = 'destination-out';
+                };
+
+                const timerId = setTimeout(initCanvas, 50);
+                return () => clearTimeout(timerId);
+            }, [isRevealed, lang]);
+
+            const scratch = (e) => {
+                if (!isDrawing.current || isRevealed) return;
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const rect = canvas.getBoundingClientRect();
+                
+                const clientX = e.clientX ?? (e.touches ? e.touches[0].clientX : 0);
+                const clientY = e.clientY ?? (e.touches ? e.touches[0].clientY : 0);
+                
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+
+                ctx.lineWidth = 50;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                if (lastPos.current) {
+                    ctx.beginPath();
+                    ctx.moveTo(lastPos.current.x, lastPos.current.y);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 25, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                lastPos.current = { x, y };
+            };
+
+            const handleDown = (e) => {
+                isDrawing.current = true;
+                lastPos.current = null;
+                scratch(e);
+            };
+
+            const handleUp = () => {
+                isDrawing.current = false;
+                lastPos.current = null;
+                checkReveal();
+            };
+
+            const handleMove = (e) => {
+                if (isDrawing.current) {
+                    scratch(e);
+                }
+            };
+
+            const checkReveal = () => {
+                const canvas = canvasRef.current;
+                if (!canvas) return;
+                const ctx = canvas.getContext('2d');
+                const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const pixels = imageData.data;
+                let transparent = 0;
+                // 每 16 個像素抽樣檢查一次以提升效能
+                const stride = 16; 
+                for (let i = 3; i < pixels.length; i += 4 * stride) {
+                    if (pixels[i] < 128) transparent++;
+                }
+                const checkedPixels = (pixels.length / 4) / stride;
+                // 刮開超過 40% 即可自動顯示全部
+                if (transparent / checkedPixels > 0.4) {
+                    setIsRevealed(true);
+                }
+            };
+
+            return (
+                <div className="relative w-full h-full flex flex-col">
+                    {/* 修改：讓底層的內容永遠保持不透明，這樣刮開時才看得到底下的字 */}
+                    <div className="flex-1 flex flex-col">
+                        {children}
+                    </div>
+                    {/* 修改：Canvas 一直掛載著，覆蓋在文字上方，當刮除 40% 後才加上透明與穿透效果 */}
+                    <canvas
+                        ref={canvasRef}
+                        onPointerDown={handleDown}
+                        onPointerUp={handleUp}
+                        onPointerMove={handleMove}
+                        onPointerLeave={handleUp}
+                        className={`absolute inset-0 z-50 cursor-crosshair touch-none rounded-xl transition-opacity duration-1000 ${isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}
+                    />
+                </div>
+            );
+        };
+
         // --- 改良版：恩典籤卡片 Modal (Updated for Mobile & Inset Border) ---
         const GraceModal = ({ isOpen, onClose, card, date, mode, onNavigate, lang }) => {
-            if (!isOpen || !card) return null;
-            const t = TRANSLATIONS[lang];
+            const [isRevealed, setIsRevealed] = useState(mode === 'view');
             const isViewMode = mode === 'view';
+            const t = TRANSLATIONS[lang];
+
+            useEffect(() => {
+                setIsRevealed(mode === 'view');
+            }, [card, mode, date]);
+
+            if (!isOpen || !card) return null;
 
             return (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-in fade-in duration-300 no-print">
@@ -1278,50 +1419,50 @@
                             </>
                         )}
 
-                        {/* Scrollable Content Container */}
-                        <div className="flex-1 overflow-y-auto custom-scrollbar relative z-10">
-                             <div className="flex flex-col items-center px-6 pt-10 pb-4">
-                                
-                                {/* Header */}
-                                <div className="text-center mb-6 relative z-10">
-                                    {/* 修改：加大日期與分類的字體 (text-sm)，調整 padding 與 icon 大小 */}
-                                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-[#1E3A8A] font-bold text-sm tracking-wide uppercase mb-4 border border-blue-100">
-                                        <Sparkles size={14} />
-                                        <span>{date}</span>
-                                        <span className="opacity-30">|</span>
-                                        <span>{card.category}</span>
+                        {/* Scrollable Content Container with ScratchCard */}
+                        <div className={`flex-1 ${isRevealed ? 'overflow-y-auto' : 'overflow-hidden'} custom-scrollbar relative z-10 p-3 flex flex-col`}>
+                            <ScratchCard key={`${date}-${mode}`} isRevealed={isRevealed} setIsRevealed={setIsRevealed} lang={lang}>
+                                <div className="flex flex-col items-center px-3 pt-7 pb-2">
+                                    
+                                    {/* Header */}
+                                    <div className="text-center mb-6 relative z-10">
+                                        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-50 text-[#1E3A8A] font-bold text-sm tracking-wide uppercase mb-4 border border-blue-100">
+                                            <Sparkles size={14} />
+                                            <span>{date}</span>
+                                            <span className="opacity-30">|</span>
+                                            <span>{card.category}</span>
+                                        </div>
+                                        <h2 className="text-2xl font-bold text-[#1E3A8A] font-serif-tc tracking-wide leading-tight px-2 drop-shadow-sm">
+                                            {card.title}
+                                        </h2>
                                     </div>
-                                    <h2 className="text-2xl font-bold text-[#1E3A8A] font-serif-tc tracking-wide leading-tight px-2 drop-shadow-sm">
-                                        {card.title}
-                                    </h2>
-                                </div>
 
-                                {/* Verse */}
-                                <div className="w-full relative py-4 mb-4 border-y border-blue-50/60">
-                                     <Quote size={20} className="absolute -top-2.5 left-2 text-blue-100 transform -scale-x-100" />
-                                     <p className="text-lg text-center font-bold text-slate-800 leading-relaxed font-serif-tc px-2">
-                                        {card.verse}
-                                     </p>
-                                     <Quote size={20} className="absolute -bottom-2.5 right-2 text-blue-100" />
-                                     <div className="text-center mt-3">
-                                        <span className="text-xs font-bold text-slate-400 tracking-widest uppercase font-sans bg-white px-2 relative z-10">
-                                            {card.reference}
-                                        </span>
-                                     </div>
-                                </div>
+                                    {/* Verse */}
+                                    <div className="w-full relative py-4 mb-4 border-y border-blue-50/60">
+                                         <Quote size={20} className="absolute -top-2.5 left-2 text-blue-100 transform -scale-x-100" />
+                                         <p className="text-lg text-center font-bold text-slate-800 leading-relaxed font-serif-tc px-2">
+                                            {card.verse}
+                                         </p>
+                                         <Quote size={20} className="absolute -bottom-2.5 right-2 text-blue-100" />
+                                         <div className="text-center mt-3">
+                                            <span className="text-xs font-bold text-slate-400 tracking-widest uppercase font-sans bg-white px-2 relative z-10">
+                                                {card.reference}
+                                            </span>
+                                         </div>
+                                    </div>
 
-                                {/* Message */}
-                                <div className="w-full p-4 rounded-xl bg-slate-50 border border-slate-100 shadow-inner mb-2">
-                                    <p className="text-base text-slate-700 text-justify leading-7 font-sans font-medium">
-                                        {card.message}
-                                    </p>
+                                    {/* Message */}
+                                    <div className="w-full p-4 rounded-xl bg-slate-50 border border-slate-100 shadow-inner mb-2 flex-1">
+                                        <p className="text-base text-slate-700 text-justify leading-7 font-sans font-medium">
+                                            {card.message}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
+                            </ScratchCard>
                         </div>
 
                         {/* Footer */}
-                        <div className="px-6 pb-6 pt-2 z-10 bg-white relative">
-                            {/* Tags - 修改：字體改小 (text-[10px])，調整 padding */}
+                        <div className={`px-6 pb-6 pt-2 z-10 bg-white relative transition-opacity duration-1000 ${isRevealed ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}>
                              <div className="flex flex-wrap gap-2 justify-center mb-5">
                                 {card.tags.map(tag => (
                                     <span key={tag} className="text-[10px] font-bold text-[#1E3A8A] px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100 tracking-wide">#{tag}</span>
