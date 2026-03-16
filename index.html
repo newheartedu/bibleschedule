@@ -1521,9 +1521,16 @@
             const canvasRef = useRef(null);
             const isDrawing = useRef(false);
             const lastPos = useRef(null);
+            const [isCanvasReady, setIsCanvasReady] = useState(false);
 
             useEffect(() => {
-                if (isRevealed) return;
+                if (isRevealed) {
+                    setIsCanvasReady(true);
+                    return;
+                }
+                // 每次準備新刮刮卡時，先設定未就緒
+                setIsCanvasReady(false);
+                
                 const canvas = canvasRef.current;
                 if (!canvas) return;
                 
@@ -1618,9 +1625,12 @@
 
                     // 設定塗抹時為擦除效果
                     ctx.globalCompositeOperation = 'destination-out';
+                    
+                    // 通知 React Canvas 已經畫好可以顯示了
+                    setIsCanvasReady(true);
                 };
 
-                const timerId = setTimeout(initCanvas, 100);
+                const timerId = setTimeout(initCanvas, 30);
                 return () => clearTimeout(timerId);
             }, [isRevealed, lang]);
 
@@ -1694,11 +1704,13 @@
                 setIsRevealed(true);
             };
 
-            // 改用 Fragment <></>，不改變原本排版，直接蓋一層在最上面
             return (
                 <>
-                    {/* 底層：完全保留原始內容結構 */}
+                    {/* 底層：完全還原原始內容排版結構，不包覆多餘的 div 避免跑版 */}
                     {children}
+                    
+                    {/* 載入遮罩：在 Canvas 繪製完成前，用白底覆蓋內容，完美避免「閃爍」且不破壞排版 */}
+                    <div className={`absolute inset-0 bg-white z-[50] transition-opacity duration-200 ${isCanvasReady || isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}></div>
                     
                     {/* 上層遮罩：滿版 Canvas 與一鍵打開按鈕 */}
                     <div className={`absolute inset-0 z-[60] transition-opacity duration-1000 ${isRevealed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
@@ -1711,7 +1723,7 @@
                             className="absolute inset-0 w-full h-full cursor-crosshair touch-none"
                         />
                         
-                        <div className="absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none">
+                        <div className={`absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none transition-opacity duration-500 ${!isCanvasReady ? 'opacity-0' : 'opacity-100'}`}>
                             <button 
                                 onClick={handleDirectReveal}
                                 className="pointer-events-auto px-6 py-3 bg-slate-900/85 hover:bg-slate-800 backdrop-blur-md text-amber-300 border border-amber-500/40 rounded-full text-sm font-bold tracking-widest shadow-2xl transition-all flex items-center gap-2 transform active:scale-95"
@@ -1725,7 +1737,7 @@
             );
         };
 
-        // --- 改良版：恩典籤卡片 Modal (完全恢復原本的內容格式) ---
+        // --- 改良版：恩典籤卡片 Modal ---
         const GraceModal = ({ isOpen, onClose, card, date, mode, onNavigate, lang }) => {
             const [isRevealed, setIsRevealed] = useState(mode === 'view');
             const isViewMode = mode === 'view';
