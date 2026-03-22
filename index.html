@@ -2086,7 +2086,7 @@
                         <div className={`absolute bottom-8 left-0 right-0 flex justify-center pointer-events-none transition-opacity duration-500 ${!isCanvasReady ? 'opacity-0' : 'opacity-100'}`}>
                             <button 
                                 onClick={handleDirectReveal}
-                                className="pointer-events-auto px-6 py-3 bg-slate-900/85 hover:bg-slate-800 backdrop-blur-md text-amber-300 border border-amber-500/40 rounded-full text-sm font-bold tracking-widest shadow-2xl transition-all flex items-center gap-2 transform active:scale-95"
+                                className={`pointer-events-auto px-6 py-3 bg-slate-900/85 hover:bg-slate-800 backdrop-blur-md text-amber-300 border border-amber-500/40 rounded-full text-sm font-bold tracking-widest shadow-2xl transition-all flex items-center gap-2 transform active:scale-95 ${isRevealed ? 'hidden' : ''}`}
                             >
                                 <Sparkles size={16} className="text-amber-400" />
                                 {lang === 'zh' ? '一鍵打開' : 'Reveal Instantly'}
@@ -2123,18 +2123,6 @@
                         <ScratchCard key={`${date}-${mode}`} isRevealed={isRevealed} setIsRevealed={setIsRevealed} lang={lang}>
                             {/* 以下完全恢復您最喜歡的原始格式 */}
                             <div className="absolute inset-3 border-[1.5px] border-[#1E3A8A] rounded-xl pointer-events-none z-[30] opacity-80"></div>
-
-                            {/* 導覽按鈕 */}
-                            {isViewMode && (
-                                <>
-                                    <button onClick={() => onNavigate(-1)} className="absolute left-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 hover:bg-blue-50 text-[#1E3A8A] rounded-full shadow-md border border-blue-100 transition-all z-[40] active:scale-95">
-                                        <ChevronLeft size={20}/>
-                                    </button>
-                                    <button onClick={() => onNavigate(1)} className="absolute right-4 top-1/2 -translate-y-1/2 p-2 bg-white/90 hover:bg-blue-50 text-[#1E3A8A] rounded-full shadow-md border border-blue-100 transition-all z-[40] active:scale-95">
-                                        <ChevronRight size={20}/>
-                                    </button>
-                                </>
-                            )}
 
                             {/* 內容區塊 */}
                             <div className={`flex-1 ${isRevealed ? 'overflow-y-auto' : 'overflow-hidden'} custom-scrollbar relative z-10 p-3 flex flex-col`}>
@@ -2173,23 +2161,43 @@
                                 </div>
                             </div>
 
-                            {/* 底部按鈕 */}
+                            {/* 底部按鈕：將左右切換整合至此 */}
                             <div className={`px-6 pb-6 pt-2 bg-white relative transition-all duration-1000 ${isRevealed ? 'opacity-100 z-[25] pointer-events-auto' : 'opacity-0 pointer-events-none z-10'}`}>
                                  <div className="flex flex-wrap gap-2 justify-center mb-5">
                                     {card.tags.map(tag => (
                                         <span key={tag} className="text-[10px] font-bold text-[#1E3A8A] px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100 tracking-wide">#{tag}</span>
                                     ))}
                                 </div>
-                                <button 
-                                    type="button"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onClose();
-                                    }} 
-                                    className="w-full py-3 bg-[#1E3A8A] hover:bg-blue-800 text-white rounded-lg text-sm font-bold tracking-[0.2em] shadow-lg transition-all transform active:scale-[0.98] uppercase flex items-center justify-center gap-2"
-                                >
-                                    {t.grace_close}
-                                </button>
+                                <div className="flex items-center justify-center gap-3">
+                                    {isViewMode && (
+                                        <button 
+                                            type="button"
+                                            onClick={(e) => { e.stopPropagation(); onNavigate(-1); }} 
+                                            className="p-3 bg-blue-50 hover:bg-blue-100 text-[#1E3A8A] rounded-lg shadow-sm border border-blue-100 transition-all transform active:scale-95 flex-shrink-0"
+                                        >
+                                            <ChevronLeft size={20}/>
+                                        </button>
+                                    )}
+                                    <button 
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onClose();
+                                        }} 
+                                        className="flex-1 py-3 bg-[#1E3A8A] hover:bg-blue-800 text-white rounded-lg text-sm font-bold tracking-[0.2em] shadow-lg transition-all transform active:scale-[0.98] uppercase flex items-center justify-center gap-2"
+                                    >
+                                        {t.grace_close}
+                                    </button>
+                                    {isViewMode && (
+                                        <button 
+                                            type="button"
+                                            onClick={(e) => { e.stopPropagation(); onNavigate(1); }} 
+                                            className="p-3 bg-blue-50 hover:bg-blue-100 text-[#1E3A8A] rounded-lg shadow-sm border border-blue-100 transition-all transform active:scale-95 flex-shrink-0"
+                                        >
+                                            <ChevronRight size={20}/>
+                                        </button>
+                                    )}
+                                </div>
                             </div>
                         </ScratchCard>
                         
