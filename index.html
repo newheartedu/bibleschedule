@@ -2103,6 +2103,7 @@
             const [copied, setCopied] = useState(false);
             const [isSharing, setIsSharing] = useState(false);
             const [fallbackImageUrl, setFallbackImageUrl] = useState(null); // 新增：用於手機無法原生分享時的長按預覽
+            const [shareFile, setShareFile] = useState(null); // 新增：預先生成的圖檔
             const printRef = useRef(null);
             const isViewMode = mode === 'view';
             const t = TRANSLATIONS[lang];
@@ -2111,7 +2112,33 @@
                 setIsRevealed(mode === 'view');
                 setCopied(false);
                 setFallbackImageUrl(null); // 關閉時重置預覽圖
-            }, [card, mode, date]);
+                setShareFile(null); // 關閉或切換時重置圖檔
+
+                // 優化：Modal 打開後，在背景提早生成圖片。
+                // 這樣能避免點擊分享時 html2canvas 耗時，導致手機瀏覽器判斷「非直接點擊」而封鎖 Line 的分享選單。
+                if (isOpen && card) {
+                    const timer = setTimeout(async () => {
+                        if (!printRef.current) return;
+                        try {
+                            const canvas = await html2canvas(printRef.current, {
+                                scale: 2.5, // 2.5 在手機上已經非常清晰且生成速度快
+                                backgroundColor: '#F9F9F7', 
+                                useCORS: true,
+                                logging: false,
+                            });
+                            canvas.toBlob((blob) => {
+                                if (blob) {
+                                    const file = new File([blob], `PJBC_GraceCard_${date}.png`, { type: 'image/png' });
+                                    setShareFile(file);
+                                }
+                            }, 'image/png');
+                        } catch (err) {
+                            console.error("Pre-generation failed", err);
+                        }
+                    }, 800); // 確保字體與動畫已載入完成再擷取
+                    return () => clearTimeout(timer);
+                }
+            }, [card, mode, date, isOpen]);
 
             const handleShare = async (e) => {
                 e.stopPropagation();
@@ -2119,90 +2146,90 @@
                 
                 setIsSharing(true);
                 try {
-                    // 1. 使用 html2canvas 將隱藏的版型轉換為 Canvas
-                    const canvas = await html2canvas(printRef.current, {
-                        scale: 3, // 高解析度
-                        backgroundColor: '#F9F9F7', 
-                        useCORS: true,
-                        logging: false,
-                    });
+                    let file = shareFile;
+                    let fallbackDataUrl = null;
 
-                    // 2. 將 Canvas 轉換為 Blob 檔案
-                    canvas.toBlob(async (blob) => {
-                        if (!blob) {
-                            setIsSharing(false);
-                            return;
+                    // 若使用者點太快，圖片還沒預先生成好，則即時生成
+                    if (!file) {
+                        const canvas = await html2canvas(printRef.current, {
+                            scale: 2.5,
+                            backgroundColor: '#F9F9F7', 
+                            useCORS: true,
+                            logging: false,
+                        });
+                        fallbackDataUrl = canvas.toDataURL('image/png');
+                        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+                        if (blob) {
+                            file = new File([blob], `PJBC_GraceCard_${date}.png`, { type: 'image/png' });
                         }
+                    } else {
+                        // 若已有 file，為了長按預覽功能建立暫時 URL
+                        fallbackDataUrl = URL.createObjectURL(file);
+                    }
 
-                        const file = new File([blob], `PJBC_GraceCard_${date}.png`, { type: 'image/png' });
-                        const shareData = {
-                            title: 'PJBC 每日恩典籤',
-                            files: [file]
-                        };
+                    let shared = false;
+                    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-                        let shared = false;
-                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+                    // 3. 嘗試原生分享：強制觸發手機底層的 Share Sheet (會跳出 Line、FB、IG)
+                    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            // 注意：只傳送 files，不加 title/text。因為部分 Android 系統分享到 Line 時若同時有文字和圖片，會引發 Line 吞掉圖片的 Bug。
+                            await navigator.share({ files: [file] });
+                            shared = true;
+                        } catch (err) {
+                            // 若使用者自行取消分享，會產生 AbortError，此時直接中止即可
+                            if (err.name === 'AbortError') {
+                                setIsSharing(false);
+                                return;
+                            }
+                            console.warn('Native Share API failed:', err);
+                        }
+                    }
 
-                        // 3. 嘗試原生分享：強制嘗試觸發手機底層的 Share Sheet (分享到 Line、FB)
-                        if (navigator.share) {
+                    // 4. 原生分享失敗的備用方案
+                    if (!shared) {
+                        if (isMobile) {
+                            // 【手機版】若在 Line 或 FB 的「內建瀏覽器」無法喚醒原生分享，改顯示長按圖片介面
+                            setFallbackImageUrl(fallbackDataUrl);
+                        } else {
+                            // 【電腦版】直接複製到剪貼簿，方便按 Ctrl+V 貼上
                             try {
-                                await navigator.share(shareData);
-                                shared = true;
-                            } catch (err) {
-                                // 若使用者自行取消分享，會產生 AbortError，此時直接中止即可
-                                if (err.name === 'AbortError') {
-                                    setIsSharing(false);
-                                    return;
+                                if (navigator.clipboard && window.ClipboardItem && file) {
+                                    const item = new window.ClipboardItem({ 'image/png': file });
+                                    await navigator.clipboard.write([item]);
+                                    alert(lang === 'zh' ? '📸 圖片已成功複製！\n\n您可以直接打開 Line 或 Facebook 對話框「貼上 (Ctrl+V)」囉！' : 'Image copied! You can now paste it into social apps.');
+                                    shared = true;
                                 }
-                                console.warn('Native Share API failed:', err);
+                            } catch (clipboardErr) {
+                                console.error('Clipboard copy failed', clipboardErr);
+                            }
+                            
+                            // 電腦版若連剪貼簿都不支援，最後才觸發下載
+                            if (!shared && fallbackDataUrl) {
+                                fallbackDownload(fallbackDataUrl);
                             }
                         }
+                    }
 
-                        // 4. 原生分享失敗的備用方案
-                        if (!shared) {
-                            if (isMobile) {
-                                // 【手機版】若在 Line 或 FB 內建瀏覽器無法使用原生分享，改顯示長按圖片介面
-                                setFallbackImageUrl(canvas.toDataURL('image/png'));
-                            } else {
-                                // 【電腦版】直接複製到剪貼簿，方便按 Ctrl+V 貼上
-                                try {
-                                    if (navigator.clipboard && window.ClipboardItem) {
-                                        const item = new window.ClipboardItem({ 'image/png': blob });
-                                        await navigator.clipboard.write([item]);
-                                        alert(lang === 'zh' ? '📸 圖片已成功複製！\n\n您可以直接打開 Line 或 Facebook 對話框「貼上 (Ctrl+V)」囉！' : 'Image copied! You can now paste it into social apps.');
-                                        shared = true;
-                                    }
-                                } catch (clipboardErr) {
-                                    console.error('Clipboard copy failed', clipboardErr);
-                                }
-                                
-                                // 電腦版若連剪貼簿都不支援，最後才觸發下載
-                                if (!shared) {
-                                    fallbackDownload(canvas);
-                                }
-                            }
-                        }
-
-                        if (shared) {
-                            setCopied(true);
-                            setTimeout(() => setCopied(false), 2000);
-                        }
-                        
-                        setIsSharing(false);
-                    }, 'image/png');
+                    if (shared) {
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                    }
+                    
+                    setIsSharing(false);
 
                 } catch (err) {
-                    console.error('Canvas generation failed', err);
+                    console.error('Sharing process failed', err);
                     setIsSharing(false);
                     // 萬一圖片生成失敗，退回純文字複製
                     fallbackTextCopy(); 
                 }
             };
 
-            const fallbackDownload = (canvas) => {
+            const fallbackDownload = (dataUrl) => {
                 const link = document.createElement('a');
                 link.download = `PJBC_GraceCard_${date}.png`;
-                link.href = canvas.toDataURL('image/png');
+                link.href = dataUrl;
                 link.click();
                 setCopied(true);
                 setTimeout(() => setCopied(false), 2000);
