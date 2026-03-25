@@ -2102,6 +2102,7 @@
             const [isRevealed, setIsRevealed] = useState(mode === 'view');
             const [copied, setCopied] = useState(false);
             const [isSharing, setIsSharing] = useState(false);
+            const [fallbackImageUrl, setFallbackImageUrl] = useState(null); // 新增：用於手機無法原生分享時的長按預覽
             const printRef = useRef(null);
             const isViewMode = mode === 'view';
             const t = TRANSLATIONS[lang];
@@ -2109,6 +2110,7 @@
             useEffect(() => {
                 setIsRevealed(mode === 'view');
                 setCopied(false);
+                setFallbackImageUrl(null); // 關閉時重置預覽圖
             }, [card, mode, date]);
 
             const handleShare = async (e) => {
@@ -2135,47 +2137,50 @@
                         const file = new File([blob], `PJBC_GraceCard_${date}.png`, { type: 'image/png' });
                         const shareData = {
                             title: 'PJBC 每日恩典籤',
-                            // 某些 APP 如果同時傳送 text 和 files，可能會忽略檔案，所以這裡省略 text 或只留簡短文字
                             files: [file]
                         };
 
                         let shared = false;
+                        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-                        // 3. 嘗試原生分享 (手機端通常會開啟 Line/IG/FB 選單，將圖片直接帶入)
-                        if (navigator.canShare && navigator.canShare(shareData)) {
+                        // 3. 嘗試原生分享：強制嘗試觸發手機底層的 Share Sheet (分享到 Line、FB)
+                        if (navigator.share) {
                             try {
                                 await navigator.share(shareData);
                                 shared = true;
                             } catch (err) {
-                                // 如果使用者取消分享，會拋出 AbortError，此時不當作錯誤
-                                if (err.name !== 'AbortError') {
-                                    console.error('Share API failed, trying clipboard fallback', err);
-                                } else {
+                                // 若使用者自行取消分享，會產生 AbortError，此時直接中止即可
+                                if (err.name === 'AbortError') {
                                     setIsSharing(false);
                                     return;
                                 }
+                                console.warn('Native Share API failed:', err);
                             }
                         }
 
-                        // 4. 若不支援原生分享（如電腦版），改為「複製圖片到剪貼簿」，讓使用者可以一鍵貼上到 Line/FB
+                        // 4. 原生分享失敗的備用方案
                         if (!shared) {
-                            try {
-                                if (navigator.clipboard && window.ClipboardItem) {
-                                    const item = new window.ClipboardItem({ 'image/png': blob });
-                                    await navigator.clipboard.write([item]);
-                                    alert(lang === 'zh' ? '📸 圖片已成功複製！\n\n您可以直接「貼上 (Ctrl+V)」到 Line、Facebook 或 IG 的對話框中分享喔！' : 'Image copied! You can now paste it into social apps.');
-                                    shared = true;
+                            if (isMobile) {
+                                // 【手機版】若在 Line 或 FB 內建瀏覽器無法使用原生分享，改顯示長按圖片介面
+                                setFallbackImageUrl(canvas.toDataURL('image/png'));
+                            } else {
+                                // 【電腦版】直接複製到剪貼簿，方便按 Ctrl+V 貼上
+                                try {
+                                    if (navigator.clipboard && window.ClipboardItem) {
+                                        const item = new window.ClipboardItem({ 'image/png': blob });
+                                        await navigator.clipboard.write([item]);
+                                        alert(lang === 'zh' ? '📸 圖片已成功複製！\n\n您可以直接打開 Line 或 Facebook 對話框「貼上 (Ctrl+V)」囉！' : 'Image copied! You can now paste it into social apps.');
+                                        shared = true;
+                                    }
+                                } catch (clipboardErr) {
+                                    console.error('Clipboard copy failed', clipboardErr);
                                 }
-                            } catch (clipboardErr) {
-                                console.error('Clipboard copy failed', clipboardErr);
+                                
+                                // 電腦版若連剪貼簿都不支援，最後才觸發下載
+                                if (!shared) {
+                                    fallbackDownload(canvas);
+                                }
                             }
-                        }
-                        
-                        // 5. 如果連複製圖片都不支援，最後才觸發下載
-                        if (!shared) {
-                             alert(lang === 'zh' ? '您的瀏覽器暫不支援直接分享。圖片將會下載，您可以手動上傳傳送到社群軟體。' : 'Sharing not supported, image will be downloaded.');
-                             fallbackDownload(canvas);
-                             shared = true;
                         }
 
                         if (shared) {
@@ -2382,6 +2387,30 @@
                         </ScratchCard>
                         
                     </div>
+
+                    {/* 當原生分享失敗時 (例如在 Line 內部)，為手機用戶顯示長按圖片的引導介面 */}
+                    {fallbackImageUrl && (
+                        <div 
+                            className="absolute inset-0 z-[100] bg-slate-900/95 flex flex-col items-center justify-center p-4 animate-in fade-in"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div className="bg-amber-500 text-white text-sm md:text-base font-bold px-6 py-3 rounded-full mb-6 shadow-lg flex items-center gap-2 animate-bounce-short text-center">
+                                <span className="text-xl">👆</span> {lang === 'zh' ? '請長按圖片進行分享或儲存' : 'Long press the image to share or save'}
+                            </div>
+                            <img 
+                                src={fallbackImageUrl} 
+                                alt="Grace Card Preview" 
+                                className="w-full max-w-sm rounded-2xl shadow-2xl" 
+                                style={{ maxHeight: '65vh', objectFit: 'contain' }} 
+                            />
+                            <button 
+                                onClick={() => setFallbackImageUrl(null)}
+                                className="mt-8 px-10 py-3 bg-white/10 hover:bg-white/20 text-white rounded-full font-bold tracking-widest transition-colors border border-white/20 backdrop-blur-sm"
+                            >
+                                {t.grace_close}
+                            </button>
+                        </div>
+                    )}
                 </div>
             );
         };
