@@ -2260,55 +2260,63 @@
                 >
                     {/* 隱藏的截圖專用版型 (保證每次截圖長寬比例與排版完美) */}
                     <div className="fixed pointer-events-none" style={{ left: '-9999px', top: '-9999px' }}>
-                        <div ref={printRef} className="w-[500px] p-10 flex flex-col items-center justify-center font-serif-tc tracking-wide" style={{ backgroundColor: '#F9F9F7' }}>
-                            <div className="w-full bg-white relative flex flex-col shadow-[0_15px_50px_-12px_rgba(0,0,0,0.15)]" style={{ borderRadius: '24px', overflow: 'hidden' }}>
-                                <div className="absolute border-[1.5px] border-[#1E3A8A] opacity-80 pointer-events-none" style={{ top: '12px', left: '12px', right: '12px', bottom: '12px', borderRadius: '16px' }}></div>
+                        <div ref={printRef} className="w-[460px] p-8 flex flex-col items-center justify-center font-serif-tc tracking-wide" style={{ backgroundColor: '#EFEBE5' }}>
+                            <div className="w-full relative flex flex-col shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] bg-[#FCFAF7]" style={{ borderRadius: '20px', overflow: 'hidden' }}>
+                                {/* 仿紙張微漸層 */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent pointer-events-none"></div>
                                 
-                                <div className="relative z-10 px-10 py-14 flex flex-col items-center text-center">
-                                    {/* 日期與分類標籤 */}
-                                    <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-[#eff6ff] text-[#1E3A8A] font-bold text-sm tracking-widest uppercase mb-7 border border-[#bfdbfe]">
-                                        <Sparkles size={16} className="text-amber-500" />
-                                        <span className="font-sans">{date}</span>
-                                        <span className="opacity-30">|</span>
+                                {/* 高級感雙層極細邊框 */}
+                                <div className="absolute inset-0 border border-[#DCD3C6] m-3 pointer-events-none" style={{ borderRadius: '12px' }}></div>
+                                <div className="absolute inset-0 border-[0.5px] border-[#DCD3C6] m-[18px] pointer-events-none" style={{ borderRadius: '7px' }}></div>
+
+                                <div className="relative z-10 px-10 py-12 flex flex-col items-center text-center">
+                                    
+                                    {/* 日期與分類標籤 (極簡文青風) */}
+                                    <div className="flex items-center gap-3 text-[#8C7A6B] text-[12px] font-bold tracking-[0.2em] mb-5">
+                                        <span>{date.replace(/-/g, '.')}</span>
+                                        <Flower size={12} className="opacity-60" />
                                         <span>{card.category}</span>
                                     </div>
                                     
                                     {/* 標題 */}
-                                    <h2 className="text-[34px] font-bold text-[#1E3A8A] tracking-wider leading-snug mb-8">
+                                    <h2 className="text-[30px] font-bold text-[#43382D] tracking-widest leading-snug mb-5 drop-shadow-sm">
                                         {card.title}
                                     </h2>
 
+                                    {/* 優雅的分隔線 */}
+                                    <div className="w-10 h-[1px] bg-[#DCD3C6] mb-5"></div>
+
                                     {/* 經文區塊 */}
-                                    <div className="w-full py-8 mb-8 border-y border-[#1E3A8A]/10 relative">
-                                         <Quote size={28} className="absolute -top-4 left-2 text-[#1E3A8A]/15 transform -scale-x-100" />
-                                         <p className="text-[22px] font-bold text-slate-800 leading-relaxed px-6">
+                                    <div className="w-full px-2 mb-4 relative">
+                                         <p className="text-[19px] font-bold text-[#5A4F44] leading-relaxed tracking-wide">
                                             {card.verse}
                                          </p>
-                                         <Quote size={28} className="absolute -bottom-4 right-2 text-[#1E3A8A]/15" />
-                                         <div className="mt-6">
-                                            <span className="text-[13px] font-bold text-slate-500 tracking-widest uppercase font-sans bg-white px-4 relative z-10">
-                                                {card.reference}
-                                            </span>
-                                         </div>
+                                    </div>
+                                    
+                                    {/* 出處 */}
+                                    <div className="text-[12px] font-bold text-[#A6998A] tracking-[0.15em] mb-6 uppercase font-sans">
+                                        — {card.reference} —
                                     </div>
 
-                                    {/* 內文區塊 */}
-                                    <div className="w-full p-7 bg-[#f8fafc] mb-8 text-left border border-slate-100" style={{ borderRadius: '16px' }}>
-                                        <p className="text-[19px] text-slate-700 text-justify leading-[1.8] font-sans font-medium tracking-wide">
+                                    {/* 內文區塊 (微底色塊襯托) */}
+                                    <div className="w-full px-7 py-5 bg-[#F5F2EB]/60 rounded-[12px] mb-5 text-left border border-[#EBE6DC]/50 shadow-[inset_0_2px_10px_rgba(0,0,0,0.01)]">
+                                        <p className="text-[16.5px] text-[#5A4F44] text-justify leading-[1.85] font-medium tracking-wide">
                                             {card.message}
                                         </p>
                                     </div>
 
-                                    {/* 標籤 */}
-                                    <div className="flex flex-wrap gap-2 justify-center mb-10">
+                                    {/* 標籤 (去除厚重背景，改為純文字) */}
+                                    <div className="flex flex-wrap gap-4 justify-center mb-6">
                                         {card.tags.map(tag => (
-                                            <span key={tag} className="text-[13px] font-bold text-[#1E3A8A] px-4 py-1.5 rounded-full bg-[#eff6ff] border border-[#bfdbfe] tracking-widest">#{tag}</span>
+                                            <span key={tag} className="text-[12px] font-medium text-[#A6998A] tracking-[0.15em]">#{tag}</span>
                                         ))}
                                     </div>
 
                                     {/* 底部浮水印 */}
-                                    <div className="text-[#1E3A8A]/40 font-bold text-sm tracking-widest uppercase flex items-center gap-2 mt-2 font-sans">
-                                        <Fish size={16}/> PJBC 每日恩典籤 <Fish size={16} className="transform -scale-x-100"/>
+                                    <div className="flex items-center justify-center gap-2 text-[#A6998A]/60 text-[10px] tracking-widest mt-1 font-sans">
+                                        <Sparkles size={10} />
+                                        <span>PJBC DAILY GRACE</span>
+                                        <Sparkles size={10} />
                                     </div>
                                 </div>
                             </div>
