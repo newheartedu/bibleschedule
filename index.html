@@ -151,7 +151,7 @@
           Calendar as CalendarIcon, List, Home, Settings, ChevronLeft, ChevronRight, CheckCircle, Circle, 
           Star, BookOpen, Edit3, X, Search, Download, RefreshCw, Sparkles, Bookmark, Book, ArrowRight, 
           TrendingUp, LayoutGrid, Sun, Globe, Printer, Eye, FileDown, Image as ImageIcon, FileText, Fish,
-          Map, Award, Anchor, Milestone, Lock, Gift, Bell, User, Heart, Quote, History, Flower
+          Map, Award, Anchor, Milestone, Lock, Gift, Bell, User, Heart, Quote, History, Flower, Share2
         } from 'lucide-react';
 
         // --- 資料與輔助函式 (保持不變) ---
@@ -2100,12 +2100,51 @@
         // --- 改良版：恩典籤卡片 Modal ---
         const GraceModal = ({ isOpen, onClose, card, date, mode, onNavigate, lang }) => {
             const [isRevealed, setIsRevealed] = useState(mode === 'view');
+            const [copied, setCopied] = useState(false);
             const isViewMode = mode === 'view';
             const t = TRANSLATIONS[lang];
 
             useEffect(() => {
                 setIsRevealed(mode === 'view');
+                setCopied(false);
             }, [card, mode, date]);
+
+            const handleShare = async (e) => {
+                e.stopPropagation();
+                if (!card) return;
+                
+                const shareText = `【${card.title}】\n${card.verse}\n- ${card.reference}\n\n${card.message}\n\n#PJBC讀經進度 #每日恩典籤`;
+                
+                const copyToClipboard = () => {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = shareText;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        setCopied(true);
+                        setTimeout(() => setCopied(false), 2000);
+                    } catch (err) {
+                        console.error('Copy failed', err);
+                    }
+                    document.body.removeChild(textArea);
+                };
+
+                if (navigator.share) {
+                    try {
+                        await navigator.share({
+                            title: 'PJBC 每日恩典籤',
+                            text: shareText,
+                        });
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            copyToClipboard();
+                        }
+                    }
+                } else {
+                    copyToClipboard();
+                }
+            };
 
             if (!isOpen || !card) return null;
 
@@ -2168,7 +2207,7 @@
                                         <span key={tag} className="text-[10px] font-bold text-[#1E3A8A] px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100 tracking-wide">#{tag}</span>
                                     ))}
                                 </div>
-                                <div className="flex items-center justify-center gap-3">
+                                <div className="flex items-center justify-center gap-2">
                                     {isViewMode && (
                                         <button 
                                             type="button"
@@ -2178,6 +2217,16 @@
                                             <ChevronLeft size={20}/>
                                         </button>
                                     )}
+
+                                    <button 
+                                        type="button"
+                                        onClick={handleShare}
+                                        className={`p-3 rounded-lg shadow-sm border transition-all transform active:scale-95 flex-shrink-0 flex items-center justify-center gap-2 ${copied ? 'bg-green-50 hover:bg-green-100 text-green-600 border-green-200' : 'bg-amber-50 hover:bg-amber-100 text-amber-600 border-amber-200'}`}
+                                        title={lang === 'zh' ? '分享' : 'Share'}
+                                    >
+                                        {copied ? <CheckCircle size={20}/> : <Share2 size={20}/>}
+                                    </button>
+
                                     <button 
                                         type="button"
                                         onClick={(e) => {
