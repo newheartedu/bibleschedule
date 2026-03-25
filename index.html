@@ -2139,23 +2139,50 @@
                             files: [file]
                         };
 
-                        // 3. 檢查瀏覽器是否支援 Web Share API 分享檔案
+                        let shared = false;
+
+                        // 3. 嘗試原生分享 (手機端通常會開啟 Line/IG/FB 選單，將圖片直接帶入)
                         if (navigator.canShare && navigator.canShare(shareData)) {
                             try {
                                 await navigator.share(shareData);
-                                setCopied(true);
-                                setTimeout(() => setCopied(false), 2000);
+                                shared = true;
                             } catch (err) {
                                 // 如果使用者取消分享，會拋出 AbortError，此時不當作錯誤
                                 if (err.name !== 'AbortError') {
-                                    console.error('Share API failed, falling back to download', err);
-                                    fallbackDownload(canvas);
+                                    console.error('Share API failed, trying clipboard fallback', err);
+                                } else {
+                                    setIsSharing(false);
+                                    return;
                                 }
                             }
-                        } else {
-                            // 4. 若不支援分享檔案（例如電腦版 Chrome），則直接觸發下載
-                            fallbackDownload(canvas);
                         }
+
+                        // 4. 若不支援原生分享（如電腦版），改為「複製圖片到剪貼簿」，讓使用者可以一鍵貼上到 Line/FB
+                        if (!shared) {
+                            try {
+                                if (navigator.clipboard && window.ClipboardItem) {
+                                    const item = new window.ClipboardItem({ 'image/png': blob });
+                                    await navigator.clipboard.write([item]);
+                                    alert(lang === 'zh' ? '📸 圖片已成功複製！\n\n您可以直接「貼上 (Ctrl+V)」到 Line、Facebook 或 IG 的對話框中分享喔！' : 'Image copied! You can now paste it into social apps.');
+                                    shared = true;
+                                }
+                            } catch (clipboardErr) {
+                                console.error('Clipboard copy failed', clipboardErr);
+                            }
+                        }
+                        
+                        // 5. 如果連複製圖片都不支援，最後才觸發下載
+                        if (!shared) {
+                             alert(lang === 'zh' ? '您的瀏覽器暫不支援直接分享。圖片將會下載，您可以手動上傳傳送到社群軟體。' : 'Sharing not supported, image will be downloaded.');
+                             fallbackDownload(canvas);
+                             shared = true;
+                        }
+
+                        if (shared) {
+                            setCopied(true);
+                            setTimeout(() => setCopied(false), 2000);
+                        }
+                        
                         setIsSharing(false);
                     }, 'image/png');
 
