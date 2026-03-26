@@ -2481,8 +2481,8 @@
                         if (!printRef.current) return;
                         try {
                             const canvas = await html2canvas(printRef.current, {
-                                scale: 3, // 提高解析度
-                                backgroundColor: '#FAF7F2', // 改為米色系
+                                scale: 2, // 調降為 2 倍，避免圖檔過大導致手機分享失敗
+                                backgroundColor: '#F9F7F3', 
                                 useCORS: true,
                                 logging: false,
                             });
@@ -2512,8 +2512,8 @@
                     // 若使用者點太快，圖片還沒預先生成好，則即時生成
                     if (!file) {
                         const canvas = await html2canvas(printRef.current, {
-                            scale: 3, // 提高解析度
-                            backgroundColor: '#FAF7F2', // 改為米色系
+                            scale: 2, // 調降為 2 倍
+                            backgroundColor: '#F9F7F3', 
                             useCORS: true,
                             logging: false,
                         });
@@ -2618,61 +2618,90 @@
                     className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-sm animate-in fade-in duration-300 no-print"
                     onClick={onClose}
                 >
-                    {/* 隱藏的截圖專用版型 (溫馨米色系 + 專屬大地色精緻內框 + 網站同款字體) */}
+                    {/* 隱藏的截圖專用版型 (文青紙質色系 + 專屬標誌配色) */}
                     <div className="fixed pointer-events-none" style={{ left: '-9999px', top: '-9999px' }}>
-                        <div ref={printRef} className="w-[460px] relative flex flex-col tracking-wide bg-[#FAF7F2]" style={{ overflow: 'hidden' }}>
-                            {/* 仿紙張微雜訊/漸層 */}
-                            <div className="absolute inset-0 bg-gradient-to-br from-[#FFFFFF]/60 to-transparent pointer-events-none"></div>
+                        <div ref={printRef} className="w-[460px] relative flex flex-col tracking-wide" style={{ overflow: 'hidden', backgroundColor: '#F9F7F3' }}>
                             
-                            {/* 專屬精緻雙層內框線 (加深的高質感古銅棕) */}
-                            <div className="absolute inset-[12px] border border-[#8B7355] rounded-[16px] pointer-events-none opacity-60 z-20"></div>
-                            <div className="absolute inset-[16px] border-[0.5px] border-[#8B7355] rounded-[12px] pointer-events-none opacity-40 z-20"></div>
+                            {/* 邊緣微暗漸層，增加紙張立體感 */}
+                            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_60%,_rgba(180,165,150,0.15)_100%)] pointer-events-none z-0"></div>
+                            
+                            {/* 文青花草元素 (左上角) - 淡淡的優雅百合線條 */}
+                            <div className="absolute -top-6 -left-6 w-56 h-56 z-10 pointer-events-none opacity-[0.45]">
+                                <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" className="w-full h-full transform -rotate-12">
+                                    <g stroke="#B39C8D" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round">
+                                        {/* 莖 */}
+                                        <path d="M 80 200 C 80 150 100 120 110 90" />
+                                        {/* 葉 */}
+                                        <path d="M 85 170 C 50 160 30 180 20 150 C 50 140 70 150 85 170 Z" />
+                                        {/* 花瓣 */}
+                                        <path d="M 110 90 C 70 80 40 40 60 20 C 80 40 100 70 110 90 Z" />
+                                        <path d="M 110 90 C 100 40 130 10 150 10 C 140 40 120 70 110 90 Z" />
+                                        <path d="M 110 90 C 150 80 180 50 190 80 C 160 100 130 100 110 90 Z" />
+                                        <path d="M 110 90 C 140 120 170 140 150 160 C 130 130 120 110 110 90 Z" />
+                                        <path d="M 110 90 C 70 110 30 120 20 100 C 50 90 80 90 110 90 Z" />
+                                        {/* 花蕊 */}
+                                        <path d="M 110 90 Q 100 60 95 50" />
+                                        <path d="M 110 90 Q 120 50 125 40" />
+                                        <path d="M 110 90 Q 140 70 150 65" />
+                                        {/* 花蕊點綴 */}
+                                        <circle cx="95" cy="50" r="1.5" fill="#B39C8D" stroke="none" />
+                                        <circle cx="125" cy="40" r="1.5" fill="#B39C8D" stroke="none" />
+                                        <circle cx="150" cy="65" r="1.5" fill="#B39C8D" stroke="none" />
+                                    </g>
+                                </svg>
+                            </div>
+                            
+                            {/* 專屬精緻雙層內框線 */}
+                            <div className="absolute inset-[12px] border border-[#B39C8D] rounded-[16px] pointer-events-none opacity-50 z-20"></div>
+                            <div className="absolute inset-[16px] border-[0.5px] border-[#97A296] rounded-[12px] pointer-events-none opacity-40 z-20"></div>
 
                             <div className="relative z-10 px-10 py-14 flex flex-col items-center text-center">
                                 
-                                {/* 日期與分類標籤 (網站同款字體 font-sans) */}
-                                <div className="flex items-center gap-3 text-[#5A4A3A] text-[13px] font-bold tracking-[0.2em] mb-6 font-sans">
+                                {/* 日期與分類標籤 (鼠尾草綠) */}
+                                <div className="flex items-center gap-3 text-[#97A296] text-[13px] font-bold tracking-[0.2em] mb-6 font-sans">
                                     <span>{date.replace(/-/g, '.')}</span>
                                     <Flower size={13} className="opacity-90" />
                                     <span>{card.category}</span>
                                 </div>
                                 
-                                {/* 標題 (網站同款字體 font-serif-tc) */}
-                                <h2 className="text-[32px] font-bold text-[#2D241E] font-serif-tc tracking-widest leading-snug mb-6 drop-shadow-sm">
+                                {/* 標題 (大地暖棕) */}
+                                <h2 className="text-[32px] font-bold text-[#413C38] font-serif-tc tracking-widest leading-snug mb-6 drop-shadow-sm">
                                     {card.title}
                                 </h2>
 
-                                {/* 優雅的分隔線 */}
-                                <div className="w-12 h-[1.5px] bg-[#D5C6B5] mb-6"></div>
+                                {/* 優雅的分隔線 (奶茶色) */}
+                                <div className="w-12 h-[1.5px] bg-[#B39C8D] mb-6 opacity-70"></div>
 
-                                {/* 經文區塊 (網站同款字體 font-serif-tc) */}
+                                {/* 經文區塊 (大地暖棕) */}
                                 <div className="w-full px-2 mb-4 relative">
-                                     <p className="text-[20px] font-bold text-[#3A2F25] font-serif-tc leading-relaxed tracking-wide">
+                                     <p className="text-[20px] font-bold text-[#544B43] font-serif-tc leading-relaxed tracking-wide">
                                         {card.verse}
                                      </p>
                                 </div>
                                 
-                                {/* 出處 (font-sans) */}
-                                <div className="text-[13px] font-bold text-[#5A4A3A] tracking-[0.15em] mb-8 uppercase font-sans">
+                                {/* 出處 (枯玫瑰色) */}
+                                <div className="text-[13px] font-bold text-[#B68D8B] tracking-[0.15em] mb-8 uppercase font-sans">
                                     — {card.reference} —
                                 </div>
 
-                                {/* 內文區塊 (網站同款字體 font-sans + 完美置中) */}
-                                <div className="w-full px-8 py-6 bg-[#F4EFE6] rounded-[12px] mb-8 flex flex-col items-center justify-center min-h-[140px] shadow-[inset_0_1px_4px_rgba(0,0,0,0.02)] border border-[#EBE3D5]">
-                                    <p className="text-[17px] text-[#2D241E] text-center leading-[1.85] font-sans font-medium tracking-wide">
+                                {/* 內文區塊 (半透明透光質感) */}
+                                <div className="w-full px-8 py-6 bg-white/30 backdrop-blur-sm rounded-[12px] mb-8 flex flex-col items-center justify-center min-h-[140px] shadow-[0_2px_10px_rgba(139,115,85,0.05)] border border-white/40 relative">
+                                    <Quote size={16} className="absolute top-3 left-4 text-[#B39C8D] opacity-60 transform -scale-x-100" />
+                                    <p className="text-[17px] text-[#413C38] text-center leading-[1.85] font-sans font-medium tracking-wide relative z-10">
                                         {card.message}
                                     </p>
+                                    <Quote size={16} className="absolute bottom-3 right-4 text-[#B39C8D] opacity-60" />
                                 </div>
 
-                                {/* 標籤 (font-sans) */}
+                                {/* 標籤 (枯玫瑰色) */}
                                 <div className="flex flex-wrap gap-4 justify-center mb-8 font-sans">
                                     {card.tags.map(tag => (
-                                        <span key={tag} className="text-[13px] font-bold text-[#5A4A3A] tracking-[0.15em]">#{tag}</span>
+                                        <span key={tag} className="text-[13px] font-bold text-[#B68D8B] tracking-[0.15em]">#{tag}</span>
                                     ))}
                                 </div>
 
-                                {/* 底部浮水印 (font-sans) */}
-                                <div className="flex items-center justify-center gap-2 text-[#5A4A3A] text-[11px] font-bold tracking-widest mt-1 font-sans opacity-90">
+                                {/* 底部浮水印 (奶茶色) */}
+                                <div className="flex items-center justify-center gap-2 text-[#A68A7E] text-[11px] font-bold tracking-widest mt-1 font-sans opacity-90">
                                     <Sparkles size={11} />
                                     <span>PJBC DAILY GRACE</span>
                                     <Sparkles size={11} />
